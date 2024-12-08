@@ -7,7 +7,7 @@
 
 # Site Settings
 title                    : "Chenguang Pan/Personal Homepage"
-description              : "A third year PhD student at Teachers College Columbia University "
+description              : "A third year PhD student at Teachers College Columbia University"
 repository               : "https://github.com/cgpan/cgpan.github.io"
 google_scholar_stats_use_cdn : true
 
@@ -23,11 +23,11 @@ baidu_site_verification  :  # get baidu_site_verification from https://ziyuan.ba
 author:
   name             : "Chenguang Pan"
   avatar           : "images/portrait_L.png"
-  bio              : "Lorem ipsum College"
+  bio              : "A third year PhD student at Teachers College Columbia University"
   location         : "New York, U.S."
   employer         :
   pubmed           : 
-  googlescholar    : "https://scholar.google.com/citations?user=1g8cGG4AAAAJ&hl=en&oi=ao"
+  googlescholar    : "https://scholar.google.com/citations?user=1g8cGG4AAAAJ"
   email            : "chenguang.pan@columbia.edu"
   researchgate     :  # e.g., "https://www.researchgate.net/profile/yourprofile"
   uri              :
