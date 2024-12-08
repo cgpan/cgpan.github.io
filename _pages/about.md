@@ -21,7 +21,7 @@ I am a third-year PhD student in the Measurement, Evaluation, and Statistics pro
 
 My current work focuses on developing personalized, data-driven recommendation models for high school math course-taking plans using DTR methods. Supported by Professor Suk’s NSF funding and in collaboration with Yuxuan Li, this project leverages doubly robust and asymptotically efficient estimators through the TMLE framework. We aim to evaluate the performance of TMLE-based DTRs against other leading methods such as Causal Forest and BART in longitudinal settings with multicategorical treatments. Ultimately, our goal is to empower students by providing *the right math course for the right student at the right time*.
 
-Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Technology Group in Beijing, where I held roles including Deputy Manager of the American Graduate Tests Division, GRE Preparation Instructor, and Researcher for the GRE Instruction & Curriculum Department. These experiences honed my expertise in educational measurement and program development, laying a strong foundation for my current research.
+Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Technology Group in Beijing, where I held roles including Deputy Manager of the American Graduate Tests Division, GRE Preparation Instructor, and Researcher for the GRE Instruction & Curriculum Department. These experiences honed my expertise in educational measurement and program management, laying a strong foundation for my current research.
 
 
 # 🔥 News
