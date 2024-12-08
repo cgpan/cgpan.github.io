@@ -7,7 +7,7 @@
 
 # Site Settings
 title                    : "Chenguang Pan/Personal Homepage"
-#description              : "A third-year PhD student at Teachers College Columbia University"
+description              : "Empower education using causal machine learning!"
 url                      : "https://cgpan.github.io"
 repository               : "https://github.com/cgpan/cgpan.github.io"
 google_scholar_stats_use_cdn : true
@@ -24,7 +24,7 @@ baidu_site_verification  :  # get baidu_site_verification from https://ziyuan.ba
 author:
   name             : "Chenguang Pan"
   avatar           : "images/portrait_S.png"
-  bio              : "Empower education using causal machine learning!"
+  #bio              : "Empower education using causal machine learning!"
   location         : "New York, U.S."
   employer         :
   pubmed           : 
