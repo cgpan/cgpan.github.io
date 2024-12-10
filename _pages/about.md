@@ -54,11 +54,12 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 # 📖 Educations
 - *2022.09 - now*: Ph.D. in Measurement, Evaluation, and Statistics, Teachers College, Columbia University, NY, U.S.
 - *2020.09 - 2021.09*: Master of Education in Quantitative Analytics, University of Virginia, VA, U.S.
-- *2010.09 - 2024.06*: Bachler of Science in Physics, Harbin Normal University, Harbin, China
+- *2010.09 - 2024.06*: Bachler of Science in Physics, Harbin Normal University, Harbin, China.
 
 # 💬 Teaching Experiences
-- *2021.01 - 2021.06*, Instructor of Python Programming and Machine Learning, New Oriental Education & Technology Group, Beijing, China.
-- *2021.03*, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet.  \| [\[video\]](https://github.com/)
+- *2022.09 - 2022.12*, Teaching Assistance for QMSS GR5010 Quantitative Theory in Social Science, Columbia University, NY, U.S.
+- *2021.01 - 2021.07*, Instructor of Python Programming and Machine Learning, New Oriental Education & Technology Group, Beijing, China.
+- *2013.01 - 2022.07*, Instructor of GRE preparation in verbal and quantitative reasoning (teaching over 7,000 hours for over 10,000 students), New Oriental Education & Technology Group, Beijing, China.
 
 # 💻 Industry Experiences
 - *2018.05 - 2022.08*, Deputy Manager of American Graduate Tests Division, Full-time, New Oriental Education & Technology Group, Beijing, China.
