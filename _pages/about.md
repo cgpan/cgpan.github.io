@@ -40,7 +40,7 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 
 **Chenguang Pan**, Zhou Zhang
 
-[**Code**]() <strong><span class='show_paper_citations' data='DhtAFkwAAAAJ:ALROH1vI_8AC'></span></strong>
+[**Code**](https://github.com/cgpan/HSLSdropout) <strong><span class='show_paper_citations' data='DhtAFkwAAAAJ:ALROH1vI_8AC'></span></strong>
 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
 </div>
 </div>
