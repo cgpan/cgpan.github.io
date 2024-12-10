@@ -17,7 +17,7 @@ redirect_from:
 
 <span class='anchor' id='about-me'></span>
 
-I am a third-year PhD student in the Measurement, Evaluation, and Statistics program at Teachers College, Columbia University, where I am advised by Professor Youmi Suk. My research interests lie at the intersection of **causal inference**, **causal reinforcement learning**, **Targeted Maximum Likelihood Estimation (TMLE)**, **Dynamic Treatment Regimes (DTR)**, and **algorithmic fairness**.
+I am a third-year PhD student in the Measurement, Evaluation, and Statistics program at Teachers College, Columbia University, where I am advised by Professor [Youmi Suk](https://youmisuk.com/). My research interests lie at the intersection of **causal inference**, **causal reinforcement learning**, **Targeted Maximum Likelihood Estimation (TMLE)**, **Dynamic Treatment Regimes (DTR)**, and **algorithmic fairness**.
 
 My current work focuses on developing personalized, data-driven recommendation models for high school math course-taking plans using DTR methods. Supported by Professor Suk’s NSF funding and in collaboration with Yuxuan Li, this project leverages doubly robust and asymptotically efficient estimators through the TMLE framework. We aim to evaluate the performance of TMLE-based DTRs against other leading methods such as Causal Forest and BART in longitudinal settings with multicategorical treatments. Ultimately, our goal is to empower students by providing *the right math course for the right student at the right time*.
 
