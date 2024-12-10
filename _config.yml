@@ -26,7 +26,7 @@ author:
   avatar           : "images/portrait_S.png"
   #bio              : "Empower education using causal machine learning!"
   location         : "New York, U.S."
-  employer         :
+  employer         : Teachers College Columbia University
   pubmed           : 
   googlescholar    : "https://scholar.google.com/citations?user=1g8cGG4AAAAJ"
   email            : "chenguang.pan@columbia.edu"
@@ -44,7 +44,7 @@ author:
   instagram        :
   impactstory      : # e.g., "https://profiles.impactstory.org/u/xxxx-xxxx-xxxx-xxxx"
   lastfm           :
-  linkedin         : "www.linkedin.com/in/cgpan"
+  linkedin         : "cgpan"
   dblp             : # e.g., "https://dblp.org/pid/xx/xxxx.html"
   orcid            : "https://orcid.org/0009-0002-6507-8952"
   pinterest        :
