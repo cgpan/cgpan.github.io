@@ -40,11 +40,10 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 
 **Chenguang Pan**, Zhou Zhang
 
-<!--[**Project**](https://scholar.google.com/citations?view_op=view_citation&hl=zh-CN&user=DhtAFkwAAAAJ&citation_for_view=DhtAFkwAAAAJ:ALROH1vI_8AC) <strong><span class='show_paper_citations' data='DhtAFkwAAAAJ:ALROH1vI_8AC'></span></strong>
+[**Code**]() <strong><span class='show_paper_citations' data='DhtAFkwAAAAJ:ALROH1vI_8AC'></span></strong>
 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
 </div>
 </div>
--->
 - [Fair and Robust Estimation of Heterogeneous Treatment Effects for Optimal Policies in Multilevel Studies](https://osf.io/preprints/psyarxiv/xz3jw), Youmi Suk, Chan Park, **Chenguang Pan**, and Kwangho Kim, **Preprints**
 
 # 🎖 Honors and Awards
