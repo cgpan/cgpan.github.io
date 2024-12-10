@@ -49,7 +49,7 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 # 🎖 Honors and Awards
 - *2024.11* Provost's Grant for Conference presentation, Teachers College, Columbia University.
 - *2024.07* IEDMS Scholarship, EDM 2024, Atlanta, GA, U.S.
-- *2017.06* Outstanding Teacher Award (award rate: 1/400), New Oriental Education Technology Group, Beijing, China.
+- *2017.06* Outstanding Teacher Award (award rate: 1/400), New Oriental Education & Technology Group, Beijing, China.
 
 # 📖 Educations
 - *2022.09 - now*: Ph.D. in Measurement, Evaluation, and Statistics, Teachers College, Columbia University, NY, U.S.
