@@ -33,7 +33,7 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 
 # 📝 Publications 
 
-<div class='paper-box'><div class='paper-box-image'><div><div class="badge">CVPR 2016</div><img src='images/500x300.png' alt="sym" width="100%"></div></div>
+<div class='paper-box'><div class='paper-box-image'><div><div class="badge">EDM 2024</div><img src='images/500x300.png' alt="sym" width="100%"></div></div>
 <div class='paper-box-text' markdown="1">
 
 [Examining the Algorithmic Fairness in Predicting High School Dropouts](https://zenodo.org/records/12729810)
@@ -45,7 +45,7 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 </div>
 </div>
 
-- [Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet](https://github.com), A, B, C, **CVPR 2020**
+- [Fair and Robust Estimation of Heterogeneous Treatment Effects for Optimal Policies in Multilevel Studies](https://osf.io/preprints/psyarxiv/xz3jw), Youmi Suk, Chan Park, **Chenguang Pan**, and Kwangho Kim, **Preprints**
 
 # 🎖 Honors and Awards
 - *2021.10* Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
