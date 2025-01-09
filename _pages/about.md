@@ -25,6 +25,7 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 
 
 # 🔥 News
+- *2025.01*: &nbsp;🎉🎉 Chenguang received a sponsored registration for the 2025 AERA Annual Meeting, AERA 2025.
 - *2024.12*: &nbsp;🎉🎉 Chenguang was awarded the Provost's Grant for Conference presentation, Columbia Univeristy, NY, U.S.
 - *2024.11*: &nbsp;🎉🎉 Chenguang's paper *Designing Optimal Dynamic Treatment Regimes Using TMLE for Personalized Math Course-taking Plans* (joint work with Youmi Suk) was accepted by the American Educational Research Association (AERA) conference 2025, Denver, CO, U.S.
 - *2024.09*: &nbsp;🎉🎉 Chenguang's work (as second author) *Designing Personalized Math Course-taking Plans in High School Using Optimal Treatment Regimes* was accepted by and presented at the Society for Research on Educational Effectiveness (SREE) conference. Baltimore, MD, U.S.
