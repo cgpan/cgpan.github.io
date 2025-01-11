@@ -24,7 +24,7 @@ My current work focuses on developing personalized, data-driven recommendation m
 Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Technology Group in Beijing, where I held roles including Deputy Manager of the American Graduate Tests Division, GRE Preparation Instructor, and Researcher for the GRE Instruction & Curriculum Department. These experiences honed my expertise in educational measurement and program management, laying a strong foundation for my current research.
 
 
-# 🔥 News
+# 🔥 News  
 - *2025.01*: &nbsp;🎉🎉 Chenguang received a sponsored registration for the 2025 AERA Annual Meeting, AERA 2025.
 - *2024.12*: &nbsp;🎉🎉 Chenguang was awarded the Provost's Grant for Conference presentation, Columbia Univeristy, NY, U.S.
 - *2024.11*: &nbsp;🎉🎉 Chenguang's paper *Designing Optimal Dynamic Treatment Regimes Using TMLE for Personalized Math Course-taking Plans* (joint work with Youmi Suk) was accepted by the American Educational Research Association (AERA) conference 2025, Denver, CO, U.S.
