@@ -17,11 +17,9 @@ redirect_from:
 
 <span class='anchor' id='about-me'></span>
 
-I am a third-year PhD student in the Measurement, Evaluation, and Statistics program at Teachers College, Columbia University, where I am advised by Professor [Youmi Suk](https://youmisuk.com/). My research interests lie at the intersection of **causal inference**, **causal reinforcement learning**, **Targeted Maximum Likelihood Estimation (TMLE)**, **Dynamic Treatment Regimes (DTR)**, and **algorithmic fairness**.
+I am a fourth-year PhD student in the Measurement, Evaluation, and Statistics program at Teachers College, Columbia University, where I am advised by Professor [Youmi Suk](https://youmisuk.com/). My research interests lie at the intersection of **causal machine learning**, **dynamic treatment regimes (DTR)**, and **generative AI for synthetic tabular data**.
 
-My current work focuses on developing personalized, data-driven recommendation models for high school math course-taking plans using DTR methods. Supported by Professor Suk’s NSF funding and in collaboration with Yuxuan Li, this project leverages doubly robust and asymptotically efficient estimators through the TMLE framework. We aim to evaluate the performance of TMLE-based DTRs against other leading methods such as Causal Forest and BART in longitudinal settings with multicategorical treatments. Ultimately, our goal is to empower students by providing *the right math course for the right student at the right time*.
-
-Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Technology Group in Beijing, where I held roles including Deputy Manager of the American Graduate Tests Division, GRE Preparation Instructor, and Researcher for the GRE Instruction & Curriculum Department. These experiences honed my expertise in educational measurement and program management, laying a strong foundation for my current research.
+Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Technology Group in Beijing, where I held roles including business manager, instructor, and researcher for the graduate examination department. 
 
 
 # 🔥 News  
@@ -36,8 +34,12 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 - *2024.07*: &nbsp;🎉🎉 Chenguang's independent research paper *Examining the Algorithmic Fairness in Predicting High School Dropouts* was accepted by and presented at the 17th International Conference on Educational Data Mining (EDM) 2024. Additionally, he was awarded the IEDMS Scholarship by EDM. Atlanta, GA, U.S.
 
 
-# 📝 Publications 
+# 📝 Publications   
+## Preprints
+- [Fair and Robust Estimation of Heterogeneous Treatment Effects for Optimal Policies in Multilevel Studies](https://osf.io/preprints/psyarxiv/xz3jw), Youmi Suk, Chan Park, **Chenguang Pan**, and Kwangho Kim, **Preprints**  
+- [Using Generative AI for Sequential Data Generation in Monte Carlo Simulation Studies](https://osf.io/preprints/psyarxiv/7rd86_v2), Youmi Suk, **Chenguang Pan**, and Ke Yang.
 
+## Proceedings
 <div class='paper-box'><div class='paper-box-image'><div><div class="badge">EDM 2024</div><img src='images/500x300.png' alt="sym" width="100%"></div></div>
 <div class='paper-box-text' markdown="1">
 
@@ -48,8 +50,13 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 [**Code**](https://github.com/cgpan/HSLSdropout) <strong><span class='show_paper_citations' data='DhtAFkwAAAAJ:ALROH1vI_8AC'></span></strong>
 <!-- - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. -->
 </div>
-</div>
-- [Fair and Robust Estimation of Heterogeneous Treatment Effects for Optimal Policies in Multilevel Studies](https://osf.io/preprints/psyarxiv/xz3jw), Youmi Suk, Chan Park, **Chenguang Pan**, and Kwangho Kim, **Preprints**
+</div>  
+
+## Books  
+- [GRE Text-Completion Essentials: Full Explanations of High-Frequency Questions](https://isbnsearch.org/isbn/9787553666433), Bing Han and **Chenguang Pan**, published in Chinese.
+- [An Authentic Word List of High-Frequency GRE Vocabulary](https://isbnsearch.org/isbn/9787553662688), Bing Han and **Chenguang Pan**, published in Chinese.
+
+
 
 # 🎖 Honors and Awards
 - *2024.11* Provost's Grant for Conference presentation, Teachers College, Columbia University.
@@ -62,6 +69,7 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 - *2010.09 - 2024.06*: Bachler of Science in Physics, Harbin Normal University, Harbin, China.
 
 # 💬 Teaching Experiences
+- *2025.09 -2025.12*, Teaching Assistance for HUDM 5122 Applied Regression Analysis, Columbia University, NT, U.S.
 - *2022.09 - 2022.12*, Teaching Assistance for QMSS GR5010 Quantitative Theory in Social Science, Columbia University, NY, U.S.
 - *2021.01 - 2021.07*, Instructor of Python Programming and Machine Learning, New Oriental Education & Technology Group, Beijing, China.
 - *2013.01 - 2022.07*, Instructor of GRE preparation in verbal and quantitative reasoning (teaching over 7,000 hours for over 10,000 students), New Oriental Education & Technology Group, Beijing, China.
