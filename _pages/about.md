@@ -59,9 +59,10 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 
 
 # 🎖 Honors and Awards
-- *2024.11* Provost's Grant for Conference presentation, Teachers College, Columbia University.
-- *2024.07* IEDMS Scholarship, EDM 2024, Atlanta, GA, U.S.
-- *2017.06* Outstanding Teacher Award (award rate: 1/400), New Oriental Education & Technology Group, Beijing, China.
+- *2024* Provost's Grant for Conference presentation, Teachers College, Columbia University.
+- *2024* IEDMS Scholarship, EDM Conference 2024, Atlanta, GA, U.S.
+- *2023* Doctoral Research Fellowship Award, Teachers College, Columbia University.
+- *2017* Outstanding Teacher Award (award rate: 1/400), New Oriental Education & Technology Group, Beijing, China.
 
 # 📖 Educations
 - *2022.09 - now*: Ph.D. in Measurement, Evaluation, and Statistics, Teachers College, Columbia University, NY, U.S.
@@ -69,7 +70,7 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 - *2010.09 - 2024.06*: Bachler of Science in Physics, Harbin Normal University, Harbin, China.
 
 # 💬 Teaching Experiences
-- *2025.09 -2025.12*, Teaching Assistance for HUDM 5122 Applied Regression Analysis, Columbia University, NT, U.S.
+- *2025.09 - 2025.12*, Teaching Assistance for HUDM 5122 Applied Regression Analysis, Columbia University, NT, U.S.
 - *2022.09 - 2022.12*, Teaching Assistance for QMSS GR5010 Quantitative Theory in Social Science, Columbia University, NY, U.S.
 - *2021.01 - 2021.07*, Instructor of Python Programming and Machine Learning, New Oriental Education & Technology Group, Beijing, China.
 - *2013.01 - 2022.07*, Instructor of GRE preparation in verbal and quantitative reasoning (teaching over 7,000 hours for over 10,000 students), New Oriental Education & Technology Group, Beijing, China.
