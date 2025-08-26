@@ -40,6 +40,19 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 - [Using Generative AI for Sequential Data Generation in Monte Carlo Simulation Studies](https://osf.io/preprints/psyarxiv/7rd86_v2), Youmi Suk, **Chenguang Pan**, and Ke Yang.
 
 ## Proceedings
+<div class="paper-box">
+  <div class="paper-box-image">
+    <div>
+      <div class="badge">SREE 2025</div>
+      <img src="images/SREE_2025.png" alt="SREE 2025 logo" width="100%">
+    </div>
+  </div>
+  <div class="paper-box-text" markdown="1">
+**[Investigating Interpretable Optimal Treatment Regimes Using Kolmogorov-Arnold Networks](https://builder.guidebook.com/g/#/guides/sree2025/schedule/730413/sessions/31565870)**  
+**Chenguang Pan**, Yuxuan Li, and Youmi Suk  
+*SREE 2025*
+  </div>
+</div>
 
 <div class="paper-box">
   <div class="paper-box-image">
@@ -52,6 +65,20 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 **[Designing Optimal Dynamic Treatment Regimes Using TMLE for Personalized Math Course-Taking Plans](https://doi.org/10.3102/2190733)**  
 **Chenguang Pan** and Youmi Suk  
 *AERA 2025*
+  </div>
+</div>  
+
+<div class="paper-box">
+  <div class="paper-box-image">
+    <div>
+      <div class="badge">SREE 2025</div>
+      <img src="images/SREE_2025.png" alt="SREE 2025 logo" width="100%">
+    </div>
+  </div>
+  <div class="paper-box-text" markdown="1">
+**[Improving the Feasibility of Optimal Treatment Regimes for Personalized Education](https://builder.guidebook.com/g/#/guides/sree2025/schedule/730413/sessions/31565650?scheduleDayPosition=2025-10-09&scheduleIndexInDayPosition=11)**  
+Yuxuan Li, **Chenguang Pan**,and Youmi Suk  
+*SREE 2025*
   </div>
 </div>
 
