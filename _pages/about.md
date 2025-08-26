@@ -40,20 +40,46 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 - [Using Generative AI for Sequential Data Generation in Monte Carlo Simulation Studies](https://osf.io/preprints/psyarxiv/7rd86_v2), Youmi Suk, **Chenguang Pan**, and Ke Yang.
 
 ## Proceedings
-<div class='paper-box'><div class='paper-box-image'><div><div class="badge">EDM 2024</div><img src='images/500x300.png' alt="sym" width="100%"></div></div>
+<div class='paper-box'>
+  <div class='paper-box-image'>
+    <div>
+      <div class="badge">AERA 2025</div>
+      <img src='images/AERA_2025.png' alt="sym" width="100%">
+    </div>
+  </div>
+<div class='paper-box-text' markdown="1">
+[Designing Optimal Dynamic Treatment Regimes Using TMLE for Personalized Math Course-Taking Plans](https://doi.org/10.3102/2190733)  
+**Chenguang Pan** and Youmi Suk
+
+<div class='paper-box'>
+  <div class='paper-box-image'>
+    <div>
+      <div class="badge">EDM 2024</div>
+      <img src='images/EDM_2024.png' alt="sym" width="100%">
+    </div>
+  </div>
 <div class='paper-box-text' markdown="1">
 
-[Examining the Algorithmic Fairness in Predicting High School Dropouts](https://zenodo.org/records/12729810)
+[Examining the Algorithmic Fairness in Predicting High School Dropouts](https://zenodo.org/records/12729810)  
 
-**Chenguang Pan**, Zhou Zhang
+**Chenguang Pan** and Zhou Zhang
 
-[**Code**](https://github.com/cgpan/HSLSdropout) <strong><span class='show_paper_citations' data='DhtAFkwAAAAJ:ALROH1vI_8AC'></span></strong>
-<!-- - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. -->
-</div>
-</div>  
+[**Code**](https://github.com/cgpan/HSLSdropout)  
+
+<div class='paper-box'>
+  <div class='paper-box-image'>
+    <div>
+      <div class="badge">SREE 2024</div>
+      <img src='images/SREE_2024.png' alt="sym" width="100%">
+    </div>
+  </div>
+<div class='paper-box-text' markdown="1">
+[Designing Personalized Math Course-Taking Plans in High School Using Optimal Treatment Regimes](https://sree.confex.com/sree/2024/meetingapp.cgi/Paper/5320)
+Youmi Suk and **Chenguang Pan**
+
 
 ## Books  
-- [GRE Text-Completion Essentials: Full Explanations of High-Frequency Questions](https://isbnsearch.org/isbn/9787553666433), Bing Han and **Chenguang Pan**, published in Chinese.
+- [GRE Text-Completion Essentials: Full Explanations of High-Frequency Questions](https://isbnsearch.org/isbn/9787553666433), Bing Han, **Chenguang Pan**, and Daiyuan Cheng, published in Chinese.
 - [An Authentic Word List of High-Frequency GRE Vocabulary](https://isbnsearch.org/isbn/9787553662688), Bing Han and **Chenguang Pan**, published in Chinese.
 
 
