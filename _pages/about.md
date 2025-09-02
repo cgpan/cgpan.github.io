@@ -28,7 +28,7 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 - *2025.05*: &nbsp;🎉🎉 Chenguang gave an oral and a poster presentation about his in-progress work *Designing Realistic and Interpretable Optimal Treatment Regimes for Personalized Education* in ACIC 2025, and [Foundations of Data Science Workshop organized by Columbia Data Science Institute](https://datascience.columbia.edu/event/foundations-of-data-science-workshop-spring-2025/)  
 - *2025.05*: &nbsp;🎉🎉 Chenguang served as poster reviewer for American Causal Inference Conference (ACIC) at Detroit.
 - *2025.01*: &nbsp;🎉🎉 Chenguang received a sponsored registration for the 2025 AERA Annual Meeting, AERA 2025.
-- *2024.12*: &nbsp;🎉🎉 Chenguang was awarded the Provost's Grant for Conference presentation, Columbia Univeristy, NY, U.S.
+- *2024.12*: &nbsp;🎉🎉 Chenguang was awarded the Provost's Grant for Conference presentation, Columbia University, NY, U.S.
 - *2024.11*: &nbsp;🎉🎉 Chenguang's paper *Designing Optimal Dynamic Treatment Regimes Using TMLE for Personalized Math Course-taking Plans* (joint work with Youmi Suk) was accepted by the American Educational Research Association (AERA) conference 2025, Denver, CO, U.S.
 - *2024.09*: &nbsp;🎉🎉 Chenguang's work (as second author) *Designing Personalized Math Course-taking Plans in High School Using Optimal Treatment Regimes* was accepted by and presented at the Society for Research on Educational Effectiveness (SREE) conference. Baltimore, MD, U.S.
 - *2024.07*: &nbsp;🎉🎉 Chenguang's independent research paper *Examining the Algorithmic Fairness in Predicting High School Dropouts* was accepted by and presented at the 17th International Conference on Educational Data Mining (EDM) 2024. Additionally, he was awarded the IEDMS Scholarship by EDM. Atlanta, GA, U.S.
@@ -128,10 +128,10 @@ Youmi Suk and **Chenguang Pan**
 # 📖 Educations
 - *2022.09 - now*: Ph.D. in Measurement, Evaluation, and Statistics, Teachers College, Columbia University, NY, U.S.
 - *2020.09 - 2021.09*: Master of Education in Quantitative Analytics, University of Virginia, VA, U.S.
-- *2010.09 - 2024.06*: Bachler of Science in Physics, Harbin Normal University, Harbin, China.
+- *2010.09 - 2024.06*: Bachelor of Science in Physics, Harbin Normal University, Harbin, China.
 
 # 💬 Teaching Experiences
-- *2025.09 - 2025.12*, Teaching Assistance for HUDM 5122 Applied Regression Analysis, Columbia University, NT, U.S.
+- *2025.09 - 2025.12*, Teaching Assistance for HUDM 5122 Applied Regression Analysis, Columbia University, NY, U.S.
 - *2022.09 - 2022.12*, Teaching Assistance for QMSS GR5010 Quantitative Theory in Social Science, Columbia University, NY, U.S.
 - *2021.01 - 2021.07*, Instructor of Python Programming and Machine Learning, New Oriental Education & Technology Group, Beijing, China.
 - *2013.01 - 2022.07*, Instructor of GRE preparation in verbal and quantitative reasoning (teaching over 7,000 hours for over 10,000 students), New Oriental Education & Technology Group, Beijing, China.
