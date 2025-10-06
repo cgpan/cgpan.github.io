@@ -120,6 +120,7 @@ Youmi Suk and **Chenguang Pan**
 
 
 # 🎖 Honors and Awards
+- *2025* Provost's Grant for Conference presentation, Teachers College, Columbia University.
 - *2024* Provost's Grant for Conference presentation, Teachers College, Columbia University.
 - *2024* IEDMS Scholarship, EDM Conference 2024, Atlanta, GA, U.S.
 - *2023* Doctoral Research Fellowship Award, Teachers College, Columbia University.
