@@ -23,7 +23,8 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 
 
 # 🔥 News  
-- *2025.06*: &nbsp;🎉🎉 Three works that Chenguang involved were accepted by SREE 2025 and Chenguang will give an oral and an poster presentation.
+- *2025.11*: &nbsp;🎉🎉 Chenguang will give oral presentations in both AERA 2026 and NCME 2026.
+- *2025.06*: &nbsp;🎉🎉 Three works that Chenguang involved were accepted by SREE 2025 and Chenguang will give an oral and a poster presentation.
 - *2025.06*: &nbsp;🎉🎉 Chenguang was invited to be a reviewer for 2026 AERA Annual Meeting.  
 - *2025.05*: &nbsp;🎉🎉 Chenguang gave an oral and a poster presentation about his in-progress work *Designing Realistic and Interpretable Optimal Treatment Regimes for Personalized Education* in ACIC 2025, and [Foundations of Data Science Workshop organized by Columbia Data Science Institute](https://datascience.columbia.edu/event/foundations-of-data-science-workshop-spring-2025/)  
 - *2025.05*: &nbsp;🎉🎉 Chenguang served as poster reviewer for American Causal Inference Conference (ACIC) at Detroit.
@@ -35,9 +36,9 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 
 
 # 📝 Publications   
-## Preprints
-- [Fair and Robust Estimation of Heterogeneous Treatment Effects for Optimal Policies in Multilevel Studies](https://osf.io/preprints/psyarxiv/xz3jw), Youmi Suk, Chan Park, **Chenguang Pan**, and Kwangho Kim, **Preprints**  
-- [Using Generative AI for Sequential Data Generation in Monte Carlo Simulation Studies](https://osf.io/preprints/psyarxiv/7rd86_v2), Youmi Suk, **Chenguang Pan**, and Ke Yang.
+## Journal Papers
+- [Fair and Robust Estimation of Heterogeneous Treatment Effects for Optimal Policies in Multilevel Studies](https://osf.io/preprints/psyarxiv/xz3jw), Youmi Suk, Chan Park, **Chenguang Pan**, and Kwangho Kim, **Under Review**  
+- [Using Generative AI for Sequential Data Generation in Monte Carlo Simulation Studies](https://osf.io/preprints/psyarxiv/7rd86_v2), Youmi Suk, **Chenguang Pan**, and Ke Yang. Accepted by *Journal of Educational and Behavioral Statistics* (JEBS)
 
 ## Proceedings
 <div class="paper-box">
@@ -118,13 +119,19 @@ Youmi Suk and **Chenguang Pan**
 - [An Authentic Word List of High-Frequency GRE Vocabulary](https://isbnsearch.org/isbn/9787553662688), Bing Han and **Chenguang Pan**, published in Chinese.
 
 
-
 # 🎖 Honors and Awards
 - *2025* Provost's Grant for Conference presentation, Teachers College, Columbia University.
 - *2024* Provost's Grant for Conference presentation, Teachers College, Columbia University.
 - *2024* IEDMS Scholarship, EDM Conference 2024, Atlanta, GA, U.S.
 - *2023* Doctoral Research Fellowship Award, Teachers College, Columbia University.
 - *2017* Outstanding Teacher Award (award rate: 1/400), New Oriental Education & Technology Group, Beijing, China.
+
+
+# 📖 Educational Service
+- Reviewer, 2026 American Institute of Research Forum
+- Discussant, 3rd Annual Conference of Advanced Quantitative Methods and Analytics for Public Policy Support
+- Reviewer, AERA 2026 Annual Meeting
+- Reviewer, American Causal Inference Conference (ACIC) 2025
 
 # 📖 Educations
 - *2022.09 - now*: Ph.D. in Measurement, Evaluation, and Statistics, Teachers College, Columbia University, NY, U.S.
