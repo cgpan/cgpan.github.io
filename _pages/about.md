@@ -127,7 +127,7 @@ Youmi Suk and **Chenguang Pan**
 - *2017* Outstanding Teacher Award (award rate: 1/400), New Oriental Education & Technology Group, Beijing, China.
 
 
-# 🧐 Educational Service
+# 🧐 Academic Service
 - Reviewer, 2026 American Institute of Research Forum
 - Discussant, 3rd Annual Conference of Advanced Quantitative Methods and Analytics for Public Policy Support
 - Reviewer, AERA 2026 Annual Meeting
