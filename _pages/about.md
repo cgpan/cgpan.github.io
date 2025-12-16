@@ -23,9 +23,13 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 
 
 # 🔥 News  
+- *2025.12*: &nbsp;🎉🎉 Chenguang was awarded the Morton T. Embree Outstanding Contribution to Student Learning Award in recognition of his service as a TA.  
 - *2025.11*: &nbsp;🎉🎉 Chenguang will give oral presentations in both AERA 2026 and NCME 2026.
 - *2025.06*: &nbsp;🎉🎉 Three works that Chenguang involved were accepted by SREE 2025 and Chenguang will give an oral and a poster presentation.
 - *2025.06*: &nbsp;🎉🎉 Chenguang was invited to be a reviewer for 2026 AERA Annual Meeting.  
+
+<div id="hidden-news" style="display: none;" markdown="1">
+
 - *2025.05*: &nbsp;🎉🎉 Chenguang gave an oral and a poster presentation about his in-progress work *Designing Realistic and Interpretable Optimal Treatment Regimes for Personalized Education* in ACIC 2025, and [Foundations of Data Science Workshop organized by Columbia Data Science Institute](https://datascience.columbia.edu/event/foundations-of-data-science-workshop-spring-2025/)  
 - *2025.05*: &nbsp;🎉🎉 Chenguang served as poster reviewer for American Causal Inference Conference (ACIC) at Detroit.
 - *2025.01*: &nbsp;🎉🎉 Chenguang received a sponsored registration for the 2025 AERA Annual Meeting, AERA 2025.
@@ -34,6 +38,24 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 - *2024.09*: &nbsp;🎉🎉 Chenguang's work (as second author) *Designing Personalized Math Course-taking Plans in High School Using Optimal Treatment Regimes* was accepted by and presented at the Society for Research on Educational Effectiveness (SREE) conference. Baltimore, MD, U.S.
 - *2024.07*: &nbsp;🎉🎉 Chenguang's independent research paper *Examining the Algorithmic Fairness in Predicting High School Dropouts* was accepted by and presented at the 17th International Conference on Educational Data Mining (EDM) 2024. Additionally, he was awarded the IEDMS Scholarship by EDM. Atlanta, GA, U.S.
 
+</div>
+
+<button id="toggle-news-btn" onclick="toggleNews()" style="background: none; border: none; color: #007bff; cursor: pointer; text-decoration: underline; padding: 0; font-family: inherit; font-size: inherit;">Read more</button>
+
+<script>
+function toggleNews() {
+  var hiddenNews = document.getElementById("hidden-news");
+  var btn = document.getElementById("toggle-news-btn");
+
+  if (hiddenNews.style.display === "none") {
+    hiddenNews.style.display = "block";
+    btn.innerHTML = "Show less";
+  } else {
+    hiddenNews.style.display = "none";
+    btn.innerHTML = "Read more";
+  }
+}
+</script>
 
 # 📝 Publications   
 ## Journal Papers
@@ -120,6 +142,7 @@ Youmi Suk and **Chenguang Pan**
 
 
 # 🎖 Honors and Awards
+- *2025* Morton T. Embree Outstanding Contribution to Student Learning Award, Teachers College, Columbia University
 - *2025* Provost's Grant for Conference presentation, Teachers College, Columbia University.
 - *2024* Provost's Grant for Conference presentation, Teachers College, Columbia University.
 - *2024* IEDMS Scholarship, EDM Conference 2024, Atlanta, GA, U.S.
