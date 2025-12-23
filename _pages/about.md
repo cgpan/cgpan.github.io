@@ -151,7 +151,7 @@ Youmi Suk and **Chenguang Pan**
 
 
 # 🧐 Academic Service
-- Reviewer, 2026 American Institute of Research Forum
+- [Reviewer, 2026 American Institute of Research Forum](https://www.airweb.org/forum/2026/information/2026-proposal-reviewers)
 - Discussant, 3rd Annual Conference of Advanced Quantitative Methods and Analytics for Public Policy Support
 - Reviewer, AERA 2026 Annual Meeting
 - Reviewer, American Causal Inference Conference (ACIC) 2025
