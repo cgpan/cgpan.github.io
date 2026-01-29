@@ -76,13 +76,13 @@ author_profile: true
 			<h3>Sampling Distributions & Standard Error</h3>
 			<p>Explore how sampling distributions behave as the sample size $n$ changes.</p>
 			<div class="stats-card__meta">HTML interactive tool</div>
-			<a class="stats-card__link" href="/assets/tools/sampling-and-se.html">Open tool →</a>
+			<a class="stats-card__link" href="/stats-tools/sampling-and-se.html">Open tool →</a>
 		</article>
 		<article class="stats-card">
 			<h3>t-Distribution Explorer</h3>
 			<p>Compute p-values, critical t-values, and inspect a t-table for common significance levels.</p>
 			<div class="stats-card__meta">HTML interactive tool</div>
-			<a class="stats-card__link" href="/assets/tools/t-distribution-explorer.html">Open tool →</a>
+			<a class="stats-card__link" href="/stats-tools/t-distribution-explorer.html">Open tool →</a>
 		</article>
 	</div>
 </div>

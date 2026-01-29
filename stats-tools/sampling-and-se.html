@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sampling Distributions & Standard Error</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #3b82f6;
+      --accent-2: #10b981;
+      --accent-3: #f59e0b;
+      --border: #e5e7eb;
+      --shadow: 0 10px 24px rgba(0,0,0,0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      padding: 24px 28px 8px 28px;
+    }
+    h1 {
+      margin: 0 0 6px 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    p.lead {
+      margin: 0 0 10px 0;
+      color: var(--muted);
+    }
+    .container {
+      padding: 18px 28px 28px 28px;
+      display: grid;
+      gap: 18px;
+      grid-template-columns: 1fr;
+    }
+    .controls {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 14px;
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      align-items: center;
+    }
+    .control-group label {
+      display: block;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .control-group input[type="range"] {
+      width: 100%;
+    }
+    .value-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3730a3;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.05s ease, background 0.2s ease;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn.secondary {
+      background: #fff;
+      border-color: var(--border);
+      color: var(--text);
+    }
+    .grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 10px;
+    }
+    .panel h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+    canvas {
+      width: 100%;
+      height: 180px;
+    }
+    .stats {
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 10px;
+    }
+    .footer-note {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .highlight {
+      color: var(--accent-2);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Sampling Distributions & Standard Error</h1>
+    <p class="lead">Explore how the population distribution leads to sample distributions, sample means, and the distribution of sample means. The spread of the sample mean distribution is the <strong>standard error</strong>.</p>
+    <p class="footer-note">By Chenguang Pan.</p>
+  </header>
+
+  <div class="container">
+    <div class="controls">
+      <div class="control-group">
+        <label for="sampleSize">Sample Size (n)</label>
+        <input id="sampleSize" type="range" min="1" max="500" value="10" />
+        <div class="value-pill">n = <span id="sampleSizeValue">10</span></div>
+      </div>
+      <div class="control-group">
+        <label for="drawsPerClick">Draws per Click</label>
+        <input id="drawsPerClick" type="range" min="1" max="200" value="10" />
+        <div class="value-pill">Draws = <span id="drawsPerClickValue">10</span></div>
+      </div>
+      <div class="control-group">
+        <label for="populationMean">Population Mean ($\mu$)</label>
+        <input id="populationMean" type="range" min="150" max="200" step="0.1" value="175.3" />
+        <div class="value-pill">$\mu$ = <span id="populationMeanValue">175.3</span> cm</div>
+      </div>
+      <div class="control-group">
+        <label for="populationSd">Population SD ($\sigma$)</label>
+        <input id="populationSd" type="range" min="5" max="20" step="0.5" value="10" />
+        <div class="value-pill">$\sigma$ = <span id="populationSdValue">10</span> cm</div>
+      </div>
+      <div class="control-group">
+        <label>Actions</label>
+        <button id="drawSample" class="btn">Draw Sample(s)</button>
+        <button id="reset" class="btn secondary" style="margin-left:8px;">Reset</button>
+      </div>
+      <div class="control-group">
+        <label>Standard Error</label>
+        <div class="value-pill" id="seValue">SE ≈ 3.162</div>
+        <div class="footer-note">$SE = \sigma / \sqrt{n}$</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <h3>Population Distribution (US adult heights, cm)</h3>
+        <canvas id="populationCanvas" width="520" height="200"></canvas>
+        <div class="stats">
+          <span class="stat" id="popMeanStat">$\mu = 175.3$ cm</span>
+          <span class="stat" id="popSdStat">$\sigma = 10$ cm</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Sample Distribution (latest draw)</h3>
+        <canvas id="sampleCanvas" width="520" height="200"></canvas>
+        <div class="stats" id="sampleStats">
+          <span class="stat">No sample yet</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Sample Mean (latest draw)</h3>
+        <canvas id="meanCanvas" width="520" height="200"></canvas>
+        <div class="stats" id="meanStats">
+          <span class="stat">No sample mean yet</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Sampling Distribution of the Mean</h3>
+        <canvas id="samplingCanvas" width="520" height="200"></canvas>
+        <div class="stats" id="samplingStats">
+          <span class="stat">0 sample means collected</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sampleSizeInput = document.getElementById('sampleSize');
+    const sampleSizeValue = document.getElementById('sampleSizeValue');
+    const drawsPerClickInput = document.getElementById('drawsPerClick');
+    const drawsPerClickValue = document.getElementById('drawsPerClickValue');
+    const populationMeanInput = document.getElementById('populationMean');
+    const populationMeanValue = document.getElementById('populationMeanValue');
+    const populationSdInput = document.getElementById('populationSd');
+    const populationSdValue = document.getElementById('populationSdValue');
+    const seValue = document.getElementById('seValue');
+
+    const populationCanvas = document.getElementById('populationCanvas');
+    const sampleCanvas = document.getElementById('sampleCanvas');
+    const meanCanvas = document.getElementById('meanCanvas');
+    const samplingCanvas = document.getElementById('samplingCanvas');
+
+    const sampleStats = document.getElementById('sampleStats');
+    const meanStats = document.getElementById('meanStats');
+    const samplingStats = document.getElementById('samplingStats');
+
+    let POP_MEAN = 175.3;
+    let POP_SD = 10;
+    let populationValues = Array.from({ length: 5000 }, () => POP_MEAN + POP_SD * normalRandom());
+    let lastSample = null;
+    let lastMean = null;
+    let sampleMeans = [];
+
+    function normalRandom() {
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    }
+
+    function mean(arr) {
+      return arr.reduce((sum, val) => sum + val, 0) / arr.length;
+    }
+
+    function standardDeviation(arr) {
+      const m = mean(arr);
+      const variance = arr.reduce((sum, val) => sum + (val - m) ** 2, 0) / (arr.length - 1);
+      return Math.sqrt(variance);
+    }
+
+    function drawXAxis(ctx, width, height, min, max, options = {}) {
+      const tickCount = options.tickCount || 6;
+      ctx.strokeStyle = '#d1d5db';
+      ctx.beginPath();
+      ctx.moveTo(0, height - 10);
+      ctx.lineTo(width, height - 10);
+      ctx.stroke();
+
+      ctx.fillStyle = '#6b7280';
+      ctx.font = '11px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+
+      for (let i = 0; i < tickCount; i += 1) {
+        const value = min + (i / (tickCount - 1)) * (max - min);
+        const x = ((value - min) / (max - min)) * width;
+        ctx.strokeStyle = '#d1d5db';
+        ctx.beginPath();
+        ctx.moveTo(x, height - 10);
+        ctx.lineTo(x, height - 4);
+        ctx.stroke();
+        ctx.fillText(value.toFixed(0), x, height - 3);
+      }
+    }
+
+    function drawVerticalLine(ctx, width, height, value, min, max, options = {}) {
+      const x = ((value - min) / (max - min)) * width;
+      ctx.save();
+      if (options.dash) ctx.setLineDash(options.dash);
+      ctx.strokeStyle = options.color || '#2563eb';
+      ctx.lineWidth = options.lineWidth || 2;
+      ctx.beginPath();
+      ctx.moveTo(x, 12);
+      ctx.lineTo(x, height - 12);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawHistogram(canvas, data, options = {}) {
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+
+      const bins = options.bins || 24;
+      const min = options.min ?? Math.min(...data, getXMin());
+      const max = options.max ?? Math.max(...data, getXMax());
+      const range = max - min;
+      const binCounts = new Array(bins).fill(0);
+
+      data.forEach(value => {
+        const idx = Math.min(bins - 1, Math.max(0, Math.floor(((value - min) / range) * bins)));
+        binCounts[idx] += 1;
+      });
+
+      const maxCount = Math.max(...binCounts, 1);
+      const barWidth = width / bins;
+
+      ctx.fillStyle = options.barColor || '#3b82f6';
+      binCounts.forEach((count, i) => {
+        const barHeight = (count / maxCount) * (height - 20);
+        const x = i * barWidth;
+        const y = height - barHeight - 10;
+        ctx.fillRect(x + 1, y, barWidth - 2, barHeight);
+      });
+
+      drawXAxis(ctx, width, height, min, max, { tickCount: options.tickCount || 6 });
+      if (options.meanLineValue !== undefined && options.meanLineValue !== null) {
+        drawVerticalLine(ctx, width, height, options.meanLineValue, min, max, { color: options.meanLineColor || '#2563eb', dash: [4, 4] });
+      }
+    }
+
+    function drawMeanMarker(canvas, value) {
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+
+      const min = getMeanXMin();
+      const max = getMeanXMax();
+      const x = ((value - min) / (max - min)) * width;
+
+      drawXAxis(ctx, width, height, min, max, { tickCount: 6 });
+      drawVerticalLine(ctx, width, height, POP_MEAN, min, max, { color: '#2563eb', dash: [4, 4] });
+
+      ctx.fillStyle = '#10b981';
+      ctx.fillRect(x - 4, 20, 8, height - 40);
+    }
+
+    function updateStandardError() {
+      const n = Number(sampleSizeInput.value);
+      const se = POP_SD / Math.sqrt(n);
+      seValue.textContent = `SE ≈ ${se.toFixed(3)}`;
+    }
+
+    function updateSampleStats(sample) {
+      const m = mean(sample);
+      const sd = standardDeviation(sample);
+      sampleStats.innerHTML = `
+        <span class="stat">Mean: ${m.toFixed(3)}</span>
+        <span class="stat">SD: ${sd.toFixed(3)}</span>
+      `;
+    }
+
+    function updateMeanStats(value) {
+      meanStats.innerHTML = `<span class="stat">Sample Mean: ${value.toFixed(3)}</span>`;
+    }
+
+    function updateSamplingStats() {
+      if (sampleMeans.length === 0) {
+        samplingStats.innerHTML = `<span class="stat">0 sample means collected</span>`;
+        return;
+      }
+      const m = mean(sampleMeans);
+      const sd = standardDeviation(sampleMeans);
+      samplingStats.innerHTML = `
+        <span class="stat">Means collected: ${sampleMeans.length}</span>
+        <span class="stat">Mean of means: ${m.toFixed(3)}</span>
+        <span class="stat">SD of means (SE): ${sd.toFixed(3)}</span>
+      `;
+    }
+
+    function drawSample(draws = 1) {
+      const n = Number(sampleSizeInput.value);
+      for (let d = 0; d < draws; d += 1) {
+        const sample = Array.from({ length: n }, () => POP_MEAN + POP_SD * normalRandom());
+        const m = mean(sample);
+        sampleMeans.push(m);
+        lastSample = sample;
+        lastMean = m;
+
+        if (d === draws - 1) {
+          drawHistogram(sampleCanvas, sample, { bins: Math.min(18, Math.max(6, Math.floor(n / 2))), barColor: '#f59e0b', min: getXMin(), max: getXMax(), meanLineValue: POP_MEAN });
+          drawMeanMarker(meanCanvas, m);
+          updateSampleStats(sample);
+          updateMeanStats(m);
+        }
+      }
+
+      drawHistogram(samplingCanvas, sampleMeans, { bins: 24, barColor: '#10b981', min: getMeanXMin(), max: getMeanXMax(), meanLineValue: POP_MEAN });
+      updateSamplingStats();
+    }
+
+    function resetAll() {
+      sampleMeans = [];
+      lastSample = null;
+      lastMean = null;
+      sampleStats.innerHTML = `<span class="stat">No sample yet</span>`;
+      meanStats.innerHTML = `<span class="stat">No sample mean yet</span>`;
+      samplingStats.innerHTML = `<span class="stat">0 sample means collected</span>`;
+      drawHistogram(sampleCanvas, [], { bins: 12, barColor: '#f59e0b', min: getXMin(), max: getXMax(), meanLineValue: POP_MEAN });
+      drawMeanMarker(meanCanvas, POP_MEAN);
+      drawHistogram(samplingCanvas, [], { bins: 12, barColor: '#10b981', min: getMeanXMin(), max: getMeanXMax(), meanLineValue: POP_MEAN });
+    }
+
+    function getXMin() {
+      return POP_MEAN - 5 * POP_SD;
+    }
+
+    function getXMax() {
+      return POP_MEAN + 5 * POP_SD;
+    }
+
+    function getMeanXMin() {
+      const n = Math.max(1, Number(sampleSizeInput.value));
+      const se = POP_SD / Math.sqrt(n);
+      const halfRange = Math.max(2, 4 * se);
+      return POP_MEAN - halfRange;
+    }
+
+    function getMeanXMax() {
+      const n = Math.max(1, Number(sampleSizeInput.value));
+      const se = POP_SD / Math.sqrt(n);
+      const halfRange = Math.max(2, 4 * se);
+      return POP_MEAN + halfRange;
+    }
+
+    function resizeCanvases() {
+      const targetHeight = Math.max(140, Math.min(220, Math.floor((window.innerHeight - 260) / 4)));
+      [populationCanvas, sampleCanvas, meanCanvas, samplingCanvas].forEach(canvas => {
+        const parentWidth = canvas.parentElement.clientWidth - 2;
+        canvas.width = Math.max(240, parentWidth);
+        canvas.height = targetHeight;
+      });
+
+      drawHistogram(populationCanvas, populationValues, { bins: 30, barColor: '#3b82f6', min: getXMin(), max: getXMax(), meanLineValue: POP_MEAN });
+      if (lastSample && lastSample.length) {
+        drawHistogram(sampleCanvas, lastSample, { bins: Math.min(18, Math.max(6, Math.floor(lastSample.length / 2))), barColor: '#f59e0b', min: getXMin(), max: getXMax(), meanLineValue: POP_MEAN });
+      } else {
+        drawHistogram(sampleCanvas, [], { bins: 12, barColor: '#f59e0b', min: getXMin(), max: getXMax(), meanLineValue: POP_MEAN });
+      }
+
+      if (lastMean !== null) {
+        drawMeanMarker(meanCanvas, lastMean);
+      } else {
+        drawMeanMarker(meanCanvas, POP_MEAN);
+      }
+
+      if (sampleMeans.length) {
+        drawHistogram(samplingCanvas, sampleMeans, { bins: 24, barColor: '#10b981', min: getMeanXMin(), max: getMeanXMax(), meanLineValue: POP_MEAN });
+      } else {
+        drawHistogram(samplingCanvas, [], { bins: 12, barColor: '#10b981', min: getMeanXMin(), max: getMeanXMax(), meanLineValue: POP_MEAN });
+      }
+    }
+
+    function init() {
+      resetAll();
+      updateStandardError();
+      resizeCanvases();
+    }
+
+    sampleSizeInput.addEventListener('input', () => {
+      sampleSizeValue.textContent = sampleSizeInput.value;
+      updateStandardError();
+    });
+    drawsPerClickInput.addEventListener('input', () => {
+      drawsPerClickValue.textContent = drawsPerClickInput.value;
+    });
+    populationMeanInput.addEventListener('input', () => {
+      POP_MEAN = Number(populationMeanInput.value);
+      populationMeanValue.textContent = POP_MEAN.toFixed(1).replace(/\.0$/, '');
+      document.getElementById('popMeanStat').textContent = `μ = ${POP_MEAN.toFixed(1).replace(/\.0$/, '')} cm`;
+      populationValues = Array.from({ length: 5000 }, () => POP_MEAN + POP_SD * normalRandom());
+      resetAll();
+      updateStandardError();
+      resizeCanvases();
+    });
+    populationSdInput.addEventListener('input', () => {
+      POP_SD = Number(populationSdInput.value);
+      populationSdValue.textContent = POP_SD.toFixed(1).replace(/\.0$/, '');
+      document.getElementById('popSdStat').textContent = `σ = ${POP_SD.toFixed(1).replace(/\.0$/, '')} cm`;
+      populationValues = Array.from({ length: 5000 }, () => POP_MEAN + POP_SD * normalRandom());
+      resetAll();
+      updateStandardError();
+      resizeCanvases();
+    });
+
+    document.getElementById('drawSample').addEventListener('click', () => {
+      drawSample(Number(drawsPerClickInput.value));
+    });
+    document.getElementById('reset').addEventListener('click', resetAll);
+
+    window.addEventListener('resize', resizeCanvases);
+
+    init();
+  </script>
+</body>
+</html>
