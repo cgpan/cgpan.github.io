@@ -15,14 +15,16 @@ redirect_from:
 {% endif %}
 {% assign url = gsDataBaseUrl | append: "google-scholar-stats/gs_data_shieldsio.json" %}
 
-<span class='anchor' id='about-me'></span>
+<span class='anchor' id='home'></span>
 
-I am a fourth-year PhD student in the Measurement, Evaluation, and Statistics program at Teachers College, Columbia University, where I am advised by Professor [Youmi Suk](https://youmisuk.com/). My research interests lie at the intersection of **causal machine learning**, **dynamic treatment regimes (DTR)**, and **generative AI for synthetic tabular data**.
+I am a fourth-year PhD student in the Measurement, Evaluation, and Statistics program at Teachers College, Columbia University, where I am advised by Professor [Youmi Suk](https://youmisuk.com/). Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Technology Group in Beijing, where I held roles including business manager, instructor, and researcher for the graduate examination department.
 
-Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Technology Group in Beijing, where I held roles including business manager, instructor, and researcher for the graduate examination department. 
+<span class='anchor' id='research'></span>
+# Research
+My research interests lie at the intersection of **causal machine learning**, **dynamic treatment regimes (DTR)**, and **generative AI for synthetic tabular data**.
 
 
-# 🔥 News  
+# News  
 - *2025.12*: &nbsp;🎉🎉 Chenguang was awarded the Morton T. Embree Outstanding Contribution to Student Learning Award in recognition of his service as a TA.  
 - *2025.11*: &nbsp;🎉🎉 Chenguang will give oral presentations in both AERA 2026 and NCME 2026.
 - *2025.06*: &nbsp;🎉🎉 Three works that Chenguang involved were accepted by SREE 2025 and Chenguang will give an oral and a poster presentation.
@@ -40,7 +42,7 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 
 </div>
 
-<button id="toggle-news-btn" onclick="toggleNews()" style="background: none; border: none; color: #007bff; cursor: pointer; text-decoration: underline; padding: 0; font-family: inherit; font-size: inherit;">Read more</button>
+<button id="toggle-news-btn" class="news-toggle" onclick="toggleNews()">Read more</button>
 
 <script>
 function toggleNews() {
@@ -57,7 +59,8 @@ function toggleNews() {
 }
 </script>
 
-# 📝 Publications   
+<span class='anchor' id='publications'></span>
+# Publications   
 ## Journal Papers
 - [Learning Feasible Optimal Treatment Regimes for Personalized Decision-Making](https://osf.io/preprints/psyarxiv/arp48_v1), **Chenguang Pan**, Yuxuan Li, and Youmi Suk, **Under Review**
 - [Fair and Robust Estimation of Heterogeneous Treatment Effects for Optimal Policies in Multilevel Studies](https://osf.io/preprints/psyarxiv/xz3jw), Youmi Suk, Chan Park, **Chenguang Pan**, and Kwangho Kim, **Under Review**  
@@ -162,13 +165,17 @@ Youmi Suk and **Chenguang Pan**
 - *2020.09 - 2021.09*: Master of Education in Quantitative Analytics, University of Virginia, VA, U.S.
 - *2010.09 - 2024.06*: Bachelor of Science in Physics, Harbin Normal University, Harbin, China.
 
-# 💬 Teaching Experiences
+<span class='anchor' id='teaching'></span>
+# Teaching
 - *2025.09 - 2025.12*, Teaching Assistance for HUDM 5122 Applied Regression Analysis, Columbia University, NY, U.S.
 - *2022.09 - 2022.12*, Teaching Assistance for QMSS GR5010 Quantitative Theory in Social Science, Columbia University, NY, U.S.
 - *2021.01 - 2021.07*, Instructor of Python Programming and Machine Learning, New Oriental Education & Technology Group, Beijing, China.
 - *2013.01 - 2022.07*, Instructor of GRE preparation in verbal and quantitative reasoning (teaching over 7,000 hours for over 10,000 students), New Oriental Education & Technology Group, Beijing, China.
 
-# 💻 Industry Experiences
+# Industry Experiences
 - *2018.05 - 2022.08*, Deputy Manager of American Graduate Tests Division, Full-time, New Oriental Education & Technology Group, Beijing, China.
 - *2014.05 - 2018.05*, Senior Researcher of GRE Instruction and Curriculum Department, Full-time, New Oriental Education & Technology Group, Beijing, China.
 
+<span class='anchor' id='cv'></span>
+# CV
+Please contact me for the most recent CV PDF.

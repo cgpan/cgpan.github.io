@@ -1,4 +1,45 @@
-<script src="assets/js/main.min.js"></script>
+<script src="{{ '/assets/js/main.min.js' | relative_url }}"></script>
+<script>
+  (function () {
+    var storageKey = "theme";
+    var toggleButton = document.getElementById("theme-toggle");
+    if (!toggleButton) {
+      return;
+    }
+
+    var mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      var isDark = theme === "dark";
+      toggleButton.setAttribute("aria-pressed", String(isDark));
+      toggleButton.textContent = isDark ? "Light" : "Dark";
+    }
+
+    function getInitialTheme() {
+      var stored = localStorage.getItem(storageKey);
+      if (stored === "light" || stored === "dark") {
+        return stored;
+      }
+      return mediaQuery.matches ? "dark" : "light";
+    }
+
+    applyTheme(getInitialTheme());
+
+    toggleButton.addEventListener("click", function () {
+      var nextTheme = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      localStorage.setItem(storageKey, nextTheme);
+      applyTheme(nextTheme);
+    });
+
+    mediaQuery.addEventListener("change", function (event) {
+      var stored = localStorage.getItem(storageKey);
+      if (stored !== "light" && stored !== "dark") {
+        applyTheme(event.matches ? "dark" : "light");
+      }
+    });
+  })();
+</script>
 
 {% include analytics.html %}
 {% include fetch_google_scholar_stats.html %}

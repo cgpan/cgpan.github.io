@@ -7,13 +7,68 @@ html {
   min-height: 100%;
 }
 
+:root {
+  color-scheme: light;
+  --color-bg: #fbfbf9;
+  --color-text: #1f2429;
+  --color-muted: #4b5560;
+  --color-border: #e4e6e1;
+  --color-link: #2b5f7f;
+  --color-link-hover: #1f445a;
+  --color-code-bg: #f4f4f1;
+  --color-code-text: #111418;
+  --color-masthead-bg: rgba(251, 251, 249, 0.98);
+  --color-masthead-shadow: 0 6px 20px rgba(31, 36, 41, 0.06);
+  --color-footer-bg: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --color-bg: #0f1216;
+    --color-text: #e7ebee;
+    --color-muted: #b3bdc6;
+    --color-border: #2a3239;
+    --color-link: #8fc1e3;
+    --color-link-hover: #b9dbf1;
+    --color-code-bg: #151a20;
+    --color-code-text: #f1f5f8;
+    --color-masthead-bg: rgba(15, 18, 22, 0.98);
+    --color-masthead-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    --color-footer-bg: transparent;
+  }
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: #0f1216;
+  --color-text: #e7ebee;
+  --color-muted: #b3bdc6;
+  --color-border: #2a3239;
+  --color-link: #8fc1e3;
+  --color-link-hover: #b9dbf1;
+  --color-code-bg: #151a20;
+  --color-code-text: #f1f5f8;
+  --color-masthead-bg: rgba(15, 18, 22, 0.98);
+  --color-masthead-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --color-footer-bg: transparent;
+}
+
 body {
   margin: 0;
   padding: 0;
   padding-bottom: 0em;
-  color: $text-color;
+  color: var(--color-text);
+  background-color: var(--color-bg);
   font-family: $global-font-family;
-  line-height: 1.5;
+  line-height: 1.7;
+  font-size: $doc-font-size * 1px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 
   &.overflow--hidden {
     /* when primary navigation is visible, the content in the background won't scroll */
@@ -25,7 +80,7 @@ h1, h2, h3, h4, h5, h6 {
   margin: 1em 0 0.5em;
   line-height: 1.2;
   font-family: $header-font-family;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 h1 {
@@ -118,6 +173,8 @@ blockquote {
 /* links */
 
 a {
+  color: var(--color-link);
+  text-decoration: none;
   
   &:focus {
     @extend %tab-focus;
@@ -127,6 +184,62 @@ a {
   &:active {
     outline: 0;
   }
+}
+
+.masthead {
+  background-color: var(--color-masthead-bg);
+  border-bottom-color: var(--color-border);
+  box-shadow: var(--color-masthead-shadow);
+}
+
+.page__footer {
+  background-color: var(--color-footer-bg);
+  border-top-color: var(--color-border);
+  color: var(--color-muted);
+}
+
+blockquote {
+  border-left-color: var(--color-link);
+}
+
+hr {
+  border-top-color: var(--color-border);
+}
+
+p > code,
+a > code,
+li > code,
+figcaption > code,
+td > code,
+pre,
+tt,
+code,
+kbd,
+samp {
+  color: var(--color-code-text);
+}
+
+p > code,
+a > code,
+li > code,
+figcaption > code,
+td > code {
+  background: var(--color-code-bg);
+  border-color: var(--color-border);
+  box-shadow: none;
+}
+
+pre {
+  background: var(--color-code-bg);
+  border: 1px solid var(--color-border);
+  padding: 0.75rem 1rem;
+  border-radius: $border-radius;
+}
+
+.katex,
+.MathJax,
+.math {
+  color: var(--color-text);
 }
 
 /* code */

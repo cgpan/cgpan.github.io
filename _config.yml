@@ -9,7 +9,8 @@
 title                    : "Chenguang Pan/Personal Homepage"
 description              : "Empower education using causal machine learning!"
 url                      : "https://cpan.ai"
-repository               : "https://github.com/cgpan/cgpan.github.io"
+#repository               : "https://github.com/cgpan/cgpan.github.io"
+repository               : "cgpan/cgpan.github.io"
 google_scholar_stats_use_cdn : true
 
 # google analytics
@@ -23,7 +24,7 @@ baidu_site_verification  :  # get baidu_site_verification from https://ziyuan.ba
 # Site Author
 author:
   name             : "Chenguang Pan"
-  avatar           : "images/portrait_S.png"
+  avatar           : "/images/portrait_S.png"
   #bio              : "Empower education using causal machine learning!"
   location         : "New York, U.S."
   employer         : Columbia University
