@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>t-Distribution Explorer</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #3b82f6;
+      --accent-2: #10b981;
+      --accent-3: #f59e0b;
+      --border: #e5e7eb;
+      --shadow: 0 10px 24px rgba(0,0,0,0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      padding: 24px 28px 8px 28px;
+    }
+    h1 {
+      margin: 0 0 6px 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    p.lead {
+      margin: 0 0 10px 0;
+      color: var(--muted);
+    }
+    .container {
+      padding: 18px 28px 28px 28px;
+      display: grid;
+      gap: 18px;
+      grid-template-columns: 1fr;
+    }
+    .controls {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 14px;
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      align-items: center;
+    }
+    .control-group label {
+      display: block;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .control-group input[type="range"] {
+      width: 100%;
+    }
+    .value-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3730a3;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.05s ease, background 0.2s ease;
+      margin-right: 8px;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn.secondary {
+      background: #fff;
+      border-color: var(--border);
+      color: var(--text);
+    }
+    .btn.active {
+      background: var(--accent-2);
+    }
+    .grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 10px;
+    }
+    .panel h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+    canvas {
+      width: 100%;
+      height: 200px;
+    }
+    .stats {
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 10px;
+    }
+    .stat.result-box {
+      border-radius: 12px;
+      padding: 10px 14px;
+      min-width: 200px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      box-shadow: inset 0 0 0 1px var(--border);
+      font-weight: 600;
+      color: var(--text);
+    }
+    .footer-note {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: right;
+      white-space: nowrap;
+    }
+    th:first-child, td:first-child { text-align: left; }
+    thead th {
+      position: sticky;
+      top: 0;
+      background: #f3f4f6;
+      z-index: 1;
+    }
+    .inline-inputs {
+      display: flex;
+      gap: 16px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+    .field {
+      display: grid;
+      gap: 6px;
+      min-width: 140px;
+    }
+    .field label {
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .field input[type="number"] {
+      width: 140px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    select {
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>t-Distribution Explorer</h1>
+    <p class="lead">Interact with the t-distribution to compute p-values, critical t-values, and inspect a t-table for common significance levels.</p>
+    <p class="footer-note">By Chenguang Pan.</p>
+  </header>
+
+  <div class="container">
+    <div class="grid">
+      <div class="panel" style="grid-column: span 2;">
+        <div class="panel-header">
+          <h3>t-Distribution & Tail Area</h3>
+          <div>
+            <button id="oneTailBtn" class="btn active">One Tail</button>
+            <button id="twoTailBtn" class="btn secondary">Two Tail</button>
+          </div>
+        </div>
+        <canvas id="tCanvas" width="700" height="220"></canvas>
+        <div class="stats">
+          <span class="stat" id="pValueStat">p-value: 0.0737</span>
+          <span class="stat" id="criticalStat">Critical t: 2.228</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>P-value Calculator</h3>
+        <div class="inline-inputs">
+          <div class="field">
+            <label for="tInput">t-Value</label>
+            <input id="tInput" type="number" step="0.01" value="1.50" />
+          </div>
+          <div class="field">
+            <label for="dfInput">df (Degrees of freedom)</label>
+            <input id="dfInput" type="number" min="1" step="1" value="10" />
+          </div>
+        </div>
+        <div class="stats" style="margin-top:10px;">
+          <span class="stat result-box" id="pValueInline">p-value: 0.0737</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Critical t-Value Calculator</h3>
+        <div class="inline-inputs">
+          <div class="field">
+            <label for="alphaInput">Alpha (Significance level)</label>
+            <input id="alphaInput" type="number" step="0.001" value="0.05" />
+          </div>
+          <div class="field">
+            <label for="dfInput2">df (Degrees of freedom)</label>
+            <input id="dfInput2" type="number" min="1" step="1" value="10" />
+          </div>
+        </div>
+        <div class="stats" style="margin-top:10px;">
+          <span class="stat result-box" id="criticalInline">Critical t: 2.228</span>
+        </div>
+      </div>
+
+      <div class="panel" style="grid-column: span 2;">
+        <h3>t-Table (Critical Values)</h3>
+        <div class="inline-inputs" style="margin-bottom:10px;">
+          <label for="tableTail">Tail</label>
+          <select id="tableTail">
+            <option value="one">One Tail</option>
+            <option value="two" selected>Two Tail</option>
+          </select>
+          <label for="tableAlphas">Alpha Levels</label>
+          <select id="tableAlphas">
+            <option value="0.10,0.05,0.025,0.01" selected>0.10, 0.05, 0.025, 0.01</option>
+            <option value="0.20,0.10,0.05">0.20, 0.10, 0.05</option>
+            <option value="0.05,0.01,0.005">0.05, 0.01, 0.005</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table id="tTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const oneTailBtn = document.getElementById('oneTailBtn');
+    const twoTailBtn = document.getElementById('twoTailBtn');
+
+    const tCanvas = document.getElementById('tCanvas');
+    const pValueStat = document.getElementById('pValueStat');
+    const criticalStat = document.getElementById('criticalStat');
+
+    const tInput = document.getElementById('tInput');
+    const dfInput = document.getElementById('dfInput');
+    const alphaInput = document.getElementById('alphaInput');
+    const dfInput2 = document.getElementById('dfInput2');
+    const pValueInline = document.getElementById('pValueInline');
+    const criticalInline = document.getElementById('criticalInline');
+
+    const tableTail = document.getElementById('tableTail');
+    const tableAlphas = document.getElementById('tableAlphas');
+    const tTable = document.getElementById('tTable');
+
+    let tailType = 'one';
+
+    function logGamma(z) {
+      const g = 7;
+      const p = [
+        0.99999999999980993,
+        676.5203681218851,
+        -1259.1392167224028,
+        771.32342877765313,
+        -176.61502916214059,
+        12.507343278686905,
+        -0.13857109526572012,
+        9.9843695780195716e-6,
+        1.5056327351493116e-7
+      ];
+      if (z < 0.5) {
+        return Math.log(Math.PI) - Math.log(Math.sin(Math.PI * z)) - logGamma(1 - z);
+      }
+      z -= 1;
+      let x = p[0];
+      for (let i = 1; i < p.length; i++) {
+        x += p[i] / (z + i);
+      }
+      const t = z + g + 0.5;
+      return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+    }
+
+    function betacf(a, b, x) {
+      const MAXIT = 200;
+      const EPS = 3e-7;
+      const FPMIN = 1e-30;
+      let qab = a + b;
+      let qap = a + 1.0;
+      let qam = a - 1.0;
+      let c = 1.0;
+      let d = 1.0 - qab * x / qap;
+      if (Math.abs(d) < FPMIN) d = FPMIN;
+      d = 1.0 / d;
+      let h = d;
+      for (let m = 1; m <= MAXIT; m++) {
+        let m2 = 2 * m;
+        let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+        d = 1.0 + aa * d;
+        if (Math.abs(d) < FPMIN) d = FPMIN;
+        c = 1.0 + aa / c;
+        if (Math.abs(c) < FPMIN) c = FPMIN;
+        d = 1.0 / d;
+        h *= d * c;
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+        d = 1.0 + aa * d;
+        if (Math.abs(d) < FPMIN) d = FPMIN;
+        c = 1.0 + aa / c;
+        if (Math.abs(c) < FPMIN) c = FPMIN;
+        d = 1.0 / d;
+        let del = d * c;
+        h *= del;
+        if (Math.abs(del - 1.0) < EPS) break;
+      }
+      return h;
+    }
+
+    function betai(a, b, x) {
+      if (x < 0 || x > 1) return NaN;
+      if (x === 0 || x === 1) return x;
+      const bt = Math.exp(logGamma(a + b) - logGamma(a) - logGamma(b) + a * Math.log(x) + b * Math.log(1.0 - x));
+      if (x < (a + 1.0) / (a + b + 2.0)) {
+        return bt * betacf(a, b, x) / a;
+      }
+      return 1.0 - bt * betacf(b, a, 1.0 - x) / b;
+    }
+
+    function tCdf(t, df) {
+      const x = df / (df + t * t);
+      const a = df / 2.0;
+      const b = 0.5;
+      const ib = betai(a, b, x);
+      if (t >= 0) {
+        return 1.0 - 0.5 * ib;
+      }
+      return 0.5 * ib;
+    }
+
+    function tPdf(t, df) {
+      const logCoef = logGamma((df + 1) / 2) - logGamma(df / 2) - 0.5 * (Math.log(df) + Math.log(Math.PI));
+      return Math.exp(logCoef) * Math.pow(1 + (t * t) / df, -(df + 1) / 2);
+    }
+
+    function tInv(p, df) {
+      if (p <= 0) return -Infinity;
+      if (p >= 1) return Infinity;
+      let low = -20;
+      let high = 20;
+      while (tCdf(high, df) < p) high *= 1.5;
+      while (tCdf(low, df) > p) low *= 1.5;
+      for (let i = 0; i < 80; i++) {
+        const mid = (low + high) / 2;
+        const cdf = tCdf(mid, df);
+        if (cdf < p) low = mid; else high = mid;
+      }
+      return (low + high) / 2;
+    }
+
+    function formatNumber(value, digits = 4) {
+      if (!isFinite(value)) return value > 0 ? '∞' : '-∞';
+      return Number(value).toFixed(digits);
+    }
+
+    function getPValue(t, df, tail) {
+      const cdf = tCdf(t, df);
+      if (tail === 'two') {
+        return 2 * (1 - tCdf(Math.abs(t), df));
+      }
+      return t >= 0 ? 1 - cdf : cdf;
+    }
+
+    function getCritical(df, alpha, tail) {
+      const target = tail === 'two' ? 1 - alpha / 2 : 1 - alpha;
+      return tInv(target, df);
+    }
+
+    function drawAxis(ctx, width, height, min, max) {
+      ctx.strokeStyle = '#d1d5db';
+      ctx.beginPath();
+      ctx.moveTo(0, height - 24);
+      ctx.lineTo(width, height - 24);
+      ctx.stroke();
+
+      ctx.fillStyle = '#6b7280';
+      ctx.font = '11px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      const tickCount = 7;
+      for (let i = 0; i < tickCount; i++) {
+        const value = min + (i / (tickCount - 1)) * (max - min);
+        const x = ((value - min) / (max - min)) * width;
+        ctx.beginPath();
+        ctx.moveTo(x, height - 24);
+        ctx.lineTo(x, height - 18);
+        ctx.stroke();
+        ctx.fillText(value.toFixed(1), x, height - 16);
+      }
+    }
+
+    function drawTDistribution() {
+      const df = Math.max(1, Number(dfInput.value));
+      const tVal = Number(tInput.value);
+      const crit = getCritical(Math.max(1, Number(dfInput2.value)), Number(alphaInput.value), tailType);
+      const xRange = Math.max(4, Math.abs(tVal) * 1.4, Math.abs(crit) * 1.4);
+
+      const ctx = tCanvas.getContext('2d');
+      const width = tCanvas.width;
+      const height = tCanvas.height;
+      ctx.clearRect(0, 0, width, height);
+
+      const minX = -xRange;
+      const maxX = xRange;
+      const step = (maxX - minX) / 200;
+      let maxY = 0;
+      for (let x = minX; x <= maxX; x += step) {
+        maxY = Math.max(maxY, tPdf(x, df));
+      }
+
+      ctx.beginPath();
+      for (let x = minX; x <= maxX; x += step) {
+        const y = tPdf(x, df);
+        const px = ((x - minX) / (maxX - minX)) * width;
+        const py = height - 24 - (y / maxY) * (height - 40);
+        if (x === minX) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      const shadeColor = 'rgba(16, 185, 129, 0.35)';
+      ctx.fillStyle = shadeColor;
+
+      function shadeTail(xStart, xEnd) {
+        ctx.beginPath();
+        let started = false;
+        for (let x = xStart; x <= xEnd; x += step) {
+          const y = tPdf(x, df);
+          const px = ((x - minX) / (maxX - minX)) * width;
+          const py = height - 24 - (y / maxY) * (height - 40);
+          if (!started) {
+            ctx.moveTo(px, height - 24);
+            ctx.lineTo(px, py);
+            started = true;
+          } else {
+            ctx.lineTo(px, py);
+          }
+        }
+        const endX = ((xEnd - minX) / (maxX - minX)) * width;
+        ctx.lineTo(endX, height - 24);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      if (tailType === 'two') {
+        shadeTail(minX, -Math.abs(tVal));
+        shadeTail(Math.abs(tVal), maxX);
+      } else if (tVal >= 0) {
+        shadeTail(tVal, maxX);
+      } else {
+        shadeTail(minX, tVal);
+      }
+
+      drawAxis(ctx, width, height, minX, maxX);
+    }
+
+    function updateStats() {
+      const df = Math.max(1, Number(dfInput.value));
+      const tVal = Number(tInput.value);
+      const alpha = Number(alphaInput.value);
+      const critDf = Math.max(1, Number(dfInput2.value));
+      const p = getPValue(tVal, df, tailType);
+      const crit = getCritical(critDf, alpha, tailType);
+
+      pValueStat.textContent = `p-value: ${formatNumber(p, 4)}`;
+      criticalStat.textContent = `Critical t: ${formatNumber(crit, 3)}`;
+
+      pValueInline.textContent = `p-value: ${formatNumber(getPValue(Number(tInput.value), Number(dfInput.value), tailType), 4)}`;
+      criticalInline.textContent = `Critical t: ${formatNumber(getCritical(Number(dfInput2.value), Number(alphaInput.value), tailType), 3)}`;
+    }
+
+    function updateAll() {
+      updateStats();
+      drawTDistribution();
+    }
+
+    function setTail(type) {
+      tailType = type;
+      if (type === 'one') {
+        oneTailBtn.classList.add('active');
+        oneTailBtn.classList.remove('secondary');
+        twoTailBtn.classList.add('secondary');
+        twoTailBtn.classList.remove('active');
+      } else {
+        twoTailBtn.classList.add('active');
+        twoTailBtn.classList.remove('secondary');
+        oneTailBtn.classList.add('secondary');
+        oneTailBtn.classList.remove('active');
+      }
+      buildTable();
+      updateAll();
+    }
+
+    function buildTable() {
+      const tail = tableTail.value;
+      const alphaList = tableAlphas.value.split(',').map(v => Number(v));
+      const thead = tTable.querySelector('thead');
+      const tbody = tTable.querySelector('tbody');
+      thead.innerHTML = '';
+      tbody.innerHTML = '';
+
+      const headerRow = document.createElement('tr');
+      const thDf = document.createElement('th');
+      thDf.textContent = 'df';
+      headerRow.appendChild(thDf);
+      alphaList.forEach(alpha => {
+        const th = document.createElement('th');
+        th.textContent = `α=${alpha}`;
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+
+      const dfValues = Array.from({ length: 30 }, (_, i) => i + 1);
+      dfValues.forEach(df => {
+        const row = document.createElement('tr');
+        const dfCell = document.createElement('td');
+        dfCell.textContent = df;
+        row.appendChild(dfCell);
+        alphaList.forEach(alpha => {
+          const cell = document.createElement('td');
+          const crit = getCritical(df, alpha, tail);
+          cell.textContent = formatNumber(crit, 3);
+          row.appendChild(cell);
+        });
+        tbody.appendChild(row);
+      });
+    }
+
+    tInput.addEventListener('input', updateAll);
+    dfInput.addEventListener('input', updateAll);
+    alphaInput.addEventListener('input', updateAll);
+    dfInput2.addEventListener('input', updateAll);
+
+    oneTailBtn.addEventListener('click', () => setTail('one'));
+    twoTailBtn.addEventListener('click', () => setTail('two'));
+
+    tableTail.addEventListener('change', buildTable);
+    tableAlphas.addEventListener('change', buildTable);
+
+    window.addEventListener('resize', () => {
+      const parentWidth = tCanvas.parentElement.clientWidth - 2;
+      tCanvas.width = Math.max(320, parentWidth);
+      drawTDistribution();
+    });
+
+    function init() {
+      const parentWidth = tCanvas.parentElement.clientWidth - 2;
+      tCanvas.width = Math.max(320, parentWidth);
+      setTail('one');
+      buildTable();
+      updateAll();
+    }
+
+    init();
+  </script>
+</body>
+</html>

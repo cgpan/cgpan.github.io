@@ -78,5 +78,11 @@ author_profile: true
 			<div class="stats-card__meta">HTML interactive tool</div>
 			<a class="stats-card__link" href="/assets/tools/sampling-and-se.html">Open tool →</a>
 		</article>
+		<article class="stats-card">
+			<h3>t-Distribution Explorer</h3>
+			<p>Compute p-values, critical t-values, and inspect a t-table for common significance levels.</p>
+			<div class="stats-card__meta">HTML interactive tool</div>
+			<a class="stats-card__link" href="/assets/tools/t-distribution-explorer.html">Open tool →</a>
+		</article>
 	</div>
 </div>
