@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Linear Regression Explorer</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #3b82f6;
+      --accent-2: #10b981;
+      --accent-3: #f59e0b;
+      --border: #e5e7eb;
+      --shadow: 0 10px 24px rgba(0,0,0,0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      padding: 24px 28px 8px 28px;
+    }
+    h1 {
+      margin: 0 0 6px 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    p.lead {
+      margin: 0 0 10px 0;
+      color: var(--muted);
+    }
+    .container {
+      padding: 18px 28px 28px 28px;
+      display: grid;
+      gap: 18px;
+      grid-template-columns: 1fr;
+    }
+    .controls {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 14px;
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      align-items: center;
+    }
+    .control-group label {
+      display: block;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .value-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3730a3;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.05s ease, background 0.2s ease;
+      margin-right: 8px;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn.secondary {
+      background: #fff;
+      border-color: var(--border);
+      color: var(--text);
+    }
+    .grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 10px;
+    }
+    .panel h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+    .canvas-wrap {
+      position: relative;
+    }
+    canvas {
+      width: 100%;
+      height: 460px;
+    }
+    .stats {
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 10px;
+    }
+    .equations {
+      display: grid;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .equation-box {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .footer-note {
+      font-size: 13px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Simple Linear Regression Explorer</h1>
+    <p class="lead">Visualize a population of 500 points, the true regression line, and one random sample of 50 points with its fitted line.</p>
+    <p class="footer-note">By <a href="https://cpan.ai/" target="_blank" rel="noopener noreferrer">Chenguang Pan</a>.</p>
+  </header>
+
+  <div class="container">
+    <div class="controls">
+      <div class="control-group">
+        <label>Population Size</label>
+        <div class="value-pill">N = 500</div>
+      </div>
+      <div class="control-group">
+        <label for="sampleSize">Sample Size</label>
+        <input id="sampleSize" type="range" min="50" max="400" step="50" value="50" />
+        <div class="value-pill">n = <span id="sampleSizeValue">50</span></div>
+      </div>
+      <div class="control-group">
+        <label>Actions</label>
+        <button id="drawSample" class="btn">Draw Sample</button>
+        <button id="resetSample" class="btn secondary">Reset Sample</button>
+        <button id="bestFit" class="btn secondary">Best Fit</button>
+      </div>
+      <div class="control-group">
+        <label>Population Model</label>
+        <div class="footer-note">True line is dashed with 80% opacity</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="panel" style="grid-column: span 2;">
+        <h3>Population and Sample (with Regression Lines)</h3>
+        <div class="canvas-wrap">
+          <canvas id="regCanvas" width="1100" height="520"></canvas>
+        </div>
+        <div class="stats">
+          <span class="stat" id="popStats">Population: 500 points</span>
+          <span class="stat" id="sampleStats">No sample drawn yet</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Notes</h3>
+        <div class="footer-note">
+          The population points are shown at 30% opacity and the true line at 80% opacity. Adjust the sample size, draw a sample, and drag the fitted line to see residuals and MSE update.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('regCanvas');
+    const popStats = document.getElementById('popStats');
+    const sampleStats = document.getElementById('sampleStats');
+    const sampleSizeInput = document.getElementById('sampleSize');
+    const sampleSizeValue = document.getElementById('sampleSizeValue');
+    const drawSampleBtn = document.getElementById('drawSample');
+    const resetSampleBtn = document.getElementById('resetSample');
+    const bestFitBtn = document.getElementById('bestFit');
+
+    const POP_SIZE = 500;
+    let sampleSize = 50;
+    const TRUE_B0 = 10;
+    const TRUE_B1 = 0.7;
+    const NOISE_SD = 15;
+    const X_MIN = 0;
+    const X_MAX = 100;
+
+    let population = [];
+    let sample = [];
+    let sampleFit = null;
+    let currentLine = null;
+    let currentMSE = null;
+    let isDragging = false;
+    let dragStart = null;
+
+    function normalRandom() {
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    }
+
+    function generatePopulation() {
+      population = Array.from({ length: POP_SIZE }, () => {
+        const x = X_MIN + Math.random() * (X_MAX - X_MIN);
+        const y = TRUE_B0 + TRUE_B1 * x + NOISE_SD * normalRandom();
+        return { x, y };
+      });
+    }
+
+    function computeOLS(points) {
+      const n = points.length;
+      const meanX = points.reduce((sum, p) => sum + p.x, 0) / n;
+      const meanY = points.reduce((sum, p) => sum + p.y, 0) / n;
+      let num = 0;
+      let den = 0;
+      points.forEach(p => {
+        num += (p.x - meanX) * (p.y - meanY);
+        den += (p.x - meanX) ** 2;
+      });
+      const b1 = num / den;
+      const b0 = meanY - b1 * meanX;
+      return { b0, b1 };
+    }
+
+    function getYRange() {
+      const ys = population.map(p => p.y);
+      const minY = Math.min(...ys);
+      const maxY = Math.max(...ys);
+      const pad = (maxY - minY) * 0.1 || 10;
+      return { minY: minY - pad, maxY: maxY + pad };
+    }
+
+    function toCanvasX(x, width, padding) {
+      return padding + ((x - X_MIN) / (X_MAX - X_MIN)) * (width - padding * 2);
+    }
+
+    function toCanvasY(y, height, padding, minY, maxY) {
+      return height - padding - ((y - minY) / (maxY - minY)) * (height - padding * 2);
+    }
+
+    function drawAxes(ctx, width, height, padding, minY, maxY) {
+      ctx.strokeStyle = '#d1d5db';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padding, height - padding);
+      ctx.lineTo(width - padding, height - padding);
+      ctx.moveTo(padding, height - padding);
+      ctx.lineTo(padding, padding);
+      ctx.stroke();
+
+      ctx.fillStyle = '#6b7280';
+      ctx.font = '11px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      for (let i = 0; i <= 5; i += 1) {
+        const x = X_MIN + (i / 5) * (X_MAX - X_MIN);
+        const cx = toCanvasX(x, width, padding);
+        ctx.beginPath();
+        ctx.moveTo(cx, height - padding);
+        ctx.lineTo(cx, height - padding + 6);
+        ctx.stroke();
+        ctx.fillText(x.toFixed(0), cx, height - padding + 8);
+      }
+
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      for (let i = 0; i <= 5; i += 1) {
+        const y = minY + (i / 5) * (maxY - minY);
+        const cy = toCanvasY(y, height, padding, minY, maxY);
+        ctx.beginPath();
+        ctx.moveTo(padding - 6, cy);
+        ctx.lineTo(padding, cy);
+        ctx.stroke();
+        ctx.fillText(y.toFixed(0), padding - 8, cy);
+      }
+    }
+
+    function drawRoundedRect(ctx, x, y, width, height, radius) {
+      const r = Math.min(radius, width / 2, height / 2);
+      if (typeof ctx.roundRect === 'function') {
+        ctx.beginPath();
+        ctx.roundRect(x, y, width, height, r);
+        return;
+      }
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + width, y, x + width, y + height, r);
+      ctx.arcTo(x + width, y + height, x, y + height, r);
+      ctx.arcTo(x, y + height, x, y, r);
+      ctx.arcTo(x, y, x + width, y, r);
+      ctx.closePath();
+    }
+
+    function drawEquations(ctx) {
+      const trueEquation = `True: y = ${TRUE_B0.toFixed(2)} + ${TRUE_B1.toFixed(2)}x`;
+      const sampleEquationText = currentLine
+        ? `Sample: ŷ = ${currentLine.b0.toFixed(2)} + ${currentLine.b1.toFixed(2)}x`
+        : 'Sample: ŷ = —';
+      const mseText = currentMSE === null ? 'MSE: —' : `MSE: ${currentMSE.toFixed(2)}`;
+
+      ctx.save();
+      const fontSize = 19;
+      ctx.font = `${fontSize}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial`;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.strokeStyle = 'rgba(229, 231, 235, 1)';
+      const padding = 14;
+      const lineHeight = fontSize + 8;
+      const textWidth = Math.max(
+        ctx.measureText(trueEquation).width,
+        ctx.measureText(sampleEquationText).width
+      );
+      const boxWidth = textWidth + padding * 2;
+      const boxHeight = lineHeight * 2 + padding * 2;
+      const x = 70;
+      const y = 40;
+
+      drawRoundedRect(ctx, x, y, boxWidth, boxHeight, 12);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#111827';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText(trueEquation, x + padding, y + padding);
+      ctx.fillText(sampleEquationText, x + padding, y + padding + lineHeight);
+
+      const mseBoxWidth = ctx.measureText(mseText).width + padding * 2;
+      const mseBoxHeight = lineHeight + padding * 2;
+      const mseX = x + boxWidth + 16;
+      const mseY = y;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.strokeStyle = 'rgba(229, 231, 235, 1)';
+      drawRoundedRect(ctx, mseX, mseY, mseBoxWidth, mseBoxHeight, 12);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#111827';
+      ctx.fillText(mseText, mseX + padding, mseY + padding);
+      ctx.restore();
+    }
+
+    function drawPoints(ctx, points, color, alpha) {
+      ctx.fillStyle = color;
+      ctx.globalAlpha = alpha;
+      const { minY, maxY } = getYRange();
+      points.forEach(p => {
+        const cx = toCanvasX(p.x, canvas.width, 50);
+        const cy = toCanvasY(p.y, canvas.height, 50, minY, maxY);
+        ctx.beginPath();
+        ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    function drawResiduals(ctx, points, line) {
+      if (!points.length || !line) return;
+      const { minY, maxY } = getYRange();
+      ctx.save();
+      ctx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
+      ctx.setLineDash([3, 4]);
+      ctx.lineWidth = 1.5;
+      points.forEach(p => {
+        const fittedY = line.b0 + line.b1 * p.x;
+        const cx = toCanvasX(p.x, canvas.width, 50);
+        const cy = toCanvasY(p.y, canvas.height, 50, minY, maxY);
+        const fy = toCanvasY(fittedY, canvas.height, 50, minY, maxY);
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx, fy);
+        ctx.stroke();
+      });
+      ctx.restore();
+    }
+
+    function computeMSE(points, line) {
+      if (!points.length || !line) return null;
+      const sumSq = points.reduce((acc, p) => {
+        const fitted = line.b0 + line.b1 * p.x;
+        const resid = p.y - fitted;
+        return acc + resid * resid;
+      }, 0);
+      return sumSq / points.length;
+    }
+
+    function drawLine(ctx, b0, b1, color, dash = [], alpha = 1) {
+      const { minY, maxY } = getYRange();
+      const x1 = X_MIN;
+      const x2 = X_MAX;
+      const y1 = b0 + b1 * x1;
+      const y2 = b0 + b1 * x2;
+      const cx1 = toCanvasX(x1, canvas.width, 50);
+      const cx2 = toCanvasX(x2, canvas.width, 50);
+      const cy1 = toCanvasY(y1, canvas.height, 50, minY, maxY);
+      const cy2 = toCanvasY(y2, canvas.height, 50, minY, maxY);
+
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.setLineDash(dash);
+      ctx.beginPath();
+      ctx.moveTo(cx1, cy1);
+      ctx.lineTo(cx2, cy2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function getLineCanvasPoints(line) {
+      const { minY, maxY } = getYRange();
+      const x1 = X_MIN;
+      const x2 = X_MAX;
+      const y1 = line.b0 + line.b1 * x1;
+      const y2 = line.b0 + line.b1 * x2;
+      return {
+        x1: toCanvasX(x1, canvas.width, 50),
+        y1: toCanvasY(y1, canvas.height, 50, minY, maxY),
+        x2: toCanvasX(x2, canvas.width, 50),
+        y2: toCanvasY(y2, canvas.height, 50, minY, maxY)
+      };
+    }
+
+    function distancePointToSegment(px, py, x1, y1, x2, y2) {
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      if (dx === 0 && dy === 0) return Math.hypot(px - x1, py - y1);
+      const t = ((px - x1) * dx + (py - y1) * dy) / (dx * dx + dy * dy);
+      const clamped = Math.max(0, Math.min(1, t));
+      const cx = x1 + clamped * dx;
+      const cy = y1 + clamped * dy;
+      return Math.hypot(px - cx, py - cy);
+    }
+
+    function getCanvasPoint(evt) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      return {
+        x: (evt.clientX - rect.left) * scaleX,
+        y: (evt.clientY - rect.top) * scaleY
+      };
+    }
+
+    function drawScene() {
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const { minY, maxY } = getYRange();
+      drawAxes(ctx, canvas.width, canvas.height, 50, minY, maxY);
+
+      drawPoints(ctx, population, 'rgba(59, 130, 246, 1)', 0.3);
+      drawLine(ctx, TRUE_B0, TRUE_B1, 'rgba(59, 130, 246, 1)', [6, 6], 0.8);
+
+      if (sample.length > 0) {
+        drawPoints(ctx, sample, 'rgba(239, 68, 68, 1)', 0.95);
+        if (currentLine) {
+          drawResiduals(ctx, sample, currentLine);
+          drawLine(ctx, currentLine.b0, currentLine.b1, 'rgba(239, 68, 68, 1)', [], 1);
+        }
+      }
+
+      drawEquations(ctx);
+      updateMSE();
+    }
+
+    function drawSample() {
+      sample = [];
+      const indices = Array.from({ length: population.length }, (_, i) => i);
+      for (let i = indices.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      for (let i = 0; i < sampleSize; i += 1) {
+        sample.push(population[indices[i]]);
+      }
+      sampleFit = computeOLS(sample);
+      currentLine = { ...sampleFit };
+      sampleStats.textContent = `Sample: ${sampleSize} points`;
+      updateMSE();
+      drawScene();
+    }
+
+    function resetSample() {
+      sample = [];
+      sampleFit = null;
+      currentLine = null;
+      sampleStats.textContent = 'No sample drawn yet';
+      currentMSE = null;
+      drawScene();
+    }
+
+    function updateMSE() {
+      currentMSE = computeMSE(sample, currentLine);
+    }
+
+    function updateSampleSize() {
+      sampleSize = Number(sampleSizeInput.value);
+      sampleSizeValue.textContent = sampleSize;
+    }
+
+    function bestFit() {
+      if (!sampleFit) return;
+      currentLine = { ...sampleFit };
+      updateMSE();
+      drawScene();
+    }
+
+    function onMouseDown(evt) {
+      if (!currentLine) return;
+      const point = getCanvasPoint(evt);
+      const { x1, y1, x2, y2 } = getLineCanvasPoints(currentLine);
+      const dist = distancePointToSegment(point.x, point.y, x1, y1, x2, y2);
+      if (dist <= 8) {
+        isDragging = true;
+        dragStart = { data: point, line: { ...currentLine } };
+      }
+    }
+
+    function onMouseMove(evt) {
+      if (!isDragging || !dragStart) return;
+      const point = getCanvasPoint(evt);
+      const { minY, maxY } = getYRange();
+      const padding = 50;
+      const dataY = maxY - ((point.y - padding) / (canvas.height - padding * 2)) * (maxY - minY);
+      const startDataY = maxY - ((dragStart.data.y - padding) / (canvas.height - padding * 2)) * (maxY - minY);
+      const deltaY = dataY - startDataY;
+      currentLine = {
+        b0: dragStart.line.b0 + deltaY,
+        b1: dragStart.line.b1
+      };
+      updateMSE();
+      drawScene();
+    }
+
+    function onMouseUp() {
+      isDragging = false;
+      dragStart = null;
+    }
+
+    function init() {
+      generatePopulation();
+      popStats.textContent = `Population: ${POP_SIZE} points`;
+      drawScene();
+    }
+
+    drawSampleBtn.addEventListener('click', drawSample);
+    resetSampleBtn.addEventListener('click', resetSample);
+    bestFitBtn.addEventListener('click', bestFit);
+    sampleSizeInput.addEventListener('input', updateSampleSize);
+    canvas.addEventListener('mousedown', onMouseDown);
+    canvas.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+
+    updateSampleSize();
+    init();
+  </script>
+</body>
+</html>

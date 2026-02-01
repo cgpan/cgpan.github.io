@@ -25,7 +25,7 @@ author_profile: true
 	}
 	.stats-tools__grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+		grid-template-columns: 1fr;
 		gap: 1.25rem;
 	}
 	.stats-card {
@@ -83,6 +83,12 @@ author_profile: true
 			<p>Compute p-values, critical t-values, and inspect a t-table for common significance levels.</p>
 			<div class="stats-card__meta">HTML interactive tool</div>
 			<a class="stats-card__link" href="/stats-tools/t-distribution-explorer.html">Open tool →</a>
+		</article>
+		<article class="stats-card">
+			<h3>Simple Linear Regression Explorer</h3>
+			<p>See how sampling, fitted lines, residuals, and MSE behave in a simple linear regression.</p>
+			<div class="stats-card__meta">HTML interactive tool</div>
+			<a class="stats-card__link" href="/stats-tools/simple-linear-regression-explorer.html">Open tool →</a>
 		</article>
 	</div>
 </div>
