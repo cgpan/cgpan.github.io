@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>t-Test Hypothesis Test Visualizer</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #2563eb;
+      --accent-2: #10b981;
+      --accent-3: #f59e0b;
+      --border: #e5e7eb;
+      --shadow: 0 12px 28px rgba(0,0,0,0.08);
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      padding: 24px 28px 8px 28px;
+    }
+    h1 {
+      margin: 0 0 6px 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    p.lead {
+      margin: 0 0 10px 0;
+      color: var(--muted);
+    }
+    .container {
+      padding: 18px 28px 28px 28px;
+      display: grid;
+      gap: 18px;
+      grid-template-columns: 1fr;
+    }
+    .controls {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 14px;
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      align-items: start;
+    }
+    .control-group label {
+      display: block;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .control-group label.case-sensitive {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .control-group textarea,
+    .control-group input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 14px;
+      font-family: inherit;
+    }
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.05s ease, background 0.2s ease;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn.secondary {
+      background: #fff;
+      border-color: var(--border);
+      color: var(--text);
+    }
+    .grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 10px;
+    }
+    .panel h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+    canvas {
+      width: 100%;
+      height: 220px;
+    }
+    .stats {
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .stat {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 10px;
+      line-height: 1.2;
+      color: var(--text);
+      font-weight: 600;
+      width: fit-content;
+      max-width: 100%;
+    }
+    .stat.highlight {
+      background: #eef2ff;
+      color: #3730a3;
+      border-color: #e0e7ff;
+    }
+    .stat.decision-reject {
+      background: #fee2e2;
+      color: #991b1b;
+      border-color: #fecaca;
+    }
+    .stat.decision-fail {
+      background: #dcfce7;
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+    .step-list {
+      display: grid;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .step {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .footer-note {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .footer-note a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .footer-note a:hover {
+      text-decoration: underline;
+    }
+    .warning {
+      color: var(--danger);
+      font-size: 13px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>t-Test Hypothesis Test Visualizer</h1>
+    <p class="lead">Check whether your one-time sample mean is consistent with a population mean by locating its t-value on the t-distribution.</p>
+    <p class="footer-note">By <a href="https://cpan.ai/" target="_blank" rel="noopener">Chenguang Pan</a>.</p>
+  </header>
+
+  <div class="container">
+    <div class="controls">
+      <div class="control-group" style="grid-column: span 2;">
+        <label for="sampleInput">Your sample (comma, space, or new-line separated)</label>
+        <textarea id="sampleInput" rows="4">12, 11, 13, 10, 9, 12, 11, 8, 14, 10, 12, 13, 9, 11, 10, 12, 8, 14, 11, 9</textarea>
+        <div class="hint">We compute the sample mean and sample SD from these values.</div>
+        <div class="warning" id="sampleWarning" style="display:none;">Enter at least 2 numbers to compute a t-value.</div>
+      </div>
+      <div class="control-group">
+        <label for="muInput" class="case-sensitive">Assumed population mean (&mu;&#8320;)</label>
+        <input id="muInput" type="number" step="0.01" value="11" />
+      </div>
+      <div class="control-group">
+        <label for="alphaInput" class="case-sensitive">Significance level (&alpha;, two-tail)</label>
+        <input id="alphaInput" type="number" step="0.001" min="0.001" max="0.20" value="0.05" />
+      </div>
+      <div class="control-group">
+        <label>Actions</label>
+        <button id="loadExample" class="btn">Load Another Example</button>
+        <button id="clearSample" class="btn secondary" style="margin-top:8px;">Clear Sample</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="panel" style="grid-column: span 2;">
+        <div class="panel-header">
+          <h3>t-Distribution with Your t-Value</h3>
+        </div>
+        <canvas id="tCanvas" width="720" height="240"></canvas>
+        <div class="stats">
+          <span class="stat" id="dfStat">df = 9</span>
+          <span class="stat" id="tStat">t = 0.00</span>
+          <span class="stat" id="pStat">p-value (two-tail) = 1.0000</span>
+          <span class="stat highlight" id="critStat">critical t (α=0.05) = 2.262</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Sample Summary</h3>
+        <div class="stats">
+          <span class="stat" id="nStat">n = 10</span>
+          <span class="stat" id="meanStat">mean = 11.00</span>
+          <span class="stat" id="sdStat">sample SD = 1.83</span>
+          <span class="stat" id="seStat">SE = 0.58</span>
+        </div>
+        <div class="step-list" style="margin-top:10px;">
+          <div class="step" id="step1">Assume your sample comes from the population with mean μ₀.</div>
+          <div class="step" id="step2">Compute df = n − 1 and use the corresponding t-distribution.</div>
+          <div class="step" id="step3">Compute t = (x̄ − μ₀) / (s / √n).</div>
+          <div class="step" id="step4">Compare |t| to the two-tail critical value at α.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Decision</h3>
+        <div class="stats" style="margin-top:6px;">
+          <span class="stat" id="decisionStat">Decision: —</span>
+        </div>
+        <div class="step-list" style="margin-top:10px;">
+          <div class="step" id="decisionText">If |t| is in the extreme tails, the sample is unlikely under the assumed population mean.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sampleInput = document.getElementById('sampleInput');
+    const muInput = document.getElementById('muInput');
+    const alphaInput = document.getElementById('alphaInput');
+    const loadExample = document.getElementById('loadExample');
+    const clearSample = document.getElementById('clearSample');
+    const sampleWarning = document.getElementById('sampleWarning');
+
+    const tCanvas = document.getElementById('tCanvas');
+    const dfStat = document.getElementById('dfStat');
+    const tStat = document.getElementById('tStat');
+    const pStat = document.getElementById('pStat');
+    const critStat = document.getElementById('critStat');
+
+    const nStat = document.getElementById('nStat');
+    const meanStat = document.getElementById('meanStat');
+    const sdStat = document.getElementById('sdStat');
+    const seStat = document.getElementById('seStat');
+
+    const decisionStat = document.getElementById('decisionStat');
+    const decisionText = document.getElementById('decisionText');
+
+    const examples = [
+      '12, 11, 13, 10, 9, 12, 11, 8, 14, 10, 12, 13, 9, 11, 10, 12, 8, 14, 11, 9',
+      '18 20 17 19 21 22 16 23 19 18 20 21 17 22 19 20 18 23 16 21',
+      '5, 6, 4, 7, 6, 5, 4, 8, 6, 5, 7, 6, 4, 7, 5, 6, 8, 4, 7, 5'
+    ];
+    let exampleIndex = 0;
+
+    function logGamma(z) {
+      const g = 7;
+      const p = [
+        0.99999999999980993,
+        676.5203681218851,
+        -1259.1392167224028,
+        771.32342877765313,
+        -176.61502916214059,
+        12.507343278686905,
+        -0.13857109526572012,
+        9.9843695780195716e-6,
+        1.5056327351493116e-7
+      ];
+      if (z < 0.5) {
+        return Math.log(Math.PI) - Math.log(Math.sin(Math.PI * z)) - logGamma(1 - z);
+      }
+      z -= 1;
+      let x = p[0];
+      for (let i = 1; i < p.length; i++) {
+        x += p[i] / (z + i);
+      }
+      const t = z + g + 0.5;
+      return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+    }
+
+    function betacf(a, b, x) {
+      const MAXIT = 200;
+      const EPS = 3e-7;
+      const FPMIN = 1e-30;
+      let qab = a + b;
+      let qap = a + 1.0;
+      let qam = a - 1.0;
+      let c = 1.0;
+      let d = 1.0 - qab * x / qap;
+      if (Math.abs(d) < FPMIN) d = FPMIN;
+      d = 1.0 / d;
+      let h = d;
+      for (let m = 1; m <= MAXIT; m++) {
+        let m2 = 2 * m;
+        let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+        d = 1.0 + aa * d;
+        if (Math.abs(d) < FPMIN) d = FPMIN;
+        c = 1.0 + aa / c;
+        if (Math.abs(c) < FPMIN) c = FPMIN;
+        d = 1.0 / d;
+        h *= d * c;
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+        d = 1.0 + aa * d;
+        if (Math.abs(d) < FPMIN) d = FPMIN;
+        c = 1.0 + aa / c;
+        if (Math.abs(c) < FPMIN) c = FPMIN;
+        d = 1.0 / d;
+        let del = d * c;
+        h *= del;
+        if (Math.abs(del - 1.0) < EPS) break;
+      }
+      return h;
+    }
+
+    function betai(a, b, x) {
+      if (x < 0 || x > 1) return NaN;
+      if (x === 0 || x === 1) return x;
+      const bt = Math.exp(logGamma(a + b) - logGamma(a) - logGamma(b) + a * Math.log(x) + b * Math.log(1.0 - x));
+      if (x < (a + 1.0) / (a + b + 2.0)) {
+        return bt * betacf(a, b, x) / a;
+      }
+      return 1.0 - bt * betacf(b, a, 1.0 - x) / b;
+    }
+
+    function tCdf(t, df) {
+      const x = df / (df + t * t);
+      const a = df / 2.0;
+      const b = 0.5;
+      const ib = betai(a, b, x);
+      if (t >= 0) {
+        return 1.0 - 0.5 * ib;
+      }
+      return 0.5 * ib;
+    }
+
+    function tPdf(t, df) {
+      const logCoef = logGamma((df + 1) / 2) - logGamma(df / 2) - 0.5 * (Math.log(df) + Math.log(Math.PI));
+      return Math.exp(logCoef) * Math.pow(1 + (t * t) / df, -(df + 1) / 2);
+    }
+
+    function tInv(p, df) {
+      if (p <= 0) return -Infinity;
+      if (p >= 1) return Infinity;
+      let low = -20;
+      let high = 20;
+      while (tCdf(high, df) < p) high *= 1.5;
+      while (tCdf(low, df) > p) low *= 1.5;
+      for (let i = 0; i < 80; i++) {
+        const mid = (low + high) / 2;
+        const cdf = tCdf(mid, df);
+        if (cdf < p) low = mid; else high = mid;
+      }
+      return (low + high) / 2;
+    }
+
+    function formatNumber(value, digits = 4) {
+      if (!isFinite(value)) return value > 0 ? '∞' : '-∞';
+      return Number(value).toFixed(digits);
+    }
+
+    function parseSampleValues(text) {
+      return text
+        .split(/[^-+\d.eE]+/)
+        .map(v => Number(v))
+        .filter(v => Number.isFinite(v));
+    }
+
+    function mean(values) {
+      return values.reduce((sum, v) => sum + v, 0) / values.length;
+    }
+
+    function sampleSd(values) {
+      const n = values.length;
+      if (n < 2) return NaN;
+      const m = mean(values);
+      const variance = values.reduce((sum, v) => sum + Math.pow(v - m, 2), 0) / (n - 1);
+      return Math.sqrt(variance);
+    }
+
+    function drawAxis(ctx, width, height, min, max) {
+      ctx.strokeStyle = '#d1d5db';
+      ctx.beginPath();
+      ctx.moveTo(0, height - 24);
+      ctx.lineTo(width, height - 24);
+      ctx.stroke();
+
+      ctx.fillStyle = '#6b7280';
+      ctx.font = '11px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      const tickCount = 7;
+      for (let i = 0; i < tickCount; i++) {
+        const value = min + (i / (tickCount - 1)) * (max - min);
+        const x = ((value - min) / (max - min)) * width;
+        ctx.beginPath();
+        ctx.moveTo(x, height - 24);
+        ctx.lineTo(x, height - 18);
+        ctx.stroke();
+        ctx.fillText(value.toFixed(1), x, height - 16);
+      }
+    }
+
+    function drawTDistribution(df, tVal, crit, alpha) {
+      const ctx = tCanvas.getContext('2d');
+      const width = tCanvas.width;
+      const height = tCanvas.height;
+      ctx.clearRect(0, 0, width, height);
+
+      const xRange = Math.max(4, Math.abs(tVal) * 1.6, Math.abs(crit) * 1.6);
+      const minX = -xRange;
+      const maxX = xRange;
+      const step = (maxX - minX) / 240;
+
+      let maxY = 0;
+      for (let x = minX; x <= maxX; x += step) {
+        maxY = Math.max(maxY, tPdf(x, df));
+      }
+
+      ctx.beginPath();
+      for (let x = minX; x <= maxX; x += step) {
+        const y = tPdf(x, df);
+        const px = ((x - minX) / (maxX - minX)) * width;
+        const py = height - 24 - (y / maxY) * (height - 40);
+        if (x === minX) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.strokeStyle = '#2563eb';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      const shadeColor = 'rgba(239, 68, 68, 0.25)';
+      ctx.fillStyle = shadeColor;
+
+      function shadeTail(xStart, xEnd) {
+        ctx.beginPath();
+        let started = false;
+        for (let x = xStart; x <= xEnd; x += step) {
+          const y = tPdf(x, df);
+          const px = ((x - minX) / (maxX - minX)) * width;
+          const py = height - 24 - (y / maxY) * (height - 40);
+          if (!started) {
+            ctx.moveTo(px, height - 24);
+            ctx.lineTo(px, py);
+            started = true;
+          } else {
+            ctx.lineTo(px, py);
+          }
+        }
+        const endX = ((xEnd - minX) / (maxX - minX)) * width;
+        ctx.lineTo(endX, height - 24);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      shadeTail(minX, -Math.abs(crit));
+      shadeTail(Math.abs(crit), maxX);
+
+      const pShade = 'rgba(16, 185, 129, 0.3)';
+      ctx.fillStyle = pShade;
+      shadeTail(minX, -Math.abs(tVal));
+      shadeTail(Math.abs(tVal), maxX);
+
+      function drawVerticalLine(xValue, color, label) {
+        const x = ((xValue - minX) / (maxX - minX)) * width;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x, 16);
+        ctx.lineTo(x, height - 24);
+        ctx.stroke();
+        ctx.fillStyle = color;
+        ctx.font = '12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(label, x, 2);
+      }
+
+      drawVerticalLine(tVal, '#10b981', `t = ${formatNumber(tVal, 2)}`);
+      drawVerticalLine(-crit, '#ef4444', `-t*`);
+      drawVerticalLine(crit, '#ef4444', `t*`);
+
+      drawAxis(ctx, width, height, minX, maxX);
+    }
+
+    function update() {
+      const values = parseSampleValues(sampleInput.value);
+      if (values.length < 2) {
+        sampleWarning.style.display = 'block';
+        decisionStat.textContent = 'Decision: —';
+        decisionStat.className = 'stat';
+        decisionText.textContent = 'Enter at least two values to compute the t-statistic.';
+        return;
+      }
+      sampleWarning.style.display = 'none';
+
+      const n = values.length;
+      const df = n - 1;
+      const xBar = mean(values);
+      const s = sampleSd(values);
+      const se = s / Math.sqrt(n);
+      const mu0 = Number(muInput.value);
+      const alpha = Math.min(Math.max(Number(alphaInput.value), 0.001), 0.20);
+
+      const tVal = (xBar - mu0) / se;
+      const crit = tInv(1 - alpha / 2, df);
+      const pVal = 2 * (1 - tCdf(Math.abs(tVal), df));
+
+      nStat.textContent = `n = ${n}`;
+      meanStat.textContent = `mean = ${formatNumber(xBar, 2)}`;
+      sdStat.textContent = `sample SD = ${formatNumber(s, 2)}`;
+      seStat.textContent = `SE = ${formatNumber(se, 3)}`;
+
+      dfStat.textContent = `df = ${df}`;
+      tStat.textContent = `t = ${formatNumber(tVal, 3)}`;
+      pStat.textContent = `p-value (two-tail) = ${formatNumber(pVal, 4)}`;
+      critStat.textContent = `critical t (α=${alpha.toFixed(3)}) = ${formatNumber(crit, 3)}`;
+
+      const reject = Math.abs(tVal) > crit;
+      decisionStat.textContent = reject ? 'Decision: Reject H₀' : 'Decision: Fail to reject H₀';
+      decisionStat.className = reject ? 'stat decision-reject' : 'stat decision-fail';
+
+      decisionText.textContent = reject
+        ? 'Your t-value falls in the extreme tails. This one-time sample is unlikely if the population mean is μ₀.'
+        : 'Your t-value sits in the main body of the t-distribution. The sample mean is plausible under μ₀.';
+
+      drawTDistribution(df, tVal, crit, alpha);
+    }
+
+    sampleInput.addEventListener('input', update);
+    muInput.addEventListener('input', update);
+    alphaInput.addEventListener('input', update);
+
+    loadExample.addEventListener('click', () => {
+      exampleIndex = (exampleIndex + 1) % examples.length;
+      sampleInput.value = examples[exampleIndex];
+      update();
+    });
+
+    clearSample.addEventListener('click', () => {
+      sampleInput.value = '';
+      update();
+    });
+
+    window.addEventListener('resize', () => {
+      const parentWidth = tCanvas.parentElement.clientWidth - 2;
+      tCanvas.width = Math.max(320, parentWidth);
+      update();
+    });
+
+    function init() {
+      const parentWidth = tCanvas.parentElement.clientWidth - 2;
+      tCanvas.width = Math.max(320, parentWidth);
+      update();
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -25,8 +25,13 @@ author_profile: true
 	}
 	.stats-tools__grid {
 		display: grid;
-		grid-template-columns: 1fr;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 1.25rem;
+	}
+	@media (max-width: 720px) {
+		.stats-tools__grid {
+			grid-template-columns: 1fr;
+		}
 	}
 	.stats-card {
 		border: 1px solid #e5e7eb;
@@ -89,6 +94,12 @@ author_profile: true
 			<p>See how sampling, fitted lines, residuals, and MSE behave in a simple linear regression.</p>
 			<div class="stats-card__meta">HTML interactive tool</div>
 			<a class="stats-card__link" href="/stats-tools/simple-linear-regression-explorer.html">Open tool →</a>
+		</article>
+		<article class="stats-card">
+			<h3>t-Test Hypothesis Test Visualizer</h3>
+			<p>Locate your one-sample t-value on the t-distribution and see the two-tail p-value.</p>
+			<div class="stats-card__meta">HTML interactive tool</div>
+			<a class="stats-card__link" href="/stats-tools/t-test-hypothesis-tool.html">Open tool →</a>
 		</article>
 	</div>
 </div>
