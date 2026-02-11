@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confidence Interval Explorer</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+    onload="renderMathInElement(document.body, { delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }] });"></script>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #3b82f6;
+      --accent-2: #10b981;
+      --accent-3: #f59e0b;
+      --border: #e5e7eb;
+      --shadow: 0 10px 24px rgba(0,0,0,0.08);
+      --good: #10b981;
+      --bad: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      padding: 24px 28px 8px 28px;
+    }
+    h1 {
+      margin: 0 0 6px 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    p.lead {
+      margin: 0 0 10px 0;
+      color: var(--muted);
+    }
+    .container {
+      padding: 18px 28px 28px 28px;
+      display: grid;
+      gap: 18px;
+      grid-template-columns: 1fr;
+    }
+    .controls {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 14px;
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      align-items: center;
+    }
+    .control-group label {
+      display: block;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .control-group input[type="range"] {
+      width: 100%;
+    }
+    .value-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3730a3;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.05s ease, background 0.2s ease;
+      margin-right: 8px;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn.secondary {
+      background: #fff;
+      border-color: var(--border);
+      color: var(--text);
+    }
+    .grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 10px;
+    }
+    .panel h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+    canvas {
+      width: 100%;
+      height: 380px;
+    }
+    .stats {
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 10px;
+    }
+    .footer-note {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    #interpretationText p {
+      margin: 0 0 8px 0;
+    }
+    #interpretationText p:last-child {
+      margin-bottom: 0;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Confidence Interval Explorer</h1>
+    <p class="lead">Simulate many samples and watch 95% confidence intervals capture the true mean about 95% of the time.</p>
+    <p class="footer-note">By <a href="https://cpan.ai/" target="_blank" rel="noopener noreferrer">Chenguang Pan</a>.</p>
+  </header>
+
+  <div class="container">
+    <div class="controls">
+      <div class="control-group">
+        <label for="populationMean">Population Mean (mu)</label>
+        <input id="populationMean" type="range" min="40" max="80" step="0.1" value="60" />
+        <div class="value-pill">mu = <span id="populationMeanValue">60</span></div>
+      </div>
+      <div class="control-group">
+        <label for="populationSd">Population SD (sigma)</label>
+        <input id="populationSd" type="range" min="5" max="20" step="0.5" value="10" />
+        <div class="value-pill">sigma = <span id="populationSdValue">10</span></div>
+      </div>
+      <div class="control-group">
+        <label for="sampleSize">Sample Size (n)</label>
+        <input id="sampleSize" type="range" min="5" max="200" step="1" value="30" />
+        <div class="value-pill">n = <span id="sampleSizeValue">30</span></div>
+      </div>
+      <div class="control-group">
+        <label for="confidenceLevel">Confidence Level</label>
+        <input id="confidenceLevel" type="range" min="80" max="99" step="1" value="95" />
+        <div class="value-pill"><span id="confidenceLevelValue">95</span>%</div>
+      </div>
+      <div class="control-group">
+        <label for="batchSize">Intervals per Click</label>
+        <input id="batchSize" type="range" min="1" max="50" step="1" value="10" />
+        <div class="value-pill">k = <span id="batchSizeValue">10</span></div>
+      </div>
+      <div class="control-group">
+        <label>Actions</label>
+        <button id="addOne" class="btn">Add 1 Interval</button>
+        <button id="addBatch" class="btn secondary">Add k</button>
+        <button id="reset" class="btn secondary">Reset</button>
+      </div>
+      <div class="control-group">
+        <label>Margin of Error</label>
+        <div class="value-pill" id="moeValue">ME = 3.58</div>
+        <div class="footer-note">$ME = t^* \cdot (s / \sqrt{n})$</div>
+      </div>
+      <div class="control-group">
+        <label>Coverage</label>
+        <div class="value-pill" id="coverageValue">0 / 0 (0.0%)</div>
+        <div class="footer-note">True mean is the dashed line</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="panel" style="grid-column: span 2;">
+        <h3>Repeated Confidence Intervals</h3>
+        <canvas id="intervalCanvas" width="1100" height="420"></canvas>
+        <div class="legend">
+          <span><span class="dot" style="background: var(--good);"></span>Contains true mean</span>
+          <span><span class="dot" style="background: var(--bad);"></span>Misses true mean</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Sampling Distribution of the Mean</h3>
+        <canvas id="meanCanvas" width="520" height="420"></canvas>
+        <div class="stats" id="meanStats">
+          <span class="stat">No sample means yet</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Interpretation of the Last Draw</h3>
+        <div class="footer-note" id="interpretationText">
+          Draw an interval to see the interpretation update.
+        </div>
+        <h3>Notes</h3>
+        <div class="footer-note">
+          Each interval uses $\bar{x} \pm t^* \cdot (s / \sqrt{n})$ with $df = n - 1$. About the chosen confidence level of intervals should cross the true mean.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const populationMeanInput = document.getElementById('populationMean');
+    const populationMeanValue = document.getElementById('populationMeanValue');
+    const populationSdInput = document.getElementById('populationSd');
+    const populationSdValue = document.getElementById('populationSdValue');
+    const sampleSizeInput = document.getElementById('sampleSize');
+    const sampleSizeValue = document.getElementById('sampleSizeValue');
+    const confidenceLevelInput = document.getElementById('confidenceLevel');
+    const confidenceLevelValue = document.getElementById('confidenceLevelValue');
+    const batchSizeInput = document.getElementById('batchSize');
+    const batchSizeValue = document.getElementById('batchSizeValue');
+    const moeValue = document.getElementById('moeValue');
+    const coverageValue = document.getElementById('coverageValue');
+
+    const intervalCanvas = document.getElementById('intervalCanvas');
+    const meanCanvas = document.getElementById('meanCanvas');
+    const meanStats = document.getElementById('meanStats');
+    const interpretationText = document.getElementById('interpretationText');
+
+    const addOneBtn = document.getElementById('addOne');
+    const addBatchBtn = document.getElementById('addBatch');
+    const resetBtn = document.getElementById('reset');
+
+    let POP_MEAN = 60;
+    let POP_SD = 10;
+    let SAMPLE_N = 30;
+    let CONF_LEVEL = 0.95;
+    let BATCH = 10;
+
+    const maxIntervals = 60;
+    const intervals = [];
+    const sampleMeans = [];
+    const sampleSds = [];
+
+    function formatNumber(value, digits = 2) {
+      return Number(value).toFixed(digits);
+    }
+
+    function normalRandom() {
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    }
+
+    function mean(arr) {
+      return arr.reduce((sum, val) => sum + val, 0) / arr.length;
+    }
+
+    function standardDeviation(arr) {
+      const m = mean(arr);
+      const variance = arr.reduce((sum, val) => sum + (val - m) ** 2, 0) / (arr.length - 1);
+      return Math.sqrt(variance);
+    }
+
+    function logGamma(z) {
+      const coeff = [
+        76.18009172947146,
+        -86.50532032941677,
+        24.01409824083091,
+        -1.231739572450155,
+        0.001208650973866179,
+        -0.000005395239384953
+      ];
+      let x = z;
+      let y = z;
+      let tmp = x + 5.5;
+      tmp -= (x + 0.5) * Math.log(tmp);
+      let ser = 1.000000000190015;
+      for (let j = 0; j < coeff.length; j += 1) {
+        y += 1;
+        ser += coeff[j] / y;
+      }
+      return -tmp + Math.log(2.5066282746310005 * ser / x);
+    }
+
+    function betacf(a, b, x) {
+      const MAXIT = 200;
+      const EPS = 3.0e-7;
+      const FPMIN = 1.0e-30;
+      let qab = a + b;
+      let qap = a + 1.0;
+      let qam = a - 1.0;
+      let c = 1.0;
+      let d = 1.0 - qab * x / qap;
+      if (Math.abs(d) < FPMIN) d = FPMIN;
+      d = 1.0 / d;
+      let h = d;
+      for (let m = 1; m <= MAXIT; m += 1) {
+        let m2 = 2 * m;
+        let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+        d = 1.0 + aa * d;
+        if (Math.abs(d) < FPMIN) d = FPMIN;
+        c = 1.0 + aa / c;
+        if (Math.abs(c) < FPMIN) c = FPMIN;
+        d = 1.0 / d;
+        h *= d * c;
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+        d = 1.0 + aa * d;
+        if (Math.abs(d) < FPMIN) d = FPMIN;
+        c = 1.0 + aa / c;
+        if (Math.abs(c) < FPMIN) c = FPMIN;
+        d = 1.0 / d;
+        const del = d * c;
+        h *= del;
+        if (Math.abs(del - 1.0) < EPS) break;
+      }
+      return h;
+    }
+
+    function betai(a, b, x) {
+      if (x < 0 || x > 1) return NaN;
+      if (x === 0 || x === 1) return x;
+      const bt = Math.exp(logGamma(a + b) - logGamma(a) - logGamma(b) + a * Math.log(x) + b * Math.log(1.0 - x));
+      if (x < (a + 1.0) / (a + b + 2.0)) {
+        return bt * betacf(a, b, x) / a;
+      }
+      return 1.0 - bt * betacf(b, a, 1.0 - x) / b;
+    }
+
+    function tCdf(t, df) {
+      const x = df / (df + t * t);
+      const a = df / 2.0;
+      const b = 0.5;
+      const ib = betai(a, b, x);
+      if (t >= 0) {
+        return 1.0 - 0.5 * ib;
+      }
+      return 0.5 * ib;
+    }
+
+    function tInv(p, df) {
+      if (p <= 0) return -Infinity;
+      if (p >= 1) return Infinity;
+      let low = -20;
+      let high = 20;
+      while (tCdf(high, df) < p) high *= 1.5;
+      while (tCdf(low, df) > p) low *= 1.5;
+      for (let i = 0; i < 80; i += 1) {
+        const mid = (low + high) / 2;
+        const cdf = tCdf(mid, df);
+        if (cdf < p) low = mid; else high = mid;
+      }
+      return (low + high) / 2;
+    }
+
+    function getTCritical() {
+      const alpha = 1 - CONF_LEVEL;
+      const df = Math.max(1, SAMPLE_N - 1);
+      return tInv(1 - alpha / 2, df);
+    }
+
+    function updateDerivedStats() {
+      const df = Math.max(1, SAMPLE_N - 1);
+      const tCritical = getTCritical();
+      const avgSd = sampleSds.length === 0 ? POP_SD : mean(sampleSds);
+      const se = avgSd / Math.sqrt(SAMPLE_N);
+      const moe = tCritical * se;
+      moeValue.textContent = `ME = ${moe.toFixed(2)}`;
+
+      const covered = intervals.filter(d => d.contains).length;
+      const total = intervals.length;
+      const pct = total === 0 ? 0 : (covered / total) * 100;
+      coverageValue.textContent = `${covered} / ${total} (${pct.toFixed(1)}%)`;
+
+      if (sampleMeans.length === 0) {
+        meanStats.innerHTML = '<span class="stat">No sample means yet</span>';
+      } else {
+        const avg = mean(sampleMeans);
+        meanStats.innerHTML = `
+          <span class="stat">Means: ${sampleMeans.length}</span>
+          <span class="stat">Average mean: ${avg.toFixed(2)}</span>
+          <span class="stat">Avg SD: ${avgSd.toFixed(2)}</span>
+          <span class="stat">SE: ${se.toFixed(2)}</span>
+          <span class="stat">df: ${df}</span>
+        `;
+      }
+    }
+
+    function updateInterpretation() {
+      if (intervals.length === 0) {
+        interpretationText.textContent = 'Draw an interval to see the interpretation update.';
+        return;
+      }
+
+      const last = intervals[intervals.length - 1];
+      const confPct = Math.round(CONF_LEVEL * 100);
+      const lower = formatNumber(last.lower, 2);
+      const upper = formatNumber(last.upper, 2);
+      const muValue = formatNumber(POP_MEAN, 2);
+      const xbarValue = formatNumber(last.mean, 2);
+      interpretationText.innerHTML = `
+        <p>We computed a ${confPct}% confidence interval for the population mean, [${lower}, ${upper}] with $\\mu = ${muValue}$ and $\\bar{x} = ${xbarValue}$.</p>
+        <p>Interpretation: If we were to repeatedly take many random samples of size ${SAMPLE_N} from the same population and compute a ${confPct}% confidence interval each time using this same method, then about ${confPct}% of those intervals would contain the true population mean $\\mu$.</p>
+        <p>For our current sample, the interval [${lower}, ${upper}] is our best estimate of plausible values for $\\mu$ given the data and this procedure.</p>
+      `;
+      if (window.renderMathInElement) {
+        renderMathInElement(interpretationText, { delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }] });
+      }
+    }
+
+    function drawXAxis(ctx, width, height, min, max, options = {}) {
+      const tickCount = options.tickCount || 6;
+      ctx.strokeStyle = '#d1d5db';
+      ctx.beginPath();
+      ctx.moveTo(0, height - 14);
+      ctx.lineTo(width, height - 14);
+      ctx.stroke();
+
+      ctx.fillStyle = '#6b7280';
+      ctx.font = '11px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+
+      for (let i = 0; i < tickCount; i += 1) {
+        const value = min + (i / (tickCount - 1)) * (max - min);
+        const x = ((value - min) / (max - min)) * width;
+        ctx.strokeStyle = '#d1d5db';
+        ctx.beginPath();
+        ctx.moveTo(x, height - 14);
+        ctx.lineTo(x, height - 8);
+        ctx.stroke();
+        ctx.fillText(value.toFixed(1), x, height - 6);
+      }
+    }
+
+    function drawIntervals() {
+      const ctx = intervalCanvas.getContext('2d');
+      const width = intervalCanvas.width;
+      const height = intervalCanvas.height;
+      ctx.clearRect(0, 0, width, height);
+
+      const avgSd = sampleSds.length === 0 ? POP_SD : mean(sampleSds);
+      const se = avgSd / Math.sqrt(SAMPLE_N);
+      const range = 4.2 * se;
+      const min = POP_MEAN - range;
+      const max = POP_MEAN + range;
+
+      drawXAxis(ctx, width, height, min, max, { tickCount: 6 });
+
+      const xTrue = ((POP_MEAN - min) / (max - min)) * width;
+      ctx.save();
+      ctx.setLineDash([5, 5]);
+      ctx.strokeStyle = '#111827';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(xTrue, 12);
+      ctx.lineTo(xTrue, height - 24);
+      ctx.stroke();
+      ctx.restore();
+
+      const visibleIntervals = intervals.slice(-maxIntervals);
+      const gap = (height - 40) / Math.max(visibleIntervals.length, 1);
+      visibleIntervals.forEach((d, i) => {
+        const y = 16 + i * gap;
+        const x1 = ((d.lower - min) / (max - min)) * width;
+        const x2 = ((d.upper - min) / (max - min)) * width;
+        const xMean = ((d.mean - min) / (max - min)) * width;
+
+        ctx.strokeStyle = d.contains ? getComputedStyle(document.documentElement).getPropertyValue('--good') : getComputedStyle(document.documentElement).getPropertyValue('--bad');
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(x1, y);
+        ctx.lineTo(x2, y);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#111827';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(xMean, y - 6);
+        ctx.lineTo(xMean, y + 6);
+        ctx.stroke();
+      });
+    }
+
+    function drawHistogram(canvas, data) {
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+
+      if (data.length === 0) {
+        drawXAxis(ctx, width, height, POP_MEAN - 4, POP_MEAN + 4, { tickCount: 6 });
+        return;
+      }
+
+      const min = Math.min(...data);
+      const max = Math.max(...data);
+      const padding = (max - min) * 0.15 || 1;
+      const minX = min - padding;
+      const maxX = max + padding;
+      const bins = 20;
+      const binCounts = new Array(bins).fill(0);
+
+      data.forEach(value => {
+        const idx = Math.min(bins - 1, Math.max(0, Math.floor(((value - minX) / (maxX - minX)) * bins)));
+        binCounts[idx] += 1;
+      });
+
+      const maxCount = Math.max(...binCounts, 1);
+      const barWidth = width / bins;
+
+      ctx.fillStyle = '#3b82f6';
+      binCounts.forEach((count, i) => {
+        const barHeight = (count / maxCount) * (height - 24);
+        const x = i * barWidth;
+        const y = height - barHeight - 14;
+        ctx.fillRect(x + 1, y, barWidth - 2, barHeight);
+      });
+
+      drawXAxis(ctx, width, height, minX, maxX, { tickCount: 6 });
+
+      const xTrue = ((POP_MEAN - minX) / (maxX - minX)) * width;
+      ctx.save();
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = '#111827';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(xTrue, 10);
+      ctx.lineTo(xTrue, height - 20);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function addIntervals(count) {
+      for (let i = 0; i < count; i += 1) {
+        const sample = Array.from({ length: SAMPLE_N }, () => POP_MEAN + POP_SD * normalRandom());
+        const m = mean(sample);
+        const s = standardDeviation(sample);
+        const tCritical = getTCritical();
+        const margin = tCritical * (s / Math.sqrt(SAMPLE_N));
+        const lower = m - margin;
+        const upper = m + margin;
+        const contains = lower <= POP_MEAN && POP_MEAN <= upper;
+        intervals.push({ mean: m, lower, upper, contains });
+        sampleMeans.push(m);
+        sampleSds.push(s);
+      }
+      drawIntervals();
+      drawHistogram(meanCanvas, sampleMeans);
+      updateDerivedStats();
+      updateInterpretation();
+    }
+
+    function resetAll() {
+      intervals.length = 0;
+      sampleMeans.length = 0;
+      sampleSds.length = 0;
+      drawIntervals();
+      drawHistogram(meanCanvas, sampleMeans);
+      updateDerivedStats();
+      updateInterpretation();
+    }
+
+    function syncInputs() {
+      POP_MEAN = Number(populationMeanInput.value);
+      POP_SD = Number(populationSdInput.value);
+      SAMPLE_N = Number(sampleSizeInput.value);
+      CONF_LEVEL = Number(confidenceLevelInput.value) / 100;
+      BATCH = Number(batchSizeInput.value);
+
+      populationMeanValue.textContent = POP_MEAN.toFixed(1);
+      populationSdValue.textContent = POP_SD.toFixed(1);
+      sampleSizeValue.textContent = SAMPLE_N.toString();
+      confidenceLevelValue.textContent = Math.round(CONF_LEVEL * 100).toString();
+      batchSizeValue.textContent = BATCH.toString();
+
+      updateDerivedStats();
+      drawIntervals();
+      drawHistogram(meanCanvas, sampleMeans);
+      updateInterpretation();
+    }
+
+    populationMeanInput.addEventListener('input', syncInputs);
+    populationSdInput.addEventListener('input', syncInputs);
+    sampleSizeInput.addEventListener('input', syncInputs);
+    confidenceLevelInput.addEventListener('input', syncInputs);
+    batchSizeInput.addEventListener('input', syncInputs);
+
+    addOneBtn.addEventListener('click', () => addIntervals(1));
+    addBatchBtn.addEventListener('click', () => addIntervals(BATCH));
+    resetBtn.addEventListener('click', resetAll);
+
+    syncInputs();
+  </script>
+</body>
+</html>
