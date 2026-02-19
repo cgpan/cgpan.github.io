@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F-Distribution From Repeated Sampling</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #3b82f6;
+      --accent-2: #10b981;
+      --accent-3: #f59e0b;
+      --border: #e5e7eb;
+      --shadow: 0 10px 24px rgba(0,0,0,0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      padding: 24px 28px 8px 28px;
+    }
+    h1 {
+      margin: 0 0 6px 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    p.lead {
+      margin: 0 0 10px 0;
+      color: var(--muted);
+    }
+    .container {
+      padding: 18px 28px 28px 28px;
+      display: grid;
+      gap: 18px;
+      grid-template-columns: 1fr;
+    }
+    .controls {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 14px;
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      align-items: center;
+    }
+    .control-group label {
+      display: block;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .control-group input[type="range"] {
+      width: 100%;
+    }
+    .value-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3730a3;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.05s ease, background 0.2s ease;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn.secondary {
+      background: #fff;
+      border-color: var(--border);
+      color: var(--text);
+    }
+    .grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 10px;
+    }
+    .panel h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+    canvas {
+      width: 100%;
+      height: 180px;
+    }
+    .stats {
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 10px;
+    }
+    .footer-note {
+      font-size: 13px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>F-Distribution From Repeated Sampling</h1>
+    <p class="lead">Repeatedly sample from two normal populations, compute the variance ratio F = s<sub>1</sub><sup>2</sup> / s<sub>2</sub><sup>2</sup>, and watch the sampling distribution of F emerge. When sigma<sub>1</sub> = sigma<sub>2</sub>, the ratio follows a central F distribution with df<sub>1</sub> = n<sub>1</sub> - 1 and df<sub>2</sub> = n<sub>2</sub> - 1.</p>
+    <p class="footer-note">By <a href="https://cpan.ai/" target="_blank" rel="noopener noreferrer">Chenguang Pan</a>.</p>
+  </header>
+
+  <div class="container">
+    <div class="controls">
+      <div class="control-group">
+        <label for="n1Input">Sample Size n<sub>1</sub></label>
+        <input id="n1Input" type="range" min="3" max="200" value="12" />
+        <div class="value-pill">n<sub>1</sub> = <span id="n1Value">12</span></div>
+      </div>
+      <div class="control-group">
+        <label for="n2Input">Sample Size n<sub>2</sub></label>
+        <input id="n2Input" type="range" min="3" max="200" value="16" />
+        <div class="value-pill">n<sub>2</sub> = <span id="n2Value">16</span></div>
+      </div>
+      <div class="control-group">
+        <label for="mu1Input">Population mean mu<sub>1</sub></label>
+        <input id="mu1Input" type="range" min="40" max="80" step="0.5" value="60" />
+        <div class="value-pill">mu<sub>1</sub> = <span id="mu1Value">60</span></div>
+      </div>
+      <div class="control-group">
+        <label for="mu2Input">Population mean mu<sub>2</sub></label>
+        <input id="mu2Input" type="range" min="40" max="80" step="0.5" value="60" />
+        <div class="value-pill">mu<sub>2</sub> = <span id="mu2Value">60</span></div>
+      </div>
+      <div class="control-group">
+        <label for="sigma1Input">Population SD sigma<sub>1</sub></label>
+        <input id="sigma1Input" type="range" min="3" max="20" step="0.5" value="8" />
+        <div class="value-pill">sigma<sub>1</sub> = <span id="sigma1Value">8</span></div>
+      </div>
+      <div class="control-group">
+        <label for="sigma2Input">Population SD sigma<sub>2</sub></label>
+        <input id="sigma2Input" type="range" min="3" max="20" step="0.5" value="8" />
+        <div class="value-pill">sigma<sub>2</sub> = <span id="sigma2Value">8</span></div>
+      </div>
+      <div class="control-group">
+        <label for="drawsPerClick">Draws per Click</label>
+        <input id="drawsPerClick" type="range" min="1" max="300" value="20" />
+        <div class="value-pill">Draws = <span id="drawsPerClickValue">20</span></div>
+      </div>
+      <div class="control-group">
+        <label>Actions</label>
+        <button id="drawSample" class="btn">Draw Sample(s)</button>
+        <button id="reset" class="btn secondary" style="margin-left:8px;">Reset</button>
+      </div>
+      <div class="control-group">
+        <label>F-test setup</label>
+        <div class="value-pill" id="dfValue">df1 = 11, df2 = 15</div>
+        <div class="footer-note">F = s<sub>1</sub><sup>2</sup> / s<sub>2</sub><sup>2</sup></div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <h3>Population 1 (normal)</h3>
+        <canvas id="pop1Canvas" width="520" height="200"></canvas>
+        <div class="stats">
+          <span class="stat" id="pop1MeanStat">mu<sub>1</sub> = 60</span>
+          <span class="stat" id="pop1SdStat">sigma<sub>1</sub> = 8</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Population 2 (normal)</h3>
+        <canvas id="pop2Canvas" width="520" height="200"></canvas>
+        <div class="stats">
+          <span class="stat" id="pop2MeanStat">mu<sub>2</sub> = 60</span>
+          <span class="stat" id="pop2SdStat">sigma<sub>2</sub> = 8</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Latest sample variances</h3>
+        <canvas id="varianceCanvas" width="520" height="200"></canvas>
+        <div class="stats" id="varianceStats">
+          <span class="stat">No sample yet</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Sampling distribution of F</h3>
+        <canvas id="fCanvas" width="520" height="200"></canvas>
+        <div class="stats" id="fStats">
+          <span class="stat">0 F ratios collected</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const n1Input = document.getElementById('n1Input');
+    const n2Input = document.getElementById('n2Input');
+    const mu1Input = document.getElementById('mu1Input');
+    const mu2Input = document.getElementById('mu2Input');
+    const sigma1Input = document.getElementById('sigma1Input');
+    const sigma2Input = document.getElementById('sigma2Input');
+    const drawsPerClickInput = document.getElementById('drawsPerClick');
+
+    const n1Value = document.getElementById('n1Value');
+    const n2Value = document.getElementById('n2Value');
+    const mu1Value = document.getElementById('mu1Value');
+    const mu2Value = document.getElementById('mu2Value');
+    const sigma1Value = document.getElementById('sigma1Value');
+    const sigma2Value = document.getElementById('sigma2Value');
+    const drawsPerClickValue = document.getElementById('drawsPerClickValue');
+    const dfValue = document.getElementById('dfValue');
+
+    const pop1Canvas = document.getElementById('pop1Canvas');
+    const pop2Canvas = document.getElementById('pop2Canvas');
+    const varianceCanvas = document.getElementById('varianceCanvas');
+    const fCanvas = document.getElementById('fCanvas');
+
+    const varianceStats = document.getElementById('varianceStats');
+    const fStats = document.getElementById('fStats');
+
+    let MU1 = 60;
+    let MU2 = 60;
+    let SIGMA1 = 8;
+    let SIGMA2 = 8;
+
+    let pop1Values = Array.from({ length: 5000 }, () => MU1 + SIGMA1 * normalRandom());
+    let pop2Values = Array.from({ length: 5000 }, () => MU2 + SIGMA2 * normalRandom());
+
+    let lastVariance1 = null;
+    let lastVariance2 = null;
+    let lastF = null;
+    let fRatios = [];
+
+    function normalRandom() {
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    }
+
+    function mean(arr) {
+      return arr.reduce((sum, val) => sum + val, 0) / arr.length;
+    }
+
+    function sampleVariance(arr) {
+      const m = mean(arr);
+      const variance = arr.reduce((sum, val) => sum + (val - m) ** 2, 0) / (arr.length - 1);
+      return variance;
+    }
+
+    function drawXAxis(ctx, width, height, min, max, options = {}) {
+      const tickCount = options.tickCount || 6;
+      ctx.strokeStyle = '#d1d5db';
+      ctx.beginPath();
+      ctx.moveTo(0, height - 10);
+      ctx.lineTo(width, height - 10);
+      ctx.stroke();
+
+      ctx.fillStyle = '#6b7280';
+      ctx.font = '11px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+
+      for (let i = 0; i < tickCount; i += 1) {
+        const value = min + (i / (tickCount - 1)) * (max - min);
+        const x = ((value - min) / (max - min)) * width;
+        ctx.strokeStyle = '#d1d5db';
+        ctx.beginPath();
+        ctx.moveTo(x, height - 10);
+        ctx.lineTo(x, height - 4);
+        ctx.stroke();
+        ctx.fillText(value.toFixed(0), x, height - 3);
+      }
+    }
+
+    function drawHistogram(canvas, data, options = {}) {
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+
+      const bins = options.bins || 24;
+      const min = options.min ?? Math.min(...data, 0);
+      const max = options.max ?? Math.max(...data, 1);
+      const range = max - min || 1;
+      const binCounts = new Array(bins).fill(0);
+
+      data.forEach(value => {
+        const idx = Math.min(bins - 1, Math.max(0, Math.floor(((value - min) / range) * bins)));
+        binCounts[idx] += 1;
+      });
+
+      const maxCount = Math.max(...binCounts, 1);
+      const barWidth = width / bins;
+
+      ctx.fillStyle = options.barColor || '#3b82f6';
+      binCounts.forEach((count, i) => {
+        const barHeight = (count / maxCount) * (height - 20);
+        const x = i * barWidth;
+        const y = height - barHeight - 10;
+        ctx.fillRect(x + 1, y, barWidth - 2, barHeight);
+      });
+
+      drawXAxis(ctx, width, height, min, max, { tickCount: options.tickCount || 6 });
+    }
+
+    function drawVarianceBars(canvas, v1, v2) {
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+
+      if (v1 === null || v2 === null) {
+        drawXAxis(ctx, width, height, 0, 1, { tickCount: 2 });
+        return;
+      }
+
+      const maxVal = Math.max(v1, v2) * 1.4;
+      const barWidth = width / 4;
+      const barMaxHeight = height - 30;
+
+      ctx.fillStyle = '#f59e0b';
+      const h1 = (v1 / maxVal) * barMaxHeight;
+      ctx.fillRect(width / 4 - barWidth / 2, height - 12 - h1, barWidth, h1);
+
+      ctx.fillStyle = '#10b981';
+      const h2 = (v2 / maxVal) * barMaxHeight;
+      ctx.fillRect((3 * width) / 4 - barWidth / 2, height - 12 - h2, barWidth, h2);
+
+      ctx.fillStyle = '#6b7280';
+      ctx.font = '12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('s1^2', width / 4, height - 2);
+      ctx.fillText('s2^2', (3 * width) / 4, height - 2);
+    }
+
+    function getPop1Min() {
+      return MU1 - 5 * SIGMA1;
+    }
+
+    function getPop1Max() {
+      return MU1 + 5 * SIGMA1;
+    }
+
+    function getPop2Min() {
+      return MU2 - 5 * SIGMA2;
+    }
+
+    function getPop2Max() {
+      return MU2 + 5 * SIGMA2;
+    }
+
+    function getFRange() {
+      if (!fRatios.length) return { min: 0, max: 5 };
+      const sorted = [...fRatios].sort((a, b) => a - b);
+      const idx = Math.max(0, Math.floor(sorted.length * 0.98) - 1);
+      const max = Math.max(2, sorted[idx] * 1.1);
+      return { min: 0, max };
+    }
+
+    function updateDfLabel() {
+      const df1 = Math.max(2, Number(n1Input.value)) - 1;
+      const df2 = Math.max(2, Number(n2Input.value)) - 1;
+      dfValue.textContent = `df1 = ${df1}, df2 = ${df2}`;
+    }
+
+    function updateStats() {
+      if (lastVariance1 === null || lastVariance2 === null || lastF === null) {
+        varianceStats.innerHTML = '<span class="stat">No sample yet</span>';
+      } else {
+        varianceStats.innerHTML = `
+          <span class="stat">s1^2 = ${lastVariance1.toFixed(3)}</span>
+          <span class="stat">s2^2 = ${lastVariance2.toFixed(3)}</span>
+          <span class="stat">F = ${lastF.toFixed(3)}</span>
+        `;
+      }
+
+      if (!fRatios.length) {
+        fStats.innerHTML = '<span class="stat">0 F ratios collected</span>';
+      } else {
+        const m = mean(fRatios);
+        fStats.innerHTML = `
+          <span class="stat">F ratios collected: ${fRatios.length}</span>
+          <span class="stat">Mean F: ${m.toFixed(3)}</span>
+        `;
+      }
+    }
+
+    function drawSample(draws = 1) {
+      const n1 = Math.max(2, Number(n1Input.value));
+      const n2 = Math.max(2, Number(n2Input.value));
+
+      for (let d = 0; d < draws; d += 1) {
+        const sample1 = Array.from({ length: n1 }, () => MU1 + SIGMA1 * normalRandom());
+        const sample2 = Array.from({ length: n2 }, () => MU2 + SIGMA2 * normalRandom());
+        const v1 = sampleVariance(sample1);
+        const v2 = sampleVariance(sample2);
+        const fVal = v2 === 0 ? 0 : v1 / v2;
+
+        fRatios.push(fVal);
+        lastVariance1 = v1;
+        lastVariance2 = v2;
+        lastF = fVal;
+      }
+
+      drawVarianceBars(varianceCanvas, lastVariance1, lastVariance2);
+      const range = getFRange();
+      drawHistogram(fCanvas, fRatios, { bins: 26, barColor: '#10b981', min: range.min, max: range.max, tickCount: 6 });
+      updateStats();
+    }
+
+    function resetAll() {
+      fRatios = [];
+      lastVariance1 = null;
+      lastVariance2 = null;
+      lastF = null;
+      updateStats();
+      drawVarianceBars(varianceCanvas, null, null);
+      const range = getFRange();
+      drawHistogram(fCanvas, [], { bins: 16, barColor: '#10b981', min: range.min, max: range.max, tickCount: 6 });
+    }
+
+    function resizeCanvases() {
+      const targetHeight = Math.max(140, Math.min(220, Math.floor((window.innerHeight - 260) / 4)));
+      [pop1Canvas, pop2Canvas, varianceCanvas, fCanvas].forEach(canvas => {
+        const parentWidth = canvas.parentElement.clientWidth - 2;
+        canvas.width = Math.max(240, parentWidth);
+        canvas.height = targetHeight;
+      });
+
+      drawHistogram(pop1Canvas, pop1Values, { bins: 28, barColor: '#3b82f6', min: getPop1Min(), max: getPop1Max(), tickCount: 6 });
+      drawHistogram(pop2Canvas, pop2Values, { bins: 28, barColor: '#3b82f6', min: getPop2Min(), max: getPop2Max(), tickCount: 6 });
+      drawVarianceBars(varianceCanvas, lastVariance1, lastVariance2);
+      const range = getFRange();
+      drawHistogram(fCanvas, fRatios, { bins: fRatios.length ? 26 : 16, barColor: '#10b981', min: range.min, max: range.max, tickCount: 6 });
+    }
+
+    function init() {
+      updateDfLabel();
+      updateStats();
+      resizeCanvases();
+    }
+
+    n1Input.addEventListener('input', () => {
+      n1Value.textContent = n1Input.value;
+      updateDfLabel();
+    });
+
+    n2Input.addEventListener('input', () => {
+      n2Value.textContent = n2Input.value;
+      updateDfLabel();
+    });
+
+    mu1Input.addEventListener('input', () => {
+      MU1 = Number(mu1Input.value);
+      mu1Value.textContent = MU1.toFixed(1).replace(/\.0$/, '');
+      document.getElementById('pop1MeanStat').textContent = `mu1 = ${MU1.toFixed(1).replace(/\.0$/, '')}`;
+      pop1Values = Array.from({ length: 5000 }, () => MU1 + SIGMA1 * normalRandom());
+      resetAll();
+      resizeCanvases();
+    });
+
+    mu2Input.addEventListener('input', () => {
+      MU2 = Number(mu2Input.value);
+      mu2Value.textContent = MU2.toFixed(1).replace(/\.0$/, '');
+      document.getElementById('pop2MeanStat').textContent = `mu2 = ${MU2.toFixed(1).replace(/\.0$/, '')}`;
+      pop2Values = Array.from({ length: 5000 }, () => MU2 + SIGMA2 * normalRandom());
+      resetAll();
+      resizeCanvases();
+    });
+
+    sigma1Input.addEventListener('input', () => {
+      SIGMA1 = Number(sigma1Input.value);
+      sigma1Value.textContent = SIGMA1.toFixed(1).replace(/\.0$/, '');
+      document.getElementById('pop1SdStat').textContent = `sigma1 = ${SIGMA1.toFixed(1).replace(/\.0$/, '')}`;
+      pop1Values = Array.from({ length: 5000 }, () => MU1 + SIGMA1 * normalRandom());
+      resetAll();
+      resizeCanvases();
+    });
+
+    sigma2Input.addEventListener('input', () => {
+      SIGMA2 = Number(sigma2Input.value);
+      sigma2Value.textContent = SIGMA2.toFixed(1).replace(/\.0$/, '');
+      document.getElementById('pop2SdStat').textContent = `sigma2 = ${SIGMA2.toFixed(1).replace(/\.0$/, '')}`;
+      pop2Values = Array.from({ length: 5000 }, () => MU2 + SIGMA2 * normalRandom());
+      resetAll();
+      resizeCanvases();
+    });
+
+    drawsPerClickInput.addEventListener('input', () => {
+      drawsPerClickValue.textContent = drawsPerClickInput.value;
+    });
+
+    document.getElementById('drawSample').addEventListener('click', () => {
+      drawSample(Number(drawsPerClickInput.value));
+    });
+
+    document.getElementById('reset').addEventListener('click', resetAll);
+
+    window.addEventListener('resize', resizeCanvases);
+
+    init();
+  </script>
+</body>
+</html>

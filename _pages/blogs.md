@@ -43,15 +43,6 @@ author_profile: true
 		flex-direction: column;
 		gap: 0.6rem;
 	}
-	.stats-card__thumb {
-		width: 100%;
-		height: auto;
-		aspect-ratio: 3 / 1;
-		object-fit: cover;
-		object-position: 50% 10%;
-		border-radius: 12px;
-		border: 1px solid #e5e7eb;
-	}
 	.stats-card h3 {
 		margin: 0;
 		font-size: 1.15rem;
@@ -87,35 +78,42 @@ author_profile: true
 
 	<div class="stats-tools__grid">
 		<article class="stats-card">
-			<img class="stats-card__thumb" src="/images/Sampling%20Distribution%20%26%20Standard%20Error.png" alt="Sampling distributions preview" />
 			<h3>Sampling Distributions & Standard Error</h3>
 			<p>Explore how sampling distributions behave as the sample size $n$ changes.</p>
 			<div class="stats-card__meta">HTML interactive tool</div>
 			<a class="stats-card__link" href="/stats-tools/sampling-and-se.html">Open tool →</a>
 		</article>
 		<article class="stats-card">
-			<img class="stats-card__thumb" src="/images/Confidence%20Interval%20Explorer.png" alt="Confidence interval explorer preview" />
 			<h3>Confidence Interval Explorer</h3>
 			<p>Simulate repeated $t$-intervals and see how often they capture the true mean.</p>
 			<div class="stats-card__meta">HTML interactive tool</div>
 			<a class="stats-card__link" href="/stats-tools/confidence-interval-explorer.html">Open tool →</a>
 		</article>
 		<article class="stats-card">
-			<img class="stats-card__thumb" src="/images/t-Distribution%20Explorer.png" alt="t distribution explorer preview" />
 			<h3>t-Distribution Explorer</h3>
 			<p>Compute p-values, critical t-values, and inspect a t-table for common significance levels.</p>
 			<div class="stats-card__meta">HTML interactive tool</div>
 			<a class="stats-card__link" href="/stats-tools/t-distribution-explorer.html">Open tool →</a>
 		</article>
 		<article class="stats-card">
-			<img class="stats-card__thumb" src="/images/Simple%20Linear%20Regression%20Explorer.png" alt="Simple linear regression explorer preview" />
+			<h3>F-Distribution Explorer</h3>
+			<p>Explore F-distribution tails, critical values, and variance-ratio intuition for the F-test.</p>
+			<div class="stats-card__meta">HTML interactive tool</div>
+			<a class="stats-card__link" href="/stats-tools/f-distribution-explorer.html">Open tool →</a>
+		</article>
+		<article class="stats-card">
+			<h3>F-Distribution From Repeated Sampling</h3>
+			<p>Repeatedly sample two normal populations to see how the F ratio distribution forms.</p>
+			<div class="stats-card__meta">HTML interactive tool</div>
+			<a class="stats-card__link" href="/stats-tools/f-distribution-sampling.html">Open tool →</a>
+		</article>
+		<article class="stats-card">
 			<h3>Simple Linear Regression Explorer</h3>
 			<p>See how sampling, fitted lines, residuals, and MSE behave in a simple linear regression.</p>
 			<div class="stats-card__meta">HTML interactive tool</div>
 			<a class="stats-card__link" href="/stats-tools/simple-linear-regression-explorer.html">Open tool →</a>
 		</article>
 		<article class="stats-card">
-			<img class="stats-card__thumb" src="/images/t-Test%20Hypothesis%20Test%20Visualizer.png" alt="t-test hypothesis visualizer preview" />
 			<h3>t-Test Hypothesis Test Visualizer</h3>
 			<p>Locate your one-sample t-value on the t-distribution and see the two-tail p-value.</p>
 			<div class="stats-card__meta">HTML interactive tool</div>
