@@ -61,6 +61,18 @@
       color: var(--muted);
       margin-bottom: 6px;
     }
+    .control-group select,
+    .control-group input[type="range"] {
+      width: 100%;
+    }
+    .control-group select {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: #fff;
+      color: var(--text);
+      font-size: 14px;
+    }
     .value-pill {
       display: inline-flex;
       align-items: center;
@@ -160,6 +172,14 @@
   <div class="container">
     <div class="controls">
       <div class="control-group">
+        <label for="scenarioSelect">Data Scenario</label>
+        <select id="scenarioSelect">
+          <option value="numeric">Linear regression with one numerical variable</option>
+          <option value="binary">Linear regression with one binary variable</option>
+          <option value="mixed">Linear regression with a binary + a numerical variable</option>
+        </select>
+      </div>
+      <div class="control-group">
         <label>Population Size</label>
         <div class="value-pill">N = 500</div>
       </div>
@@ -194,7 +214,7 @@
 
       <div class="panel">
         <h3>Notes</h3>
-        <div class="footer-note">
+        <div class="footer-note" id="scenarioNote">
           The population points are shown at 30% opacity and the true line at 80% opacity. Adjust the sample size, draw a sample, and drag the fitted line to see residuals and MSE update.
         </div>
       </div>
@@ -205,6 +225,8 @@
     const canvas = document.getElementById('regCanvas');
     const popStats = document.getElementById('popStats');
     const sampleStats = document.getElementById('sampleStats');
+    const scenarioSelect = document.getElementById('scenarioSelect');
+    const scenarioNote = document.getElementById('scenarioNote');
     const sampleSizeInput = document.getElementById('sampleSize');
     const sampleSizeValue = document.getElementById('sampleSizeValue');
     const drawSampleBtn = document.getElementById('drawSample');
@@ -213,11 +235,37 @@
 
     const POP_SIZE = 500;
     let sampleSize = 50;
-    const TRUE_B0 = 10;
-    const TRUE_B1 = 0.7;
-    const NOISE_SD = 15;
-    const X_MIN = 0;
-    const X_MAX = 100;
+    const X1_MIN = 0;
+    const X1_MAX = 100;
+
+    const SCENARIOS = {
+      numeric: {
+        key: 'numeric',
+        name: 'Linear regression with one numerical variable',
+        formula: 'Y = β0 + β1X',
+        note: 'Standard scatter plot with an OLS line. Dragging the fitted line is enabled in this mode.',
+        trueModel: { b0: 10, b1: 0.7 },
+        noiseSd: 15
+      },
+      binary: {
+        key: 'binary',
+        name: 'Linear regression with one binary variable',
+        formula: 'Y = β0 + β1X, X ∈ {0,1}',
+        note: 'Points are jittered around X=0 and X=1. Horizontal fitted lines show E[Y|X=0] and E[Y|X=1], and β1 is their difference.',
+        trueModel: { b0: 24, b1: 14 },
+        noiseSd: 10
+      },
+      mixed: {
+        key: 'mixed',
+        name: 'Linear regression with a binary + a numerical variable',
+        formula: 'Y = β0 + β1X1 + β2X2',
+        note: 'Groups are color-coded by X2. Two parallel lines are shown and their vertical gap corresponds to β2.',
+        trueModel: { b0: 8, b1: 0.55, b2: 12 },
+        noiseSd: 12
+      }
+    };
+
+    let scenarioKey = 'numeric';
 
     let population = [];
     let sample = [];
@@ -234,31 +282,167 @@
       return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
     }
 
+    function activeScenario() {
+      return SCENARIOS[scenarioKey];
+    }
+
     function generatePopulation() {
+      const scenario = activeScenario();
+      if (scenario.key === 'numeric') {
+        population = Array.from({ length: POP_SIZE }, () => {
+          const x = X1_MIN + Math.random() * (X1_MAX - X1_MIN);
+          const y = scenario.trueModel.b0 + scenario.trueModel.b1 * x + scenario.noiseSd * normalRandom();
+          return { x, y };
+        });
+        return;
+      }
+
+      if (scenario.key === 'binary') {
+        population = Array.from({ length: POP_SIZE }, () => {
+          const xBinary = Math.random() < 0.5 ? 0 : 1;
+          const y = scenario.trueModel.b0 + scenario.trueModel.b1 * xBinary + scenario.noiseSd * normalRandom();
+          return {
+            xBinary,
+            y,
+            jitter: (Math.random() - 0.5) * 0.22
+          };
+        });
+        return;
+      }
+
       population = Array.from({ length: POP_SIZE }, () => {
-        const x = X_MIN + Math.random() * (X_MAX - X_MIN);
-        const y = TRUE_B0 + TRUE_B1 * x + NOISE_SD * normalRandom();
-        return { x, y };
+        const x1 = X1_MIN + Math.random() * (X1_MAX - X1_MIN);
+        const x2 = Math.random() < 0.5 ? 0 : 1;
+        const y = scenario.trueModel.b0 + scenario.trueModel.b1 * x1 + scenario.trueModel.b2 * x2 + scenario.noiseSd * normalRandom();
+        return { x1, x2, y };
       });
     }
 
-    function computeOLS(points) {
+    function computeOLS(points, xAccessor) {
       const n = points.length;
-      const meanX = points.reduce((sum, p) => sum + p.x, 0) / n;
+      const meanX = points.reduce((sum, p) => sum + xAccessor(p), 0) / n;
       const meanY = points.reduce((sum, p) => sum + p.y, 0) / n;
       let num = 0;
       let den = 0;
       points.forEach(p => {
-        num += (p.x - meanX) * (p.y - meanY);
-        den += (p.x - meanX) ** 2;
+        const x = xAccessor(p);
+        num += (x - meanX) * (p.y - meanY);
+        den += (x - meanX) ** 2;
       });
+      if (Math.abs(den) < 1e-9) {
+        return { b0: meanY, b1: 0 };
+      }
       const b1 = num / den;
       const b0 = meanY - b1 * meanX;
       return { b0, b1 };
     }
 
+    function solveLinear3x3(matrix, vector) {
+      const m = matrix.map((row, i) => [...row, vector[i]]);
+      for (let col = 0; col < 3; col += 1) {
+        let pivot = col;
+        for (let row = col + 1; row < 3; row += 1) {
+          if (Math.abs(m[row][col]) > Math.abs(m[pivot][col])) {
+            pivot = row;
+          }
+        }
+        if (Math.abs(m[pivot][col]) < 1e-12) return null;
+        if (pivot !== col) [m[col], m[pivot]] = [m[pivot], m[col]];
+
+        const pivotVal = m[col][col];
+        for (let c = col; c < 4; c += 1) m[col][c] /= pivotVal;
+
+        for (let row = 0; row < 3; row += 1) {
+          if (row === col) continue;
+          const factor = m[row][col];
+          for (let c = col; c < 4; c += 1) {
+            m[row][c] -= factor * m[col][c];
+          }
+        }
+      }
+      return { b0: m[0][3], b1: m[1][3], b2: m[2][3] };
+    }
+
+    function computeMultipleOLS(points) {
+      const n = points.length;
+      if (!n) return null;
+      let sX1 = 0;
+      let sX2 = 0;
+      let sY = 0;
+      let sX1X1 = 0;
+      let sX2X2 = 0;
+      let sX1X2 = 0;
+      let sX1Y = 0;
+      let sX2Y = 0;
+
+      points.forEach(p => {
+        sX1 += p.x1;
+        sX2 += p.x2;
+        sY += p.y;
+        sX1X1 += p.x1 * p.x1;
+        sX2X2 += p.x2 * p.x2;
+        sX1X2 += p.x1 * p.x2;
+        sX1Y += p.x1 * p.y;
+        sX2Y += p.x2 * p.y;
+      });
+
+      const matrix = [
+        [n, sX1, sX2],
+        [sX1, sX1X1, sX1X2],
+        [sX2, sX1X2, sX2X2]
+      ];
+      const vector = [sY, sX1Y, sX2Y];
+      return solveLinear3x3(matrix, vector);
+    }
+
+    function computeFit(points) {
+      if (!points.length) return null;
+      const scenario = activeScenario();
+      if (scenario.key === 'numeric') {
+        return computeOLS(points, p => p.x);
+      }
+      if (scenario.key === 'binary') {
+        return computeOLS(points, p => p.xBinary);
+      }
+      return computeMultipleOLS(points);
+    }
+
+    function getXRange() {
+      if (scenarioKey === 'binary') {
+        return { min: -0.4, max: 1.4 };
+      }
+      return { min: X1_MIN, max: X1_MAX };
+    }
+
+    function getXTicks() {
+      if (scenarioKey === 'binary') {
+        return [
+          { value: 0, label: '0' },
+          { value: 1, label: '1' }
+        ];
+      }
+      return Array.from({ length: 6 }, (_, i) => {
+        const x = X1_MIN + (i / 5) * (X1_MAX - X1_MIN);
+        return { value: x, label: x.toFixed(0) };
+      });
+    }
+
+    function getXForPoint(point) {
+      if (scenarioKey === 'numeric') return point.x;
+      if (scenarioKey === 'binary') return point.xBinary + (point.jitter || 0);
+      return point.x1;
+    }
+
+    function predict(point, model) {
+      if (!model) return null;
+      if (scenarioKey === 'numeric') return model.b0 + model.b1 * point.x;
+      if (scenarioKey === 'binary') return model.b0 + model.b1 * point.xBinary;
+      return model.b0 + model.b1 * point.x1 + model.b2 * point.x2;
+    }
+
     function getYRange() {
       const ys = population.map(p => p.y);
+      if (sample.length) ys.push(...sample.map(p => p.y));
       const minY = Math.min(...ys);
       const maxY = Math.max(...ys);
       const pad = (maxY - minY) * 0.1 || 10;
@@ -266,7 +450,8 @@
     }
 
     function toCanvasX(x, width, padding) {
-      return padding + ((x - X_MIN) / (X_MAX - X_MIN)) * (width - padding * 2);
+      const { min, max } = getXRange();
+      return padding + ((x - min) / (max - min)) * (width - padding * 2);
     }
 
     function toCanvasY(y, height, padding, minY, maxY) {
@@ -287,15 +472,14 @@
       ctx.font = '11px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
-      for (let i = 0; i <= 5; i += 1) {
-        const x = X_MIN + (i / 5) * (X_MAX - X_MIN);
-        const cx = toCanvasX(x, width, padding);
+      getXTicks().forEach(tick => {
+        const cx = toCanvasX(tick.value, width, padding);
         ctx.beginPath();
         ctx.moveTo(cx, height - padding);
         ctx.lineTo(cx, height - padding + 6);
         ctx.stroke();
-        ctx.fillText(x.toFixed(0), cx, height - padding + 8);
-      }
+        ctx.fillText(tick.label, cx, height - padding + 8);
+      });
 
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
@@ -326,26 +510,78 @@
       ctx.closePath();
     }
 
-    function drawEquations(ctx) {
-      const trueEquation = `True: y = ${TRUE_B0.toFixed(2)} + ${TRUE_B1.toFixed(2)}x`;
-      const sampleEquationText = currentLine
-        ? `Sample: ŷ = ${currentLine.b0.toFixed(2)} + ${currentLine.b1.toFixed(2)}x`
-        : 'Sample: ŷ = —';
-      const mseText = currentMSE === null ? 'MSE: —' : `MSE: ${currentMSE.toFixed(2)}`;
+    function drawMixedLegend(ctx) {
+      const items = [
+        { label: 'Group X2 = 0', color: 'rgba(59, 130, 246, 1)' },
+        { label: 'Group X2 = 1', color: 'rgba(245, 158, 11, 1)' }
+      ];
 
       ctx.save();
-      const fontSize = 19;
+      ctx.font = '13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+      const padding = 10;
+      const lineHeight = 22;
+      const markerSize = 10;
+      const textWidth = Math.max(...items.map(item => ctx.measureText(item.label).width));
+      const boxWidth = padding * 3 + markerSize + textWidth;
+      const boxHeight = padding * 2 + lineHeight * items.length;
+      const x = canvas.width - boxWidth - 28;
+      const y = 38;
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
+      ctx.strokeStyle = 'rgba(229, 231, 235, 1)';
+      drawRoundedRect(ctx, x, y, boxWidth, boxHeight, 12);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      items.forEach((item, idx) => {
+        const rowY = y + padding + idx * lineHeight + lineHeight / 2;
+        ctx.fillStyle = item.color;
+        ctx.beginPath();
+        ctx.arc(x + padding + markerSize / 2, rowY, markerSize / 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#111827';
+        ctx.fillText(item.label, x + padding * 2 + markerSize, rowY);
+      });
+      ctx.restore();
+    }
+
+    function drawEquations(ctx) {
+      const scenario = activeScenario();
+      const trueEquation = scenario.key === 'mixed'
+        ? `True: y = ${scenario.trueModel.b0.toFixed(2)} + ${scenario.trueModel.b1.toFixed(2)}x1 + ${scenario.trueModel.b2.toFixed(2)}x2`
+        : `True: y = ${scenario.trueModel.b0.toFixed(2)} + ${scenario.trueModel.b1.toFixed(2)}x`;
+
+      let sampleEquationText = 'Sample: ŷ = —';
+      if (currentLine) {
+        if (scenario.key === 'mixed') {
+          sampleEquationText = `Sample: ŷ = ${currentLine.b0.toFixed(2)} + ${currentLine.b1.toFixed(2)}x1 + ${currentLine.b2.toFixed(2)}x2`;
+        } else {
+          sampleEquationText = `Sample: ŷ = ${currentLine.b0.toFixed(2)} + ${currentLine.b1.toFixed(2)}x`;
+        }
+      }
+      const mseText = currentMSE === null ? 'MSE: —' : `MSE: ${currentMSE.toFixed(2)}`;
+      const scenarioHint = scenario.key === 'binary'
+        ? 'β1 = E[Y|X=1] − E[Y|X=0]'
+        : scenario.key === 'mixed'
+          ? 'Parallel-line gap = β2'
+          : 'Slope = β1';
+
+      ctx.save();
+      const fontSize = 17;
       ctx.font = `${fontSize}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial`;
       ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
       ctx.strokeStyle = 'rgba(229, 231, 235, 1)';
       const padding = 14;
       const lineHeight = fontSize + 8;
+      const lines = [trueEquation, sampleEquationText, scenarioHint];
       const textWidth = Math.max(
-        ctx.measureText(trueEquation).width,
-        ctx.measureText(sampleEquationText).width
+        ...lines.map(line => ctx.measureText(line).width)
       );
       const boxWidth = textWidth + padding * 2;
-      const boxHeight = lineHeight * 2 + padding * 2;
+      const boxHeight = lineHeight * lines.length + padding * 2;
       const x = 70;
       const y = 40;
 
@@ -356,8 +592,9 @@
       ctx.fillStyle = '#111827';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
-      ctx.fillText(trueEquation, x + padding, y + padding);
-      ctx.fillText(sampleEquationText, x + padding, y + padding + lineHeight);
+      lines.forEach((line, index) => {
+        ctx.fillText(line, x + padding, y + padding + index * lineHeight);
+      });
 
       const mseBoxWidth = ctx.measureText(mseText).width + padding * 2;
       const mseBoxHeight = lineHeight + padding * 2;
@@ -378,7 +615,7 @@
       ctx.globalAlpha = alpha;
       const { minY, maxY } = getYRange();
       points.forEach(p => {
-        const cx = toCanvasX(p.x, canvas.width, 50);
+        const cx = toCanvasX(getXForPoint(p), canvas.width, 50);
         const cy = toCanvasY(p.y, canvas.height, 50, minY, maxY);
         ctx.beginPath();
         ctx.arc(cx, cy, 3, 0, Math.PI * 2);
@@ -395,8 +632,8 @@
       ctx.setLineDash([3, 4]);
       ctx.lineWidth = 1.5;
       points.forEach(p => {
-        const fittedY = line.b0 + line.b1 * p.x;
-        const cx = toCanvasX(p.x, canvas.width, 50);
+        const fittedY = predict(p, line);
+        const cx = toCanvasX(getXForPoint(p), canvas.width, 50);
         const cy = toCanvasY(p.y, canvas.height, 50, minY, maxY);
         const fy = toCanvasY(fittedY, canvas.height, 50, minY, maxY);
         ctx.beginPath();
@@ -410,7 +647,7 @@
     function computeMSE(points, line) {
       if (!points.length || !line) return null;
       const sumSq = points.reduce((acc, p) => {
-        const fitted = line.b0 + line.b1 * p.x;
+        const fitted = predict(p, line);
         const resid = p.y - fitted;
         return acc + resid * resid;
       }, 0);
@@ -419,8 +656,7 @@
 
     function drawLine(ctx, b0, b1, color, dash = [], alpha = 1) {
       const { minY, maxY } = getYRange();
-      const x1 = X_MIN;
-      const x2 = X_MAX;
+      const { min: x1, max: x2 } = getXRange();
       const y1 = b0 + b1 * x1;
       const y2 = b0 + b1 * x2;
       const cx1 = toCanvasX(x1, canvas.width, 50);
@@ -440,10 +676,70 @@
       ctx.restore();
     }
 
+    function drawHorizontalSegment(ctx, xStart, xEnd, yValue, color, dash = [], alpha = 1) {
+      const { minY, maxY } = getYRange();
+      const cx1 = toCanvasX(xStart, canvas.width, 50);
+      const cx2 = toCanvasX(xEnd, canvas.width, 50);
+      const cy = toCanvasY(yValue, canvas.height, 50, minY, maxY);
+
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.setLineDash(dash);
+      ctx.beginPath();
+      ctx.moveTo(cx1, cy);
+      ctx.lineTo(cx2, cy);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawBinaryLineLabel(ctx, x, yValue, text, color, alpha = 1) {
+      const { minY, maxY } = getYRange();
+      const cx = toCanvasX(x, canvas.width, 50);
+      const cy = toCanvasY(yValue, canvas.height, 50, minY, maxY);
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.font = '12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+
+      const padX = 7;
+      const padY = 4;
+      const textWidth = ctx.measureText(text).width;
+      const boxX = cx;
+      const boxY = cy - 8;
+      const boxWidth = textWidth + padX * 2;
+      const boxHeight = 16;
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
+      ctx.strokeStyle = 'rgba(229, 231, 235, 1)';
+      drawRoundedRect(ctx, boxX, boxY, boxWidth, boxHeight, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = color;
+      ctx.fillText(text, boxX + padX, boxY + boxHeight / 2);
+      ctx.restore();
+    }
+
+    function drawBinaryGroupLines(ctx, model, colors, dash = [], alpha = 1) {
+      const yAt0 = model.b0;
+      const yAt1 = model.b0 + model.b1;
+      drawHorizontalSegment(ctx, -0.28, 0.28, yAt0, colors.group0, dash, alpha);
+      drawHorizontalSegment(ctx, 0.72, 1.28, yAt1, colors.group1, dash, alpha);
+      drawBinaryLineLabel(ctx, 0.31, yAt0, 'X=0', colors.group0, alpha);
+      drawBinaryLineLabel(ctx, 1.31, yAt1, 'X=1', colors.group1, alpha);
+    }
+
+    function drawParallelLines(ctx, model, colors, dash = [], alpha = 1) {
+      drawLine(ctx, model.b0, model.b1, colors.group0, dash, alpha);
+      drawLine(ctx, model.b0 + model.b2, model.b1, colors.group1, dash, alpha);
+    }
+
     function getLineCanvasPoints(line) {
       const { minY, maxY } = getYRange();
-      const x1 = X_MIN;
-      const x2 = X_MAX;
+      const { min: x1, max: x2 } = getXRange();
       const y1 = line.b0 + line.b1 * x1;
       const y2 = line.b0 + line.b1 * x2;
       return {
@@ -452,6 +748,45 @@
         x2: toCanvasX(x2, canvas.width, 50),
         y2: toCanvasY(y2, canvas.height, 50, minY, maxY)
       };
+    }
+
+    function getBinarySegmentCanvasPoints(yValue, xStart, xEnd) {
+      const { minY, maxY } = getYRange();
+      return {
+        x1: toCanvasX(xStart, canvas.width, 50),
+        y1: toCanvasY(yValue, canvas.height, 50, minY, maxY),
+        x2: toCanvasX(xEnd, canvas.width, 50),
+        y2: toCanvasY(yValue, canvas.height, 50, minY, maxY)
+      };
+    }
+
+    function getDraggableSegments(line) {
+      if (!line) return [];
+      if (scenarioKey === 'numeric') {
+        return [getLineCanvasPoints(line)];
+      }
+      if (scenarioKey === 'binary') {
+        return [
+          getBinarySegmentCanvasPoints(line.b0, -0.28, 0.28),
+          getBinarySegmentCanvasPoints(line.b0 + line.b1, 0.72, 1.28)
+        ];
+      }
+      return [
+        getLineCanvasPoints(line),
+        (() => {
+          const shifted = { ...line, b0: line.b0 + line.b2 };
+          return getLineCanvasPoints(shifted);
+        })()
+      ];
+    }
+
+    function distanceToCurrentLine(point) {
+      if (!currentLine) return Infinity;
+      const segments = getDraggableSegments(currentLine);
+      return segments.reduce((best, seg) => {
+        const value = distancePointToSegment(point.x, point.y, seg.x1, seg.y1, seg.x2, seg.y2);
+        return Math.min(best, value);
+      }, Infinity);
     }
 
     function distancePointToSegment(px, py, x1, y1, x2, y2) {
@@ -481,16 +816,61 @@
 
       const { minY, maxY } = getYRange();
       drawAxes(ctx, canvas.width, canvas.height, 50, minY, maxY);
+      const scenario = activeScenario();
 
-      drawPoints(ctx, population, 'rgba(59, 130, 246, 1)', 0.3);
-      drawLine(ctx, TRUE_B0, TRUE_B1, 'rgba(59, 130, 246, 1)', [6, 6], 0.8);
+      if (scenario.key === 'mixed') {
+        drawPoints(ctx, population.filter(p => p.x2 === 0), 'rgba(59, 130, 246, 1)', 0.3);
+        drawPoints(ctx, population.filter(p => p.x2 === 1), 'rgba(245, 158, 11, 1)', 0.3);
+        drawParallelLines(
+          ctx,
+          scenario.trueModel,
+          { group0: 'rgba(59, 130, 246, 1)', group1: 'rgba(245, 158, 11, 1)' },
+          [6, 6],
+          0.8
+        );
+      } else if (scenario.key === 'binary') {
+        drawPoints(ctx, population, 'rgba(59, 130, 246, 1)', 0.3);
+        drawBinaryGroupLines(
+          ctx,
+          scenario.trueModel,
+          { group0: 'rgba(59, 130, 246, 1)', group1: 'rgba(245, 158, 11, 1)' },
+          [6, 6],
+          0.85
+        );
+      } else {
+        drawPoints(ctx, population, 'rgba(59, 130, 246, 1)', 0.3);
+        drawLine(ctx, scenario.trueModel.b0, scenario.trueModel.b1, 'rgba(59, 130, 246, 1)', [6, 6], 0.8);
+      }
 
       if (sample.length > 0) {
-        drawPoints(ctx, sample, 'rgba(239, 68, 68, 1)', 0.95);
+        if (scenario.key === 'mixed') {
+          drawPoints(ctx, sample.filter(p => p.x2 === 0), 'rgba(37, 99, 235, 1)', 0.95);
+          drawPoints(ctx, sample.filter(p => p.x2 === 1), 'rgba(217, 119, 6, 1)', 0.95);
+        } else {
+          drawPoints(ctx, sample, 'rgba(239, 68, 68, 1)', 0.95);
+        }
         if (currentLine) {
           drawResiduals(ctx, sample, currentLine);
-          drawLine(ctx, currentLine.b0, currentLine.b1, 'rgba(239, 68, 68, 1)', [], 1);
+          if (scenario.key === 'mixed') {
+            drawParallelLines(
+              ctx,
+              currentLine,
+              { group0: 'rgba(37, 99, 235, 1)', group1: 'rgba(217, 119, 6, 1)' }
+            );
+          } else if (scenario.key === 'binary') {
+            drawBinaryGroupLines(
+              ctx,
+              currentLine,
+              { group0: 'rgba(37, 99, 235, 1)', group1: 'rgba(217, 119, 6, 1)' }
+            );
+          } else {
+            drawLine(ctx, currentLine.b0, currentLine.b1, 'rgba(239, 68, 68, 1)', [], 1);
+          }
         }
+      }
+
+      if (scenario.key === 'mixed') {
+        drawMixedLegend(ctx);
       }
 
       drawEquations(ctx);
@@ -507,8 +887,8 @@
       for (let i = 0; i < sampleSize; i += 1) {
         sample.push(population[indices[i]]);
       }
-      sampleFit = computeOLS(sample);
-      currentLine = { ...sampleFit };
+      sampleFit = computeFit(sample);
+      currentLine = sampleFit ? { ...sampleFit } : null;
       sampleStats.textContent = `Sample: ${sampleSize} points`;
       updateMSE();
       drawScene();
@@ -542,25 +922,30 @@
     function onMouseDown(evt) {
       if (!currentLine) return;
       const point = getCanvasPoint(evt);
-      const { x1, y1, x2, y2 } = getLineCanvasPoints(currentLine);
-      const dist = distancePointToSegment(point.x, point.y, x1, y1, x2, y2);
+      const dist = distanceToCurrentLine(point);
       if (dist <= 8) {
         isDragging = true;
         dragStart = { data: point, line: { ...currentLine } };
+        canvas.style.cursor = 'grabbing';
       }
     }
 
     function onMouseMove(evt) {
-      if (!isDragging || !dragStart) return;
       const point = getCanvasPoint(evt);
+      if (!isDragging || !dragStart) {
+        const dist = distanceToCurrentLine(point);
+        canvas.style.cursor = dist <= 8 ? 'grab' : 'default';
+        return;
+      }
+
       const { minY, maxY } = getYRange();
       const padding = 50;
       const dataY = maxY - ((point.y - padding) / (canvas.height - padding * 2)) * (maxY - minY);
       const startDataY = maxY - ((dragStart.data.y - padding) / (canvas.height - padding * 2)) * (maxY - minY);
       const deltaY = dataY - startDataY;
       currentLine = {
-        b0: dragStart.line.b0 + deltaY,
-        b1: dragStart.line.b1
+        ...dragStart.line,
+        b0: dragStart.line.b0 + deltaY
       };
       updateMSE();
       drawScene();
@@ -569,20 +954,47 @@
     function onMouseUp() {
       isDragging = false;
       dragStart = null;
+      canvas.style.cursor = 'default';
+    }
+
+    function onMouseLeave() {
+      if (!isDragging) {
+        canvas.style.cursor = 'default';
+      }
+    }
+
+    function updateScenarioUI() {
+      const scenario = activeScenario();
+      scenarioNote.textContent = scenario.note;
+      popStats.textContent = `Population: ${POP_SIZE} points • ${scenario.formula}`;
+      sampleStats.textContent = 'No sample drawn yet';
+    }
+
+    function setScenario(nextScenarioKey) {
+      scenarioKey = nextScenarioKey;
+      isDragging = false;
+      dragStart = null;
+      sample = [];
+      sampleFit = null;
+      currentLine = null;
+      currentMSE = null;
+      generatePopulation();
+      updateScenarioUI();
+      drawScene();
     }
 
     function init() {
-      generatePopulation();
-      popStats.textContent = `Population: ${POP_SIZE} points`;
-      drawScene();
+      setScenario(scenarioKey);
     }
 
     drawSampleBtn.addEventListener('click', drawSample);
     resetSampleBtn.addEventListener('click', resetSample);
     bestFitBtn.addEventListener('click', bestFit);
     sampleSizeInput.addEventListener('input', updateSampleSize);
+    scenarioSelect.addEventListener('change', () => setScenario(scenarioSelect.value));
     canvas.addEventListener('mousedown', onMouseDown);
     canvas.addEventListener('mousemove', onMouseMove);
+    canvas.addEventListener('mouseleave', onMouseLeave);
     window.addEventListener('mouseup', onMouseUp);
 
     updateSampleSize();
