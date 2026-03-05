@@ -177,6 +177,7 @@
           <option value="numeric">Linear regression with one numerical variable</option>
           <option value="binary">Linear regression with one binary variable</option>
           <option value="mixed">Linear regression with a binary + a numerical variable</option>
+          <option value="interaction">Linear regression with an interaction</option>
         </select>
       </div>
       <div class="control-group">
@@ -262,6 +263,14 @@
         note: 'Groups are color-coded by X2. Two parallel lines are shown and their vertical gap corresponds to β2.',
         trueModel: { b0: 8, b1: 0.55, b2: 12 },
         noiseSd: 12
+      },
+      interaction: {
+        key: 'interaction',
+        name: 'Linear regression with an interaction',
+        formula: 'Y = β0 + β1X1 + β2X2 + β3(X1·X2)',
+        note: 'Groups are color-coded by X2. Two non-parallel lines are shown; the slope difference between groups is β3.',
+        trueModel: { b0: 8, b1: 0.45, b2: 10, b3: 0.35 },
+        noiseSd: 12
       }
     };
 
@@ -310,10 +319,24 @@
         return;
       }
 
+      if (scenario.key === 'mixed') {
+        population = Array.from({ length: POP_SIZE }, () => {
+          const x1 = X1_MIN + Math.random() * (X1_MAX - X1_MIN);
+          const x2 = Math.random() < 0.5 ? 0 : 1;
+          const y = scenario.trueModel.b0 + scenario.trueModel.b1 * x1 + scenario.trueModel.b2 * x2 + scenario.noiseSd * normalRandom();
+          return { x1, x2, y };
+        });
+        return;
+      }
+
       population = Array.from({ length: POP_SIZE }, () => {
         const x1 = X1_MIN + Math.random() * (X1_MAX - X1_MIN);
         const x2 = Math.random() < 0.5 ? 0 : 1;
-        const y = scenario.trueModel.b0 + scenario.trueModel.b1 * x1 + scenario.trueModel.b2 * x2 + scenario.noiseSd * normalRandom();
+        const y = scenario.trueModel.b0
+          + scenario.trueModel.b1 * x1
+          + scenario.trueModel.b2 * x2
+          + scenario.trueModel.b3 * x1 * x2
+          + scenario.noiseSd * normalRandom();
         return { x1, x2, y };
       });
     }
@@ -337,11 +360,12 @@
       return { b0, b1 };
     }
 
-    function solveLinear3x3(matrix, vector) {
+    function solveLinearSystem(matrix, vector) {
+      const n = matrix.length;
       const m = matrix.map((row, i) => [...row, vector[i]]);
-      for (let col = 0; col < 3; col += 1) {
+      for (let col = 0; col < n; col += 1) {
         let pivot = col;
-        for (let row = col + 1; row < 3; row += 1) {
+        for (let row = col + 1; row < n; row += 1) {
           if (Math.abs(m[row][col]) > Math.abs(m[pivot][col])) {
             pivot = row;
           }
@@ -350,17 +374,17 @@
         if (pivot !== col) [m[col], m[pivot]] = [m[pivot], m[col]];
 
         const pivotVal = m[col][col];
-        for (let c = col; c < 4; c += 1) m[col][c] /= pivotVal;
+        for (let c = col; c <= n; c += 1) m[col][c] /= pivotVal;
 
-        for (let row = 0; row < 3; row += 1) {
+        for (let row = 0; row < n; row += 1) {
           if (row === col) continue;
           const factor = m[row][col];
-          for (let c = col; c < 4; c += 1) {
+          for (let c = col; c <= n; c += 1) {
             m[row][c] -= factor * m[col][c];
           }
         }
       }
-      return { b0: m[0][3], b1: m[1][3], b2: m[2][3] };
+      return m.map(row => row[n]);
     }
 
     function computeMultipleOLS(points) {
@@ -392,7 +416,61 @@
         [sX2, sX1X2, sX2X2]
       ];
       const vector = [sY, sX1Y, sX2Y];
-      return solveLinear3x3(matrix, vector);
+      const solution = solveLinearSystem(matrix, vector);
+      if (!solution) return null;
+      return { b0: solution[0], b1: solution[1], b2: solution[2] };
+    }
+
+    function computeInteractionOLS(points) {
+      const n = points.length;
+      if (!n) return null;
+      let sX1 = 0;
+      let sX2 = 0;
+      let sX3 = 0;
+      let sY = 0;
+
+      let sX1X1 = 0;
+      let sX1X2 = 0;
+      let sX1X3 = 0;
+      let sX2X2 = 0;
+      let sX2X3 = 0;
+      let sX3X3 = 0;
+
+      let sX1Y = 0;
+      let sX2Y = 0;
+      let sX3Y = 0;
+
+      points.forEach(p => {
+        const x1 = p.x1;
+        const x2 = p.x2;
+        const x3 = x1 * x2;
+        sX1 += x1;
+        sX2 += x2;
+        sX3 += x3;
+        sY += p.y;
+
+        sX1X1 += x1 * x1;
+        sX1X2 += x1 * x2;
+        sX1X3 += x1 * x3;
+        sX2X2 += x2 * x2;
+        sX2X3 += x2 * x3;
+        sX3X3 += x3 * x3;
+
+        sX1Y += x1 * p.y;
+        sX2Y += x2 * p.y;
+        sX3Y += x3 * p.y;
+      });
+
+      const matrix = [
+        [n, sX1, sX2, sX3],
+        [sX1, sX1X1, sX1X2, sX1X3],
+        [sX2, sX1X2, sX2X2, sX2X3],
+        [sX3, sX1X3, sX2X3, sX3X3]
+      ];
+      const vector = [sY, sX1Y, sX2Y, sX3Y];
+      const solution = solveLinearSystem(matrix, vector);
+      if (!solution) return null;
+      return { b0: solution[0], b1: solution[1], b2: solution[2], b3: solution[3] };
     }
 
     function computeFit(points) {
@@ -403,6 +481,9 @@
       }
       if (scenario.key === 'binary') {
         return computeOLS(points, p => p.xBinary);
+      }
+      if (scenario.key === 'interaction') {
+        return computeInteractionOLS(points);
       }
       return computeMultipleOLS(points);
     }
@@ -437,6 +518,7 @@
       if (!model) return null;
       if (scenarioKey === 'numeric') return model.b0 + model.b1 * point.x;
       if (scenarioKey === 'binary') return model.b0 + model.b1 * point.xBinary;
+      if (scenarioKey === 'interaction') return model.b0 + model.b1 * point.x1 + model.b2 * point.x2 + model.b3 * point.x1 * point.x2;
       return model.b0 + model.b1 * point.x1 + model.b2 * point.x2;
     }
 
@@ -550,13 +632,17 @@
 
     function drawEquations(ctx) {
       const scenario = activeScenario();
-      const trueEquation = scenario.key === 'mixed'
+      const trueEquation = scenario.key === 'interaction'
+        ? `True: y = ${scenario.trueModel.b0.toFixed(2)} + ${scenario.trueModel.b1.toFixed(2)}x1 + ${scenario.trueModel.b2.toFixed(2)}x2 + ${scenario.trueModel.b3.toFixed(2)}x1x2`
+        : scenario.key === 'mixed'
         ? `True: y = ${scenario.trueModel.b0.toFixed(2)} + ${scenario.trueModel.b1.toFixed(2)}x1 + ${scenario.trueModel.b2.toFixed(2)}x2`
         : `True: y = ${scenario.trueModel.b0.toFixed(2)} + ${scenario.trueModel.b1.toFixed(2)}x`;
 
       let sampleEquationText = 'Sample: ŷ = —';
       if (currentLine) {
-        if (scenario.key === 'mixed') {
+        if (scenario.key === 'interaction') {
+          sampleEquationText = `Sample: ŷ = ${currentLine.b0.toFixed(2)} + ${currentLine.b1.toFixed(2)}x1 + ${currentLine.b2.toFixed(2)}x2 + ${currentLine.b3.toFixed(2)}x1x2`;
+        } else if (scenario.key === 'mixed') {
           sampleEquationText = `Sample: ŷ = ${currentLine.b0.toFixed(2)} + ${currentLine.b1.toFixed(2)}x1 + ${currentLine.b2.toFixed(2)}x2`;
         } else {
           sampleEquationText = `Sample: ŷ = ${currentLine.b0.toFixed(2)} + ${currentLine.b1.toFixed(2)}x`;
@@ -565,6 +651,8 @@
       const mseText = currentMSE === null ? 'MSE: —' : `MSE: ${currentMSE.toFixed(2)}`;
       const scenarioHint = scenario.key === 'binary'
         ? 'β1 = E[Y|X=1] − E[Y|X=0]'
+        : scenario.key === 'interaction'
+          ? 'Slope difference across groups = β3'
         : scenario.key === 'mixed'
           ? 'Parallel-line gap = β2'
           : 'Slope = β1';
@@ -737,6 +825,11 @@
       drawLine(ctx, model.b0 + model.b2, model.b1, colors.group1, dash, alpha);
     }
 
+    function drawInteractionLines(ctx, model, colors, dash = [], alpha = 1) {
+      drawLine(ctx, model.b0, model.b1, colors.group0, dash, alpha);
+      drawLine(ctx, model.b0 + model.b2, model.b1 + model.b3, colors.group1, dash, alpha);
+    }
+
     function getLineCanvasPoints(line) {
       const { minY, maxY } = getYRange();
       const { min: x1, max: x2 } = getXRange();
@@ -769,6 +862,15 @@
         return [
           getBinarySegmentCanvasPoints(line.b0, -0.28, 0.28),
           getBinarySegmentCanvasPoints(line.b0 + line.b1, 0.72, 1.28)
+        ];
+      }
+      if (scenarioKey === 'interaction') {
+        return [
+          getLineCanvasPoints(line),
+          (() => {
+            const shifted = { ...line, b0: line.b0 + line.b2, b1: line.b1 + line.b3 };
+            return getLineCanvasPoints(shifted);
+          })()
         ];
       }
       return [
@@ -818,7 +920,17 @@
       drawAxes(ctx, canvas.width, canvas.height, 50, minY, maxY);
       const scenario = activeScenario();
 
-      if (scenario.key === 'mixed') {
+      if (scenario.key === 'interaction') {
+        drawPoints(ctx, population.filter(p => p.x2 === 0), 'rgba(59, 130, 246, 1)', 0.3);
+        drawPoints(ctx, population.filter(p => p.x2 === 1), 'rgba(245, 158, 11, 1)', 0.3);
+        drawInteractionLines(
+          ctx,
+          scenario.trueModel,
+          { group0: 'rgba(59, 130, 246, 1)', group1: 'rgba(245, 158, 11, 1)' },
+          [6, 6],
+          0.8
+        );
+      } else if (scenario.key === 'mixed') {
         drawPoints(ctx, population.filter(p => p.x2 === 0), 'rgba(59, 130, 246, 1)', 0.3);
         drawPoints(ctx, population.filter(p => p.x2 === 1), 'rgba(245, 158, 11, 1)', 0.3);
         drawParallelLines(
@@ -843,7 +955,7 @@
       }
 
       if (sample.length > 0) {
-        if (scenario.key === 'mixed') {
+        if (scenario.key === 'mixed' || scenario.key === 'interaction') {
           drawPoints(ctx, sample.filter(p => p.x2 === 0), 'rgba(37, 99, 235, 1)', 0.95);
           drawPoints(ctx, sample.filter(p => p.x2 === 1), 'rgba(217, 119, 6, 1)', 0.95);
         } else {
@@ -851,7 +963,13 @@
         }
         if (currentLine) {
           drawResiduals(ctx, sample, currentLine);
-          if (scenario.key === 'mixed') {
+          if (scenario.key === 'interaction') {
+            drawInteractionLines(
+              ctx,
+              currentLine,
+              { group0: 'rgba(37, 99, 235, 1)', group1: 'rgba(217, 119, 6, 1)' }
+            );
+          } else if (scenario.key === 'mixed') {
             drawParallelLines(
               ctx,
               currentLine,
@@ -869,7 +987,7 @@
         }
       }
 
-      if (scenario.key === 'mixed') {
+      if (scenario.key === 'mixed' || scenario.key === 'interaction') {
         drawMixedLegend(ctx);
       }
 
