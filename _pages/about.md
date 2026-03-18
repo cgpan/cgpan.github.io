@@ -25,6 +25,7 @@ My research interests lie at the intersection of **causal machine learning**, **
 
 
 # News  
+- *2026.03*: &nbsp;🎉🎉 Excited to share [EDM-ARS (Educational Data Mining Automated Research System)](https://edmars.ai/) — a domain-specific, multi-agent LLM pipeline that turns a dataset + research prompt into a research paper.
 - *2025.12*: &nbsp;🎉🎉 Chenguang was awarded the Morton T. Embree Outstanding Contribution to Student Learning Award in recognition of his service as a TA.  
 - *2025.11*: &nbsp;🎉🎉 Chenguang will give oral presentations in both AERA 2026 and NCME 2026.
 - *2025.06*: &nbsp;🎉🎉 Three works that Chenguang involved were accepted by SREE 2025 and Chenguang will give an oral and a poster presentation.
