@@ -17,7 +17,7 @@ redirect_from:
 
 <span class='anchor' id='home'></span>
 
-I am a fourth-year PhD student in the Measurement, Evaluation, and Statistics program at Teachers College, Columbia University, where I am advised by Professor [Youmi Suk](https://youmisuk.com/). Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Technology Group in Beijing, where I held roles including business manager, instructor, and researcher for the graduate examination department.
+I am a fourth-year PhD student in the Measurement, Evaluation, and Statistics program at Teachers College, Columbia University, where I am advised by Professor [Youmi Suk](https://youmilab.ai/). Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Technology Group in Beijing, where I held roles including business manager, instructor, and researcher for the graduate examination department.
 
 <span class='anchor' id='research'></span>
 # Research
