@@ -64,8 +64,8 @@ function toggleNews() {
 # Publications   
 ## Journal Papers
 - [Learning Feasible Optimal Treatment Regimes for Personalized Decision-Making](https://osf.io/preprints/psyarxiv/arp48_v1), **Chenguang Pan**, Yuxuan Li, and Youmi Suk, **Under Review**
-- [Fair and Robust Estimation of Heterogeneous Treatment Effects for Optimal Policies in Multilevel Studies](https://osf.io/preprints/psyarxiv/xz3jw), Youmi Suk, Chan Park, **Chenguang Pan**, and Kwangho Kim, **Under Review**  
-- [Using Generative AI for Sequential Data Generation in Monte Carlo Simulation Studies](https://doi.org/10.3102/10769986251397559), Youmi Suk, **Chenguang Pan**, and Ke Yang. Accepted by *Journal of Educational and Behavioral Statistics* (JEBS)
+- [Fair and Robust Estimation of Heterogeneous Treatment Effects for Optimal Policies in Multilevel Studies](https://osf.io/preprints/psyarxiv/xz3jw), Youmi Suk, Chan Park, **Chenguang Pan**, and Kwangho Kim, accepted by *Multivariate Behavioral Research* (MBR)  
+- [Using Generative AI for Sequential Data Generation in Monte Carlo Simulation Studies](https://doi.org/10.3102/10769986251397559), Youmi Suk, **Chenguang Pan**, and Ke Yang. Publised by *Journal of Educational and Behavioral Statistics* (JEBS)
 
 ## Proceedings
 <div class="paper-box">
@@ -156,6 +156,7 @@ Youmi Suk and **Chenguang Pan**
 
 
 # 🧐 Academic Service
+- Reviewer, American Causal Inference Conference (ACIC) 2026  
 - [Reviewer, 2026 American Institute of Research Forum](https://www.airweb.org/forum/2026/information/2026-proposal-reviewers)
 - Discussant, 3rd Annual Conference of Advanced Quantitative Methods and Analytics for Public Policy Support
 - Reviewer, AERA 2026 Annual Meeting
