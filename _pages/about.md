@@ -63,6 +63,8 @@ function toggleNews() {
 <span class='anchor' id='publications'></span>
 # Publications   
 ## Journal Papers
+- [Estimating Optimal Dynamic Treatment Regimes for Personalized Education:A Tutorial and Applications with Machine Learning](), **Chenguang Pan**, Yuxuan Li, and Youmi Suk, **Under Review**  
+- [Generative AI-Based Monte Carlo Simulation for Method Evaluation Using Synthetic Multilevel Data](), Youmi Suk, **Chenguang Pan**, and Weixuan Xiao, **Under Review**  
 - [Learning Feasible Optimal Treatment Regimes for Personalized Decision-Making](https://osf.io/preprints/psyarxiv/arp48_v1), **Chenguang Pan**, Yuxuan Li, and Youmi Suk, **Under Review**
 - [Fair and Robust Estimation of Heterogeneous Treatment Effects for Optimal Policies in Multilevel Studies](https://osf.io/preprints/psyarxiv/xz3jw), Youmi Suk, Chan Park, **Chenguang Pan**, and Kwangho Kim, accepted by *Multivariate Behavioral Research* (MBR)  
 - [Using Generative AI for Sequential Data Generation in Monte Carlo Simulation Studies](https://doi.org/10.3102/10769986251397559), Youmi Suk, **Chenguang Pan**, and Ke Yang. Publised by *Journal of Educational and Behavioral Statistics* (JEBS)
@@ -156,6 +158,7 @@ Youmi Suk and **Chenguang Pan**
 
 
 # 🧐 Academic Service
+- Reviewer, Research Method, Society for Research on Educational Effectiveness (SREE) 2026  
 - Reviewer, American Causal Inference Conference (ACIC) 2026  
 - [Reviewer, 2026 American Institute of Research Forum](https://www.airweb.org/forum/2026/information/2026-proposal-reviewers)
 - Discussant, 3rd Annual Conference of Advanced Quantitative Methods and Analytics for Public Policy Support
@@ -169,14 +172,15 @@ Youmi Suk and **Chenguang Pan**
 
 <span class='anchor' id='teaching'></span>
 # Teaching
-- *2025.09 - 2025.12*, Teaching Assistance for HUDM 5122 Applied Regression Analysis, Columbia University, NY, U.S.
-- *2022.09 - 2022.12*, Teaching Assistance for QMSS GR5010 Quantitative Theory in Social Science, Columbia University, NY, U.S.
+- *2026.01 - 2026.05*, Teaching Assistant for HUDM 5122 Applied Regression Analysis, Sessions 001 and 003, Columbia University, NY, U.S.
+- *2025.09 - 2025.12*, Teaching Assistant for HUDM 5122 Applied Regression Analysis, Columbia University, NY, U.S.
+- *2022.09 - 2022.12*, Teaching Assistant for QMSS GR5010 Quantitative Theory in Social Science, Columbia University, NY, U.S.
 - *2021.01 - 2021.07*, Instructor of Python Programming and Machine Learning, New Oriental Education & Technology Group, Beijing, China.
 - *2013.01 - 2022.07*, Instructor of GRE preparation in verbal and quantitative reasoning (teaching over 7,000 hours for over 10,000 students), New Oriental Education & Technology Group, Beijing, China.
 
 # Industry Experiences
 - *2018.05 - 2022.08*, Deputy Manager of American Graduate Tests Division, Full-time, New Oriental Education & Technology Group, Beijing, China.
-- *2014.05 - 2018.05*, Senior Researcher of GRE Instruction and Curriculum Department, Full-time, New Oriental Education & Technology Group, Beijing, China.
+- *2014.05 - 2018.05*, Senior Researcher of GRE Instruction and Curriculum Department, Full-time, New Oriental Education & Technology Group, Beijing, China.  
 
 <span class='anchor' id='cv'></span>
 # CV
