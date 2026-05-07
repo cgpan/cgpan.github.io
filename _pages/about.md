@@ -168,7 +168,7 @@ Youmi Suk and **Chenguang Pan**
 # 📖 Educations
 - *2022.09 - now*: Ph.D. in Measurement, Evaluation, and Statistics, Teachers College, Columbia University, NY, U.S.
 - *2020.09 - 2021.09*: Master of Education in Quantitative Analytics, University of Virginia, VA, U.S.
-- *2010.09 - 2024.06*: Bachelor of Science in Physics, Harbin Normal University, Harbin, China.
+- *2010.09 - 2014.06*: Bachelor of Science in Physics, Harbin Normal University, Harbin, China.
 
 <span class='anchor' id='teaching'></span>
 # Teaching
