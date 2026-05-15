@@ -66,7 +66,7 @@ function toggleNews() {
 - [Estimating Optimal Dynamic Treatment Regimes for Personalized Education:A Tutorial and Applications with Machine Learning](), **Chenguang Pan**, Yuxuan Li, and Youmi Suk, **Under Review**  
 - [Generative AI-Based Monte Carlo Simulation for Method Evaluation Using Synthetic Multilevel Data](https://arxiv.org/abs/2605.05752), Youmi Suk, **Chenguang Pan**, and Weixuan Xiao, **Under Review**  
 - [Learning Feasible Optimal Treatment Regimes for Personalized Decision-Making](https://osf.io/preprints/psyarxiv/arp48_v1), **Chenguang Pan**, Yuxuan Li, and Youmi Suk, **Under Review**
-- [Fair and Robust Estimation of Heterogeneous Treatment Effects for Optimal Policies in Multilevel Studies](https://osf.io/preprints/psyarxiv/xz3jw), Youmi Suk, Chan Park, **Chenguang Pan**, and Kwangho Kim, accepted by *Multivariate Behavioral Research* (MBR)  
+- [Fair and Robust Estimation of Heterogeneous Treatment Effects for Optimal Policies in Multilevel Studies](https://doi.org/10.1080/00273171.2026.2669081), Youmi Suk, Chan Park, **Chenguang Pan**, and Kwangho Kim, Published by *Multivariate Behavioral Research* (MBR)  
 - [Using Generative AI for Sequential Data Generation in Monte Carlo Simulation Studies](https://doi.org/10.3102/10769986251397559), Youmi Suk, **Chenguang Pan**, and Ke Yang. Publised by *Journal of Educational and Behavioral Statistics* (JEBS)
 
 ## Proceedings
