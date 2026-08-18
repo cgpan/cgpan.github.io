@@ -21,20 +21,22 @@ I am a fourth-year PhD student in the Measurement, Evaluation, and Statistics pr
 
 <span class='anchor' id='research'></span>
 # Research
-My research interests lie at the intersection of **causal machine learning**, **dynamic treatment regimes (DTR)**, and **generative AI for synthetic tabular data**.
+My research interests lie at the intersection of **causal machine learning**, **educational data science**, and **generative AI for synthetic data**.
 
 
 # News  
+- *2026.07* Chenguang will be an instructor this fall for a graduate-level course, HUDM5001 Programming for Data Science, at Teacher College, Columbia University.
+- *2026.06* Chenguang will give two oral presentations at SREE 2026 in Baltimore.
 - *2026.03*: &nbsp;🎉🎉 Excited to share [EDM-ARS (Educational Data Mining Automated Research System)](https://edmars.ai/) — a domain-specific, multi-agent LLM pipeline that turns a dataset + research prompt into a research paper.
 - *2025.12*: &nbsp;🎉🎉 Chenguang was awarded the Morton T. Embree Outstanding Contribution to Student Learning Award in recognition of his service as a TA.  
-- *2025.11*: &nbsp;🎉🎉 Chenguang will give oral presentations in both AERA 2026 and NCME 2026.
-- *2025.06*: &nbsp;🎉🎉 Three works that Chenguang involved were accepted by SREE 2025 and Chenguang will give an oral and a poster presentation.
-- *2025.06*: &nbsp;🎉🎉 Chenguang was invited to be a reviewer for 2026 AERA Annual Meeting.  
+- *2025.11*: &nbsp;🎉🎉 Chenguang will give oral presentations at both AERA 2026 and NCME 2026.
+- *2025.06*: &nbsp;🎉🎉 Three works that Chenguang was involved in were accepted by SREE 2025, and Chenguang will give an oral and a poster presentation.
+- *2025.06*: &nbsp;🎉🎉 Chenguang was invited to be a reviewer for the 2026 AERA Annual Meeting.  
 
 <div id="hidden-news" style="display: none;" markdown="1">
 
 - *2025.05*: &nbsp;🎉🎉 Chenguang gave an oral and a poster presentation about his in-progress work *Designing Realistic and Interpretable Optimal Treatment Regimes for Personalized Education* in ACIC 2025, and [Foundations of Data Science Workshop organized by Columbia Data Science Institute](https://datascience.columbia.edu/event/foundations-of-data-science-workshop-spring-2025/)  
-- *2025.05*: &nbsp;🎉🎉 Chenguang served as poster reviewer for American Causal Inference Conference (ACIC) at Detroit.
+- *2025.05*: &nbsp;🎉🎉 Chenguang served as a poster reviewer for the American Causal Inference Conference (ACIC) in Detroit.
 - *2025.01*: &nbsp;🎉🎉 Chenguang received a sponsored registration for the 2025 AERA Annual Meeting, AERA 2025.
 - *2024.12*: &nbsp;🎉🎉 Chenguang was awarded the Provost's Grant for Conference presentation, Columbia University, NY, U.S.
 - *2024.11*: &nbsp;🎉🎉 Chenguang's paper *Designing Optimal Dynamic Treatment Regimes Using TMLE for Personalized Math Course-taking Plans* (joint work with Youmi Suk) was accepted by the American Educational Research Association (AERA) conference 2025, Denver, CO, U.S.
@@ -63,7 +65,7 @@ function toggleNews() {
 <span class='anchor' id='publications'></span>
 # Publications   
 ## Journal Papers
-- [Estimating Optimal Dynamic Treatment Regimes for Personalized Education:A Tutorial and Applications with Machine Learning](), **Chenguang Pan**, Yuxuan Li, and Youmi Suk, **Under Review**  
+- [Estimating Optimal Dynamic Treatment Regimes for Personalized Education:A Tutorial and Applications with Machine Learning](), **Chenguang Pan**, Yuxuan Li, and Youmi Suk, **Under Revision**  
 - [Generative AI-Based Monte Carlo Simulation for Method Evaluation Using Synthetic Multilevel Data](https://arxiv.org/abs/2605.05752), Youmi Suk, **Chenguang Pan**, and Weixuan Xiao, **Under Review**  
 - [Learning Feasible Optimal Treatment Regimes for Personalized Decision-Making](https://osf.io/preprints/psyarxiv/arp48_v1), **Chenguang Pan**, Yuxuan Li, and Youmi Suk, **Under Review**
 - [Fair and Robust Estimation of Heterogeneous Treatment Effects for Optimal Policies in Multilevel Studies](https://doi.org/10.1080/00273171.2026.2669081), Youmi Suk, Chan Park, **Chenguang Pan**, and Kwangho Kim, Published by *Multivariate Behavioral Research* (MBR)  
