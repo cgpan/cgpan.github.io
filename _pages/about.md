@@ -65,6 +65,7 @@ function toggleNews() {
 <span class='anchor' id='publications'></span>
 # Publications   
 ## Journal Papers
+- [Distilling Black-Box Machine Learning into a Small, Self-Explaining Language Model for Learning Analytics](https://arxiv.org/pdf/2608.21165), **Chenguang Pan**, Airui Meng, and Youmi Suk.  
 - [Estimating Optimal Dynamic Treatment Regimes for Personalized Education:A Tutorial and Applications with Machine Learning](), **Chenguang Pan**, Yuxuan Li, and Youmi Suk, **Under Revision**  
 - [Generative AI-Based Monte Carlo Simulation for Method Evaluation Using Synthetic Multilevel Data](https://arxiv.org/abs/2605.05752), Youmi Suk, **Chenguang Pan**, and Weixuan Xiao, **Under Review**  
 - [Learning Feasible Optimal Treatment Regimes for Personalized Decision-Making](https://osf.io/preprints/psyarxiv/arp48_v1), **Chenguang Pan**, Yuxuan Li, and Youmi Suk, **Under Review**
