@@ -1,0 +1,49 @@
+{
+  "course": "HUDM 5001",
+  "term": "Fall 2026",
+  "default_language": "python",
+  "languages": [
+    {
+      "id": "markdown",
+      "label": "Markdown",
+      "file": "markdown.json"
+    },
+    {
+      "id": "python",
+      "label": "Python",
+      "file": "python.json"
+    },
+    {
+      "id": "sql",
+      "label": "SQL",
+      "file": "sql.json"
+    },
+    {
+      "id": "shell",
+      "label": "Shell",
+      "file": "shell.json"
+    },
+    {
+      "id": "git",
+      "label": "Git",
+      "file": "git.json"
+    }
+  ],
+  "verified": {
+    "date": "2026-09-04",
+    "python": "3.13.15",
+    "pandas": "2.2.3",
+    "numpy": "2.5.2",
+    "matplotlib": "3.11.1",
+    "plotnine": "0.15.8",
+    "plotly": "6.9.0",
+    "sqlite": "3.53.2",
+    "git": "2.55.0"
+  },
+  "footer": "Every output on this page was produced by actually running the example (the Source row carries the verification stamp). Python examples run in an environment matched to Google Colab (Python 3.13, pandas 2.2); a local Anaconda install may ship pandas 3, which prints text columns as `str` instead of `object` and copies data more strictly, but the code on this page works in both. SQL runs in the `sqlite3` shell with `.headers on`, `.mode column`, `.nullvalue NULL`. Shell and Git examples run in a fresh folder named `hudm5001` under a home directory shown as `/Users/student`; your paths, dates and commit ids will differ. Content follows the HUDM 5001 notebooks; the `extra` chip marks a construct that appears in an assignment but not in a lecture.",
+  "credit": {
+    "text": "This page was designed and built in collaboration with Claude Code.",
+    "link_text": "Claude Code",
+    "url": "https://claude.com/claude-code"
+  }
+}

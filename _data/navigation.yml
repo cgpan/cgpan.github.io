@@ -17,3 +17,6 @@ main:
 
   - title: "StatsTools"
     url: "/stats-tools/"
+
+  - title: "PythonTools"
+    url: "/python-tools/"

@@ -1,0 +1,862 @@
+{
+  "lang": "shell",
+  "label": "Shell",
+  "verified": "2026-09-04 · bash on macOS",
+  "topics": [
+    {
+      "id": "environment",
+      "label": "Set up and run Python locally",
+      "week": 1
+    },
+    {
+      "id": "orientation",
+      "label": "Where am I",
+      "week": 9
+    },
+    {
+      "id": "files",
+      "label": "Files and folders",
+      "week": 9
+    },
+    {
+      "id": "read-files",
+      "label": "Reading and summarizing files",
+      "week": 9
+    },
+    {
+      "id": "speed",
+      "label": "Speed tricks",
+      "week": 9
+    }
+  ],
+  "entries": [
+    {
+      "id": "shell/conda-version",
+      "title": "Check the install: conda --version, python --version",
+      "topic": "environment",
+      "week": 1,
+      "summary": "After installing Anaconda or Miniforge, open a terminal (Anaconda Prompt on Windows) and confirm both commands print a version.",
+      "syntax": "conda --version\npython --version",
+      "example": "conda --version\npython --version",
+      "output": "conda 26.7.1\nPython 3.13.15",
+      "volatile": true,
+      "gotcha": "If the terminal says `conda: command not found`, close and reopen it, or run `conda init` once; on Windows use the Anaconda Prompt rather than plain cmd.",
+      "related": [
+        "shell/conda-create",
+        "shell/conda-activate",
+        "python/repl"
+      ],
+      "keywords": [
+        "anaconda",
+        "miniforge",
+        "installed",
+        "version",
+        "verify",
+        "terminal"
+      ],
+      "source": "hudm5001/class_notes/00_environment_setup.md §3"
+    },
+    {
+      "id": "shell/conda-create",
+      "title": "conda create — make an environment for the course",
+      "topic": "environment",
+      "week": 1,
+      "no_run": true,
+      "summary": "An environment is an isolated sandbox with its own Python and packages; one per project keeps upgrades from breaking each other.",
+      "syntax": "conda create -n hudm5001 python=3.12",
+      "example": "conda create -n hudm5001 python=3.12",
+      "output_note": "conda lists the packages it will install and asks `Proceed ([y]/n)?`; answer `y`. Run this once.",
+      "gotcha": "Creating the environment does not turn it on. Follow it with `conda activate hudm5001`.",
+      "related": [
+        "shell/conda-activate",
+        "shell/conda-install",
+        "shell/conda-env-commands"
+      ],
+      "keywords": [
+        "environment",
+        "env",
+        "sandbox",
+        "new environment",
+        "python version"
+      ],
+      "source": "hudm5001/class_notes/00_environment_setup.md §4.1"
+    },
+    {
+      "id": "shell/conda-activate",
+      "title": "conda activate / deactivate",
+      "topic": "environment",
+      "week": 1,
+      "no_run": true,
+      "summary": "Turns the environment on for this terminal window; the prompt then shows `(hudm5001)` on the left.",
+      "syntax": "conda activate hudm5001\nconda deactivate",
+      "example": "conda activate hudm5001",
+      "output_note": "No output; the prompt changes from `(base)` to `(hudm5001)`. Do this every time you open a new terminal to work on the course.",
+      "gotcha": "“Installed a package but Python can't find it” almost always means the wrong environment is active. Activate first, then launch Python, Jupyter or Spyder.",
+      "related": [
+        "shell/conda-create",
+        "shell/launch-tools",
+        "shell/vscode-select-interpreter"
+      ],
+      "keywords": [
+        "switch environment",
+        "turn on",
+        "prompt",
+        "base",
+        "which python"
+      ],
+      "source": "hudm5001/class_notes/00_environment_setup.md §4.1, §10"
+    },
+    {
+      "id": "shell/conda-install",
+      "title": "conda install — add packages",
+      "topic": "environment",
+      "week": 1,
+      "no_run": true,
+      "summary": "Installs packages into the active environment from the conda-forge channel.",
+      "syntax": "conda install -c conda-forge package1 package2 ...",
+      "example": "conda install -c conda-forge numpy pandas matplotlib seaborn plotly plotnine \\\n    statsmodels jupyterlab spyder",
+      "output_note": "conda solves the dependencies, prints the plan and asks `Proceed ([y]/n)?`. The backslash continues the command on the next line.",
+      "gotcha": "Activate the course environment before installing, or the packages land in `base`.",
+      "related": [
+        "shell/pip-install",
+        "shell/conda-activate"
+      ],
+      "keywords": [
+        "install package",
+        "library",
+        "conda-forge",
+        "add",
+        "dependency"
+      ],
+      "source": "hudm5001/class_notes/00_environment_setup.md §4.2"
+    },
+    {
+      "id": "shell/pip-install",
+      "title": "pip install — the other package installer",
+      "topic": "environment",
+      "week": 1,
+      "no_run": true,
+      "summary": "Installs a package from PyPI into the active environment; it works inside a conda environment too, and it is what Colab uses.",
+      "syntax": "pip install package\n!pip install -q package        # inside a Colab cell",
+      "example": "pip install dash",
+      "output_note": "pip prints the download and `Successfully installed dash-…`. Inside Colab the `-q` flag keeps it quiet.",
+      "gotcha": "`sqlite3` needs no install; it ships with Python. Prefer `conda install` for the core scientific packages and `pip` for the rest.",
+      "related": [
+        "shell/conda-install",
+        "python/pip-install"
+      ],
+      "keywords": [
+        "pypi",
+        "install package",
+        "pip",
+        "colab install"
+      ],
+      "source": "hudm5001/class_notes/00_environment_setup.md §4.2"
+    },
+    {
+      "id": "shell/conda-env-commands",
+      "title": "Managing environments: list, export, remove",
+      "topic": "environment",
+      "week": 1,
+      "no_run": true,
+      "summary": "The handful of commands for looking after environments.",
+      "syntax": "conda env list                       # all environments; * marks the active one\nconda list                           # packages in the active environment\nconda env export > environment.yml   # share your setup\nconda remove -n hudm5001 --all       # delete an environment",
+      "example": "conda env list",
+      "output_note": "Prints one line per environment with its folder; the active one is marked with `*`.",
+      "gotcha": "`conda remove --all` deletes the environment for good; your notebooks and scripts are not inside it, so they survive.",
+      "related": [
+        "shell/conda-create",
+        "shell/conda-activate"
+      ],
+      "keywords": [
+        "list environments",
+        "export",
+        "environment.yml",
+        "delete environment",
+        "packages installed"
+      ],
+      "source": "hudm5001/class_notes/00_environment_setup.md §4.4"
+    },
+    {
+      "id": "shell/launch-tools",
+      "title": "Launch Jupyter, Spyder or VS Code",
+      "topic": "environment",
+      "week": 1,
+      "no_run": true,
+      "summary": "With the course environment active, one word starts each tool.",
+      "syntax": "jupyter lab      # notebooks in the browser\nspyder           # the Spyder IDE\ncode .           # VS Code in the current folder",
+      "example": "conda activate hudm5001\njupyter lab",
+      "output_note": "JupyterLab prints a local URL and opens it in your browser; leave the terminal window open while you work.",
+      "gotcha": "Launch the tool from the activated environment so it uses the course packages. Spyder launched from `base` needs its interpreter pointed at the environment in Preferences.",
+      "related": [
+        "shell/conda-activate",
+        "shell/vscode-select-interpreter",
+        "python/colab-open-notebook"
+      ],
+      "keywords": [
+        "jupyter",
+        "spyder",
+        "vscode",
+        "start",
+        "ide",
+        "notebook locally"
+      ],
+      "source": "hudm5001/class_notes/00_environment_setup.md §5–6"
+    },
+    {
+      "id": "shell/python-script",
+      "title": "python script.py — run a file",
+      "topic": "environment",
+      "week": 1,
+      "summary": "Runs a `.py` file top to bottom from the terminal, the way software engineers run programs.",
+      "syntax": "python script.py",
+      "setup": "cat > hello.py <<'EOF'\n# hello.py\ndef greet(name):\n    return f\"Hello, {name}!\"\n\nif __name__ == \"__main__\":      # runs only when executed directly\n    print(greet(\"HUDM 5001\"))\nEOF",
+      "setup_note": "a file hello.py with a greet() function",
+      "example": "python hello.py",
+      "output": "Hello, HUDM 5001!",
+      "gotcha": "Run it from the folder that contains the file (or give the path). `python: can't open file` means the terminal is in a different folder.",
+      "related": [
+        "python/hello-script",
+        "python/name-main",
+        "python/run-script",
+        "shell/cd"
+      ],
+      "keywords": [
+        "run script",
+        "execute",
+        "command line",
+        "terminal",
+        ".py file"
+      ],
+      "source": "hudm5001/class_notes/00_environment_setup.md §7.2"
+    },
+    {
+      "id": "shell/python-dash-c",
+      "title": "python -c — run one line of Python",
+      "topic": "environment",
+      "week": 1,
+      "summary": "Runs the quoted code without creating a file; handy for checking that packages import.",
+      "syntax": "python -c \"code\"",
+      "example": "python -c \"import sys, numpy, pandas; print('Python', sys.version.split()[0]); print('numpy', numpy.__version__, '| pandas', pandas.__version__)\"",
+      "output": "Python 3.13.15\nnumpy 2.5.2 | pandas 2.2.3",
+      "volatile": true,
+      "gotcha": "Use double quotes around the code and single quotes inside it, as above; mixing them the other way ends the command early.",
+      "related": [
+        "shell/conda-version",
+        "python/import-as"
+      ],
+      "keywords": [
+        "one-liner",
+        "check install",
+        "import test",
+        "version check"
+      ],
+      "source": "hudm5001/class_notes/00_environment_setup.md §9"
+    },
+    {
+      "id": "shell/vscode-select-interpreter",
+      "title": "VS Code: choose the course environment",
+      "topic": "environment",
+      "week": 1,
+      "no_run": true,
+      "summary": "VS Code runs whichever Python you point it at; select the `hudm5001` environment once and both scripts and notebooks use it.",
+      "syntax": "Ctrl+Shift+P  (Mac: Cmd+Shift+P)  →  “Python: Select Interpreter”  →  hudm5001",
+      "example": "Cmd+Shift+P → Python: Select Interpreter → hudm5001",
+      "output_note": "The chosen interpreter appears in the status bar at the bottom of the window.",
+      "gotcha": "This single step is the usual fix for “it works in Colab but not in VS Code”. Restart the notebook kernel after changing it.",
+      "related": [
+        "shell/conda-activate",
+        "shell/launch-tools"
+      ],
+      "keywords": [
+        "vscode",
+        "interpreter",
+        "kernel",
+        "which python",
+        "select"
+      ],
+      "source": "hudm5001/class_notes/00_environment_setup.md §6"
+    },
+    {
+      "id": "shell/terminal-vs-shell",
+      "title": "Terminal vs shell",
+      "topic": "orientation",
+      "week": 9,
+      "no_run": true,
+      "summary": "The terminal is the window you type into; the shell is the program inside it that interprets what you type. Mac and Linux use bash or zsh, Windows uses PowerShell, which understands most of the same commands.",
+      "syntax": "Mac:      Terminal app  →  zsh / bash\nWindows:  PowerShell    →  most commands below work; some differ\nColab:    a code cell   →  start the line with !",
+      "gotcha": "On Windows, `ls`, `cd`, `mkdir`, `rm` and `cp` work in PowerShell, but flags such as `-lh` do not. When in doubt, use Colab's `!` cells, which are real Linux.",
+      "related": [
+        "shell/bang-in-colab",
+        "shell/pwd"
+      ],
+      "keywords": [
+        "bash",
+        "zsh",
+        "powershell",
+        "command line",
+        "cli",
+        "console"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.1"
+    },
+    {
+      "id": "shell/bang-in-colab",
+      "title": "Run a shell command in Colab with !",
+      "topic": "orientation",
+      "week": 9,
+      "runner": "python",
+      "summary": "Every Colab notebook runs on a Linux machine. A code-cell line that starts with `!` is sent to the bash shell instead of Python.",
+      "syntax": "!command",
+      "example": "!echo \"Hello from bash\"\n!pwd\n!ls",
+      "output": "Hello from bash\n/content\niris.csv\nports.csv\ntitanic.csv",
+      "gotcha": "Each `!` line runs in its own brand-new shell, so `!cd folder` is forgotten on the next line. Use `%cd` to change the notebook's folder for real.",
+      "related": [
+        "shell/percent-cd",
+        "shell/pwd",
+        "shell/ls"
+      ],
+      "keywords": [
+        "colab",
+        "exclamation mark",
+        "bang",
+        "shell in notebook",
+        "linux"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.1"
+    },
+    {
+      "id": "shell/echo-whoami-date",
+      "title": "echo, whoami, date",
+      "topic": "orientation",
+      "week": 9,
+      "summary": "Three commands to say hello to the shell: print text, print your user name, print the date and time.",
+      "syntax": "echo \"text\"\nwhoami\ndate",
+      "example": "echo \"Hello from bash\"\nwhoami\ndate",
+      "output": "Hello from bash\nstudent\nFri Sep  4 15:42:37 EDT 2026",
+      "volatile": true,
+      "gotcha": "`echo` prints exactly what you give it; put the text in quotes so spaces and symbols survive.",
+      "related": [
+        "shell/pwd",
+        "shell/bang-in-colab"
+      ],
+      "keywords": [
+        "print",
+        "username",
+        "who am i",
+        "time",
+        "hello"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.1"
+    },
+    {
+      "id": "shell/pwd",
+      "title": "pwd — print working directory",
+      "topic": "orientation",
+      "week": 9,
+      "summary": "Prints the full path of the folder you are currently in.",
+      "syntax": "pwd",
+      "example": "pwd",
+      "output": "/Users/student/hudm5001",
+      "gotcha": "In Colab the working directory is `/content`; on a Mac it starts at your home folder, `/Users/<name>`.",
+      "related": [
+        "shell/ls",
+        "shell/cd",
+        "shell/paths"
+      ],
+      "keywords": [
+        "current directory",
+        "where am i",
+        "path",
+        "folder",
+        "location"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.2"
+    },
+    {
+      "id": "shell/ls",
+      "title": "ls — list files",
+      "topic": "orientation",
+      "week": 9,
+      "summary": "Lists what is inside a folder. Add `-l` for details, `-a` for hidden files, `-h` for human-readable sizes, `-R` to descend into subfolders.",
+      "syntax": "ls\nls -lh\nls -la\nls -R folder",
+      "example": "ls\necho \"--- with sizes ---\"\nls -lh",
+      "output": "iris.csv\nports.csv\ntitanic.csv\n--- with sizes ---\ntotal 72\n-rw-r--r--  1 student  staff   3.8K Sep  4 15:42 iris.csv\n-rw-r--r--  1 student  staff    89B Sep  4 15:42 ports.csv\n-rw-r--r--  1 student  staff    25K Sep  4 15:42 titanic.csv",
+      "volatile": true,
+      "gotcha": "Flags combine: `ls -la` is `-l` and `-a` together. Files whose names start with a dot (like `.gitignore`) only appear with `-a`.",
+      "related": [
+        "shell/pwd",
+        "shell/cd",
+        "shell/mkdir"
+      ],
+      "keywords": [
+        "list",
+        "directory contents",
+        "dir",
+        "flags",
+        "hidden files",
+        "file size"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.2"
+    },
+    {
+      "id": "shell/paths",
+      "title": "Absolute vs relative paths",
+      "topic": "orientation",
+      "week": 9,
+      "summary": "The file system is a tree rooted at `/`. An absolute path starts at the root and works from anywhere; a relative path starts from the folder you are in.",
+      "syntax": "/Users/student/hudm5001/iris.csv    # absolute: starts with /\nhudm5001/iris.csv                   # relative: from the current folder\n~/hudm5001/iris.csv                 # ~ is your home folder",
+      "setup": "cd ~",
+      "setup_note": "start from the home folder",
+      "example": "pwd\nls $HOME/hudm5001          # absolute path (HOME holds your home folder)\nls hudm5001                # relative path: from here",
+      "output": "/Users/student\niris.csv\nports.csv\ntitanic.csv\niris.csv\nports.csv\ntitanic.csv",
+      "gotcha": "A relative path breaks as soon as you `cd` somewhere else; an absolute path does not. In Colab your files live under `/content`.",
+      "related": [
+        "shell/pwd",
+        "shell/cd",
+        "python/os-path"
+      ],
+      "keywords": [
+        "root",
+        "home",
+        "tilde",
+        "full path",
+        "folder tree",
+        "directory structure"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.2"
+    },
+    {
+      "id": "shell/cd",
+      "title": "cd — change directory, with . .. ~ -",
+      "topic": "orientation",
+      "week": 9,
+      "summary": "Moves you into another folder. Four shortcuts: `.` here, `..` one level up, `~` home, `-` the previous folder.",
+      "syntax": "cd folder\ncd ..        # up one level\ncd ~         # home\ncd -         # back where you were",
+      "setup": "mkdir -p practice/data",
+      "setup_note": "a practice/data folder inside hudm5001",
+      "example": "cd practice/data\npwd\ncd ..          # up to practice\npwd\ncd ~           # home\npwd\ncd -           # back to practice",
+      "output": "/Users/student/hudm5001/practice/data\n/Users/student/hudm5001/practice\n/Users/student\n/Users/student/hudm5001/practice",
+      "gotcha": "`cd` alone (no folder) also takes you home. Tab-complete folder names to avoid typos.",
+      "related": [
+        "shell/pwd",
+        "shell/paths",
+        "shell/percent-cd"
+      ],
+      "keywords": [
+        "move",
+        "navigate",
+        "go up",
+        "parent folder",
+        "home",
+        "previous"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.3"
+    },
+    {
+      "id": "shell/percent-cd",
+      "title": "%cd — change the folder for real in Colab",
+      "topic": "orientation",
+      "week": 9,
+      "runner": "python",
+      "summary": "`!cd` only changes the folder inside that one throw-away shell; the `%cd` magic changes the notebook's working directory and keeps it.",
+      "syntax": "%cd folder",
+      "setup": "import os\nos.makedirs(\"practice\", exist_ok=True)",
+      "setup_note": "a practice folder",
+      "example": "!cd practice\n!pwd            # still where we started\n%cd practice\n!pwd            # %cd persisted\n%cd ..",
+      "output": "/content\n/content/practice\n/content/practice\n/content",
+      "gotcha": "`%cd` prints the new folder each time. The magic has no `!` in front of it.",
+      "related": [
+        "shell/bang-in-colab",
+        "shell/cd"
+      ],
+      "keywords": [
+        "colab",
+        "magic",
+        "working directory",
+        "persist",
+        "change folder"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.3"
+    },
+    {
+      "id": "shell/mkdir",
+      "title": "mkdir — make a folder",
+      "topic": "files",
+      "week": 9,
+      "summary": "Creates a new folder; `-p` also creates any missing parent folders along the way.",
+      "syntax": "mkdir name\nmkdir -p parent/child",
+      "example": "mkdir -p practice/data\nls -R practice",
+      "output": "data\n\npractice/data:",
+      "gotcha": "Without `-p`, `mkdir practice/data` fails if `practice` does not exist yet.",
+      "related": [
+        "shell/touch",
+        "shell/ls",
+        "shell/rm"
+      ],
+      "keywords": [
+        "create directory",
+        "new folder",
+        "make directory",
+        "parent folders"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.4"
+    },
+    {
+      "id": "shell/touch",
+      "title": "touch — create an empty file",
+      "topic": "files",
+      "week": 9,
+      "summary": "Creates an empty file, or updates the timestamp of one that exists.",
+      "syntax": "touch file.txt\ntouch a.txt b.csv",
+      "setup": "mkdir -p practice/data",
+      "setup_note": "a practice/data folder",
+      "example": "touch practice/notes.txt practice/data/scores.csv\nls -R practice",
+      "output": "data\nnotes.txt\n\npractice/data:\nscores.csv",
+      "gotcha": "The file really is empty. `touch` is for placeholders; to write content use an editor, a Python script or `echo \"text\" > file`.",
+      "related": [
+        "shell/mkdir",
+        "shell/cat"
+      ],
+      "keywords": [
+        "new file",
+        "empty file",
+        "create file",
+        "timestamp"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.4"
+    },
+    {
+      "id": "shell/cp",
+      "title": "cp — copy",
+      "topic": "files",
+      "week": 9,
+      "summary": "Copies a file to a new name or into another folder; the original stays.",
+      "syntax": "cp source destination\ncp file.txt folder/",
+      "setup": "mkdir -p practice && echo \"lecture notes\" > practice/notes.txt",
+      "setup_note": "practice/notes.txt with one line in it",
+      "example": "cp practice/notes.txt practice/notes_backup.txt\nls practice\ncat practice/notes_backup.txt",
+      "output": "notes_backup.txt\nnotes.txt\nlecture notes",
+      "gotcha": "`cp` silently overwrites an existing destination file. Add `-i` to be asked first.",
+      "related": [
+        "shell/mv",
+        "shell/rm"
+      ],
+      "keywords": [
+        "copy",
+        "duplicate",
+        "backup"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.4"
+    },
+    {
+      "id": "shell/mv",
+      "title": "mv — move or rename",
+      "topic": "files",
+      "week": 9,
+      "summary": "Moves a file into another folder, or renames it when the destination is just a new name.",
+      "syntax": "mv old_name new_name        # rename\nmv file.txt folder/          # move",
+      "setup": "mkdir -p practice/archive && echo \"lecture notes\" > practice/notes.txt",
+      "setup_note": "practice/notes.txt and an empty practice/archive folder",
+      "example": "mv practice/notes.txt practice/README.txt      # rename\nmv practice/README.txt practice/archive/       # move\nls -R practice",
+      "output": "archive\n\npractice/archive:\nREADME.txt",
+      "gotcha": "Like `cp`, `mv` overwrites without asking if the destination already exists.",
+      "related": [
+        "shell/cp",
+        "shell/rm"
+      ],
+      "keywords": [
+        "rename",
+        "move",
+        "relocate"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.4"
+    },
+    {
+      "id": "shell/rm",
+      "title": "rm, rmdir, rm -r — delete, forever",
+      "topic": "files",
+      "week": 9,
+      "summary": "Removes a file. `rmdir` removes an empty folder; `rm -r` removes a folder and everything inside it. There is no Trash and no undo.",
+      "syntax": "rm file.txt\nrmdir empty_folder\nrm -r folder        # careful!",
+      "setup": "mkdir -p practice/data && touch practice/notes.txt practice/data/scores.csv",
+      "setup_note": "a practice folder with two files",
+      "example": "rm practice/notes.txt\nrmdir practice/data          # fails: the folder is not empty\nrm -r practice/data\nls -R practice",
+      "output": "rmdir: practice/data: Directory not empty",
+      "gotcha": "Read the command twice before pressing Enter, especially with `-r`. Deleted means gone.",
+      "related": [
+        "shell/mkdir",
+        "shell/file-naming"
+      ],
+      "keywords": [
+        "delete",
+        "remove",
+        "recursive",
+        "permanent",
+        "trash"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.4"
+    },
+    {
+      "id": "shell/file-naming",
+      "title": "File names: no spaces (and how to cope with them)",
+      "topic": "files",
+      "week": 9,
+      "summary": "A space in a name makes the shell see two names. Prefer lower-case `snake_case` or `camelCase`, ASCII letters, digits, `_` and `-` only.",
+      "syntax": "good:  shell_warmup.txt   shellWarmup.txt   week01_notes.md\nbad:   data science.csv   my file.txt   -report.txt",
+      "example": "mkdir \"data science\"       # a folder with a space (please don't)\nrmdir data science         # the shell sees two names\nrmdir \"data science\"       # quotes rescue you\nls",
+      "output": "rmdir: data: No such file or directory\nrmdir: science: No such file or directory\niris.csv\nports.csv\ntitanic.csv",
+      "gotcha": "Never start a name with `-` (the shell reads it as a flag), and R users: avoid dots except before the extension.",
+      "related": [
+        "shell/rm",
+        "shell/mkdir"
+      ],
+      "keywords": [
+        "spaces",
+        "quotes",
+        "snake_case",
+        "camelCase",
+        "naming rules",
+        "convention"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.7"
+    },
+    {
+      "id": "shell/cat",
+      "title": "cat — print a whole file",
+      "topic": "read-files",
+      "week": 9,
+      "summary": "Prints the entire contents of a file to the screen; fine for small files, overwhelming for big ones.",
+      "syntax": "cat file",
+      "example": "cat ports.csv",
+      "output": "embarked,port_name,country\nS,Southampton,England\nC,Cherbourg,France\nQ,Queenstown,Ireland",
+      "gotcha": "For a large file use `head`, `tail` or `less` (press `q` to quit `less`) instead of `cat`.",
+      "related": [
+        "shell/head-tail",
+        "shell/wc"
+      ],
+      "keywords": [
+        "print file",
+        "show contents",
+        "concatenate",
+        "view"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.5"
+    },
+    {
+      "id": "shell/head-tail",
+      "title": "head and tail — first or last lines",
+      "topic": "read-files",
+      "week": 9,
+      "summary": "Show the first or last lines of a file; `-n` sets how many. The right way to peek at a CSV before loading it.",
+      "syntax": "head -n 5 file\ntail -n 5 file\ntail -n +2 file     # from line 2 onward (skip the header)",
+      "example": "head -n 3 iris.csv\necho \"--- last 2 rows ---\"\ntail -n 2 iris.csv",
+      "output": "sepal_length,sepal_width,petal_length,petal_width,species\n5.1,3.5,1.4,0.2,setosa\n4.9,3.0,1.4,0.2,setosa\n--- last 2 rows ---\n6.2,3.4,5.4,2.3,virginica\n5.9,3.0,5.1,1.8,virginica",
+      "gotcha": "`tail -n +2` (with a plus) means “start at line 2”, which drops a CSV header; `tail -n 2` means “the last 2 lines”.",
+      "related": [
+        "shell/wc",
+        "shell/pipe",
+        "python/pd-inspect"
+      ],
+      "keywords": [
+        "first lines",
+        "last lines",
+        "peek",
+        "preview",
+        "csv header"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.5"
+    },
+    {
+      "id": "shell/wc",
+      "title": "wc — count lines, words, characters",
+      "topic": "read-files",
+      "week": 9,
+      "summary": "Counts lines (`-l`), words (`-w`) or characters (`-c`); `wc -l` on a CSV is the row count plus one header line.",
+      "syntax": "wc -l file\nwc -w file\nwc -c file",
+      "example": "wc -l iris.csv\nwc -l titanic.csv ports.csv",
+      "output": "     151 iris.csv\n     892 titanic.csv\n       4 ports.csv\n     896 total",
+      "gotcha": "The count includes the header line, so `iris.csv` has 150 data rows, not 151.",
+      "related": [
+        "shell/head-tail",
+        "python/pd-inspect"
+      ],
+      "keywords": [
+        "count lines",
+        "number of rows",
+        "word count",
+        "size"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.5"
+    },
+    {
+      "id": "shell/sort-uniq",
+      "title": "sort and uniq -c — sort lines, count repeats",
+      "topic": "read-files",
+      "week": 9,
+      "summary": "`sort` orders lines (`-n` for numbers); `uniq -c` collapses repeated neighbouring lines and counts them.",
+      "syntax": "sort file\nsort -n file\nsort file | uniq -c",
+      "setup": "printf \"10\\n9\\n100\\n9\\n\" > nums.txt",
+      "setup_note": "a file nums.txt with the lines 10, 9, 100, 9",
+      "example": "sort nums.txt            # alphabetical: 100 comes before 9\necho \"--- numeric ---\"\nsort -n nums.txt\necho \"--- counted ---\"\nsort -n nums.txt | uniq -c",
+      "output": "10\n100\n9\n9\n--- numeric ---\n9\n9\n10\n100\n--- counted ---\n   2 9\n   1 10\n   1 100",
+      "gotcha": "`uniq` only merges lines that are next to each other, so always `sort` first.",
+      "related": [
+        "shell/pipe",
+        "shell/cut",
+        "python/pd-value-counts"
+      ],
+      "keywords": [
+        "order",
+        "numeric sort",
+        "count unique",
+        "duplicates",
+        "frequency"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.5"
+    },
+    {
+      "id": "shell/cut",
+      "title": "cut — pick a column out of a CSV",
+      "topic": "read-files",
+      "week": 9,
+      "summary": "Extracts one or more fields from each line; `-d,` sets the comma as the separator and `-f` picks the field numbers.",
+      "syntax": "cut -d, -f2 file\ncut -d, -f1,5 file",
+      "example": "cut -d, -f1,5 iris.csv | head -n 4",
+      "output": "sepal_length,species\n5.1,setosa\n4.9,setosa\n4.7,setosa",
+      "gotcha": "Fields are numbered from 1, not 0. Without `-d,` the default separator is a tab, so a CSV comes back unchanged.",
+      "related": [
+        "shell/pipe",
+        "shell/sort-uniq",
+        "python/pd-select-columns"
+      ],
+      "keywords": [
+        "column",
+        "field",
+        "delimiter",
+        "extract column",
+        "csv"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.5"
+    },
+    {
+      "id": "shell/pipe",
+      "title": "Pipes — chain commands with |",
+      "topic": "read-files",
+      "week": 9,
+      "summary": "Sends the output of one command into the next, so small tools combine into one line of analysis.",
+      "syntax": "command1 | command2 | command3",
+      "example": "# species column -> drop the header -> sort -> count each unique value\ncut -d, -f5 iris.csv | tail -n +2 | sort | uniq -c",
+      "output": "  50 setosa\n  50 versicolor\n  50 virginica",
+      "gotcha": "Read a pipeline left to right, one stage at a time. Run it with the stages removed from the right to see what each one adds.",
+      "related": [
+        "shell/cut",
+        "shell/sort-uniq",
+        "shell/head-tail",
+        "python/pd-value-counts",
+        "sql/group-by"
+      ],
+      "keywords": [
+        "pipeline",
+        "chain",
+        "combine commands",
+        "count unique",
+        "one-liner"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.5"
+    },
+    {
+      "id": "shell/wget",
+      "title": "wget — download a file",
+      "topic": "read-files",
+      "week": 9,
+      "runner": "python",
+      "summary": "Downloads a file from a URL into the current folder; `-q` keeps it quiet and `-O name` chooses the file name. Colab has it preinstalled.",
+      "syntax": "!wget -q URL -O local_name",
+      "example": "!wget -q https://raw.githubusercontent.com/cgpan/hudm5001/main/asset/ports.csv -O ports_download.csv\n!wc -l ports_download.csv\n!head -n 2 ports_download.csv",
+      "output": "       4 ports_download.csv\nembarked,port_name,country\nS,Southampton,England",
+      "gotcha": "Use the raw file address (`raw.githubusercontent.com/...`), not the GitHub page that displays the file, or you download HTML.",
+      "related": [
+        "shell/head-tail",
+        "python/pd-read-csv"
+      ],
+      "keywords": [
+        "download",
+        "url",
+        "fetch",
+        "curl",
+        "internet"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.5"
+    },
+    {
+      "id": "shell/diff",
+      "title": "diff — compare two files (and less, nano)",
+      "topic": "read-files",
+      "week": 9,
+      "summary": "Prints the lines that differ between two files. Two neighbours from the warm-up: `less file` pages through a file (`q` to quit) and `nano file` edits it in the terminal.",
+      "syntax": "diff file1 file2\nless file\nnano file",
+      "setup": "printf \"name,score\\nAnn,90\\nBob,85\\n\" > a.csv\nprintf \"name,score\\nAnn,90\\nBob,88\\n\" > b.csv",
+      "setup_note": "two small CSV files that differ in one line",
+      "example": "diff a.csv b.csv",
+      "output": "3c3\n< Bob,85\n---\n> Bob,88",
+      "gotcha": "No output from `diff` means the files are identical. `<` lines come from the first file, `>` lines from the second.",
+      "related": [
+        "shell/cat",
+        "git/diff"
+      ],
+      "keywords": [
+        "compare",
+        "difference",
+        "changed lines",
+        "pager",
+        "editor"
+      ],
+      "source": "hudm5001_youmilab/warm_ups/shell_warmup.md"
+    },
+    {
+      "id": "shell/tab-completion",
+      "title": "Tab completion",
+      "topic": "speed",
+      "week": 9,
+      "no_run": true,
+      "summary": "Type the first letters of a file or command name and press Tab; the shell finishes it for you, or lists the options if several match.",
+      "syntax": "cd hud<Tab>        →  cd hudm5001/\ncat ir<Tab>        →  cat iris.csv",
+      "gotcha": "If nothing happens, the start you typed matches more than one name: press Tab twice to see them, then type one more letter.",
+      "related": [
+        "shell/history",
+        "shell/file-naming"
+      ],
+      "keywords": [
+        "autocomplete",
+        "tab",
+        "typing faster",
+        "finish name"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.6"
+    },
+    {
+      "id": "shell/history",
+      "title": "history, arrow keys, !$",
+      "topic": "speed",
+      "week": 9,
+      "no_run": true,
+      "summary": "Up and Down arrows scroll through earlier commands; `history` lists them with numbers; `!76` re-runs number 76 and `!$` reuses the last word of the previous command.",
+      "syntax": "history\n!76          # re-run command number 76\n!$           # the last argument of the previous command",
+      "example": "mkdir practice\ncd !$          # same as: cd practice",
+      "output_note": "These shortcuts need a real terminal; they do not apply inside Colab cells.",
+      "gotcha": "`!` also starts Colab shell lines, so `!$` inside a notebook cell is not the same thing.",
+      "related": [
+        "shell/tab-completion"
+      ],
+      "keywords": [
+        "previous command",
+        "repeat",
+        "arrow keys",
+        "last argument",
+        "shortcut"
+      ],
+      "source": "hudm5001/class_notes/01_shell_and_command_line.ipynb §2.6; hudm5001_youmilab/warm_ups/shell_warmup.md"
+    }
+  ]
+}
