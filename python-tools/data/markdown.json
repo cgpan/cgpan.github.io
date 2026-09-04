@@ -1,0 +1,311 @@
+{
+  "lang": "markdown",
+  "label": "Markdown",
+  "verified": "2026-09-04",
+  "topics": [
+    {
+      "id": "markdown-basics",
+      "label": "Text cells: Markdown syntax",
+      "week": 1
+    }
+  ],
+  "entries": [
+    {
+      "id": "markdown/headings",
+      "title": "Headings with #",
+      "topic": "markdown-basics",
+      "week": 1,
+      "summary": "One `#` makes a title, two make a section heading, three a subsection, four a deeper heading.",
+      "syntax": "# Title\n## Section heading\n### Subsection heading\n#### Deeper heading",
+      "example": "# Week 1 notes\n## Markdown\n### Headings",
+      "output_html": "<h1>Week 1 notes</h1>\n<h2>Markdown</h2>\n<h3>Headings</h3>",
+      "gotcha": "Leave a space after the `#`. Written as `#Title` (no space) it stays plain text in most renderers.",
+      "related": [
+        "markdown/paragraphs",
+        "markdown/bold",
+        "python/colab-code-vs-text-cell"
+      ],
+      "keywords": [
+        "title",
+        "header",
+        "section",
+        "h1",
+        "h2",
+        "hashtag"
+      ],
+      "source": "Week_01_Colab_Markdown_Python.ipynb §1.1"
+    },
+    {
+      "id": "markdown/paragraphs",
+      "title": "Paragraphs and line breaks",
+      "topic": "markdown-basics",
+      "week": 1,
+      "summary": "End a line with two spaces and press Enter to start the next line on its own; a blank line starts a new paragraph.",
+      "syntax": "first line␣␣\nsecond line\n\nnew paragraph",
+      "example": "The Top 3 movies on IMDB are listed below.  \nThey are ranked by user rating.\n\nThis sentence starts a new paragraph.",
+      "output_html": "<p>The Top 3 movies on IMDB are listed below.<br />\nThey are ranked by user rating.</p>\n<p>This sentence starts a new paragraph.</p>",
+      "gotcha": "Without the two trailing spaces or a blank line, Markdown glues consecutive lines into one paragraph.",
+      "related": [
+        "markdown/headings",
+        "markdown/lists"
+      ],
+      "keywords": [
+        "newline",
+        "line break",
+        "blank line",
+        "two spaces",
+        "enter"
+      ],
+      "source": "Week_01_Colab_Markdown_Python.ipynb §1.2"
+    },
+    {
+      "id": "markdown/lists",
+      "title": "Bulleted and numbered lists",
+      "topic": "markdown-basics",
+      "week": 1,
+      "summary": "Start each line with `-`, `*` or `+` for a bullet, or with `1.` for a numbered list.",
+      "syntax": "- item\n- item\n\n1. first\n2. second",
+      "example": "The Top 3 movies on IMDB are:\n\n- The Shawshank Redemption\n- The Godfather\n- The Dark Knight\n\nIn order:\n\n1. The Shawshank Redemption\n1. The Godfather\n1. The Dark Knight",
+      "output_html": "<p>The Top 3 movies on IMDB are:</p>\n<ul>\n<li>The Shawshank Redemption</li>\n<li>The Godfather</li>\n<li>The Dark Knight</li>\n</ul>\n<p>In order:</p>\n<ol>\n<li>The Shawshank Redemption</li>\n<li>The Godfather</li>\n<li>The Dark Knight</li>\n</ol>",
+      "gotcha": "The numbers you type do not matter: `1.` on every line still renders as 1, 2, 3. Put a blank line before the first item so the list does not merge into the paragraph above it.",
+      "related": [
+        "markdown/paragraphs",
+        "python/list"
+      ],
+      "keywords": [
+        "bullet",
+        "unordered",
+        "ordered",
+        "numbered",
+        "enumerate",
+        "dash",
+        "asterisk"
+      ],
+      "source": "Week_01_Colab_Markdown_Python.ipynb §1.3"
+    },
+    {
+      "id": "markdown/bold",
+      "title": "Bold with **",
+      "topic": "markdown-basics",
+      "week": 1,
+      "summary": "Wrap text in two asterisks on each side to make it bold.",
+      "syntax": "**bold text**",
+      "example": "I want to highlight **this**.",
+      "output_html": "<p>I want to highlight <strong>this</strong>.</p>",
+      "gotcha": "No spaces just inside the asterisks: `** this **` will not turn bold.",
+      "related": [
+        "markdown/italic",
+        "markdown/inline-code"
+      ],
+      "keywords": [
+        "strong",
+        "emphasis",
+        "asterisk",
+        "font style",
+        "highlight"
+      ],
+      "source": "Week_01_Colab_Markdown_Python.ipynb §1.4"
+    },
+    {
+      "id": "markdown/italic",
+      "title": "Italic with *",
+      "topic": "markdown-basics",
+      "week": 1,
+      "summary": "Wrap text in one asterisk on each side to make it italic.",
+      "syntax": "*italic text*",
+      "example": "Please see *this* before class.",
+      "output_html": "<p>Please see <em>this</em> before class.</p>",
+      "gotcha": "One asterisk is italic, two are bold, three are both: `***loud***`.",
+      "related": [
+        "markdown/bold"
+      ],
+      "keywords": [
+        "emphasis",
+        "em",
+        "slanted",
+        "asterisk",
+        "font style"
+      ],
+      "source": "Week_01_Colab_Markdown_Python.ipynb §1.4"
+    },
+    {
+      "id": "markdown/inline-code",
+      "title": "Inline code with backticks",
+      "topic": "markdown-basics",
+      "week": 1,
+      "summary": "Wrap a word in single backticks to show it in code style inside a sentence.",
+      "syntax": "`code`",
+      "example": "The backtick key sits left of the number 1 on your keyboard. Use `print()` to show a value.",
+      "output_html": "<p>The backtick key sits left of the number 1 on your keyboard. Use <code>print()</code> to show a value.</p>",
+      "gotcha": "The backtick ` is not the single quote '. On most keyboards it is on the key left of 1, also called backquote or grave accent.",
+      "related": [
+        "markdown/code-block",
+        "markdown/bold"
+      ],
+      "keywords": [
+        "backtick",
+        "backquote",
+        "grave",
+        "monospace",
+        "code style"
+      ],
+      "source": "Week_01_Colab_Markdown_Python.ipynb §1.4"
+    },
+    {
+      "id": "markdown/code-block",
+      "title": "Fenced code block",
+      "topic": "markdown-basics",
+      "week": 1,
+      "summary": "Three backticks on their own line open a code block; three more close it. Name the language after the opening fence for coloring.",
+      "syntax": "```python\ncode goes here\n```",
+      "example": "Demo code that is shown, not run:\n\n```python\nprint(\"Hello, world!\")\n```",
+      "output_html": "<p>Demo code that is shown, not run:</p>\n<pre><code class=\"language-python\">print(&quot;Hello, world!&quot;)\n</code></pre>",
+      "gotcha": "Code inside a text cell is never executed. To run it, put it in a code cell instead.",
+      "related": [
+        "markdown/inline-code",
+        "python/print",
+        "python/colab-code-vs-text-cell"
+      ],
+      "keywords": [
+        "fence",
+        "triple backtick",
+        "code chunk",
+        "syntax highlighting"
+      ],
+      "source": "Week_01_Colab_Markdown_Python.ipynb §1.4"
+    },
+    {
+      "id": "markdown/link",
+      "title": "Hyperlinks",
+      "topic": "markdown-basics",
+      "week": 1,
+      "summary": "Put the clickable text in square brackets and the URL in parentheses right after it.",
+      "syntax": "[link text](https://example.com)",
+      "example": "[Click here to visit Google](https://www.google.com)",
+      "output_html": "<p><a href=\"https://www.google.com\">Click here to visit Google</a></p>",
+      "gotcha": "Square brackets first, then parentheses. The other order shows literal brackets.",
+      "related": [
+        "markdown/image"
+      ],
+      "keywords": [
+        "url",
+        "hyperlink",
+        "anchor",
+        "href",
+        "web address"
+      ],
+      "source": "Week_01_Colab_Markdown_Python.ipynb §1.5"
+    },
+    {
+      "id": "markdown/image",
+      "title": "Images",
+      "topic": "markdown-basics",
+      "week": 1,
+      "summary": "An image is a link with an exclamation mark in front. The HTML `<img>` tag does the same and lets you set a width.",
+      "syntax": "![alt text](https://example.com/picture.png)\n<img src=\"https://example.com/picture.png\" width=\"300\">",
+      "example": "![R logo](https://raw.githubusercontent.com/cgpan/humd5001_mini/main/figures/r_logo.png)\n\n<img src=\"https://raw.githubusercontent.com/cgpan/humd5001_mini/main/figures/python_ranking.png\" width=\"300\">",
+      "output_html": "<p><img alt=\"R logo\" src=\"https://raw.githubusercontent.com/cgpan/humd5001_mini/main/figures/r_logo.png\" /></p>\n<p><img src=\"https://raw.githubusercontent.com/cgpan/humd5001_mini/main/figures/python_ranking.png\" width=\"300\"></p>",
+      "gotcha": "The address must point at the image file itself (ending in `.png`, `.jpg`), not at a web page that shows the image.",
+      "related": [
+        "markdown/link"
+      ],
+      "keywords": [
+        "picture",
+        "figure",
+        "img",
+        "png",
+        "width"
+      ],
+      "source": "hudm5001_mini/01_Python_Quick_Start.ipynb cells 4 and 42"
+    },
+    {
+      "id": "markdown/blockquote",
+      "title": "Blockquotes with >",
+      "topic": "markdown-basics",
+      "week": 1,
+      "summary": "Start a line with `>` to set it off as a quotation or a callout box.",
+      "syntax": "> quoted or highlighted text",
+      "example": "> **Kind reminder:** give every variable a meaningful name.",
+      "output_html": "<blockquote>\n<p><strong>Kind reminder:</strong> give every variable a meaningful name.</p>\n</blockquote>",
+      "gotcha": "Each line of a multi-line quote needs its own `>`.",
+      "related": [
+        "markdown/paragraphs"
+      ],
+      "keywords": [
+        "quote",
+        "callout",
+        "note",
+        "tip",
+        "indent"
+      ],
+      "source": "hudm5001_mini/01_Python_Quick_Start.ipynb cell 24"
+    },
+    {
+      "id": "markdown/table",
+      "title": "Tables",
+      "topic": "markdown-basics",
+      "week": 1,
+      "summary": "Pipes separate the columns; the second line of dashes separates the header from the rows.",
+      "syntax": "| Column A | Column B |\n|---|---|\n| value | value |",
+      "example": "| Type | Example | Mutable? |\n|---|---|:--:|\n| `str` | `'success'` | no |\n| `list` | `['a', 5]` | yes |",
+      "output_html": "<table>\n<thead>\n<tr>\n<th>Type</th>\n<th>Example</th>\n<th style=\"text-align: center;\">Mutable?</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>str</code></td>\n<td><code>'success'</code></td>\n<td style=\"text-align: center;\">no</td>\n</tr>\n<tr>\n<td><code>list</code></td>\n<td><code>['a', 5]</code></td>\n<td style=\"text-align: center;\">yes</td>\n</tr>\n</tbody>\n</table>",
+      "gotcha": "The line of dashes is required. Without it you get one long paragraph full of pipes. A colon in that line (`:--:`) centers the column.",
+      "related": [
+        "markdown/lists"
+      ],
+      "keywords": [
+        "grid",
+        "columns",
+        "rows",
+        "pipe",
+        "cheat sheet"
+      ],
+      "source": "hudm5001_mini/01_Python_Quick_Start.ipynb cell 4 and the Quick Reference tables"
+    },
+    {
+      "id": "markdown/horizontal-rule",
+      "title": "Horizontal rule with ---",
+      "topic": "markdown-basics",
+      "week": 1,
+      "summary": "Three dashes on a line of their own draw a horizontal line to separate sections.",
+      "syntax": "---",
+      "example": "End of part 1.\n\n---\n\nStart of part 2.",
+      "output_html": "<p>End of part 1.</p>\n<hr />\n<p>Start of part 2.</p>",
+      "gotcha": "Leave a blank line above the dashes. Directly under a line of text, `---` turns that text into a heading instead.",
+      "related": [
+        "markdown/headings"
+      ],
+      "keywords": [
+        "divider",
+        "separator",
+        "line",
+        "hr",
+        "section break"
+      ],
+      "source": "every course notebook (the `---` between sections)"
+    },
+    {
+      "id": "markdown/details-summary",
+      "title": "Collapsible block with <details>",
+      "topic": "markdown-basics",
+      "week": 1,
+      "summary": "Markdown accepts plain HTML. The `<details>` tag hides content behind a clickable `<summary>` line, which is how the notebooks hide solutions.",
+      "syntax": "<details>\n<summary>▶ Show solution</summary>\n\nhidden content\n\n</details>",
+      "example": "<details>\n<summary>▶ Show solution</summary>\n\nThe mean GPA is 3.5.\n\n</details>",
+      "output_html": "<details>\n<summary>▶ Show solution</summary>\n\nThe mean GPA is 3.5.\n\n</details>",
+      "gotcha": "Leave a blank line after `<summary>` and before `</details>` so that Markdown inside the block (code fences, bold) is still rendered.",
+      "related": [
+        "markdown/code-block"
+      ],
+      "keywords": [
+        "hide",
+        "collapse",
+        "expand",
+        "solution",
+        "html",
+        "toggle"
+      ],
+      "source": "every course notebook (the “Show solution” blocks)"
+    }
+  ]
+}

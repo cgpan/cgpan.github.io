@@ -1,0 +1,48 @@
+---
+permalink: /python-tools/
+title: "PythonTools"
+excerpt: "Syntax reference for HUDM 5001 — Markdown, Python, SQL, Shell, Git."
+author_profile: true
+---
+<link rel="stylesheet" href="{{ '/python-tools/python-tools.css' | relative_url }}">
+<script>try { if (localStorage.getItem('pt-profile') === 'hidden') { document.documentElement.classList.add('pt-no-profile'); } } catch (e) {}</script>
+
+<div id="python-tools" class="pt" data-base="{{ '/python-tools/data/' | relative_url }}">
+
+  <header class="pt-hero">
+    <h1>PythonTools</h1>
+    <p class="pt-lead">Every piece of syntax used in HUDM 5001 <em>Programming for Data Science</em>, in one place. Pick a language, pick a topic, copy the example. Each entry shows the pattern, a minimal runnable example, and the real output of running it.</p>
+    <div class="pt-spec" id="pt-spec" aria-live="polite"></div>
+  </header>
+
+  <div class="pt-controls">
+    <div class="pt-search" role="search">
+      <span class="pt-search__icon" aria-hidden="true">⌕</span>
+      <input id="pt-search" type="search" autocomplete="off" spellcheck="false"
+             placeholder="Search all languages — try merge, join, loop, %" aria-label="Search all entries">
+      <kbd class="pt-search__kbd" aria-hidden="true">/</kbd>
+      <button class="pt-search__clear" id="pt-search-clear" type="button" aria-label="Clear search" hidden>×</button>
+    </div>
+    <div class="pt-view" role="group" aria-label="View">
+      <button class="pt-view__btn" id="pt-view-lang" type="button" aria-pressed="true">By language</button>
+      <button class="pt-view__btn" id="pt-view-week" type="button" aria-pressed="false">By week</button>
+    </div>
+    <button class="pt-profile-btn" id="pt-profile-toggle" type="button" aria-pressed="false"
+            title="Hide the author column to give the reference the full page width">Hide profile</button>
+  </div>
+
+  <nav class="pt-tabs" id="pt-tabs" role="tablist" aria-label="Languages"></nav>
+
+  <div class="pt-body">
+    <aside class="pt-rail" id="pt-rail" aria-label="Topics"></aside>
+    <main class="pt-main" id="pt-main" aria-live="polite">
+      <p class="pt-status">Loading entries…</p>
+    </main>
+  </div>
+
+  <footer class="pt-foot" id="pt-foot"></footer>
+
+  <noscript><p class="pt-status">PythonTools needs JavaScript to load its entries.</p></noscript>
+</div>
+
+<script src="{{ '/python-tools/python-tools.js' | relative_url }}" defer></script>

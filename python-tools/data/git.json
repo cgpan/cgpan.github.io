@@ -1,0 +1,418 @@
+{
+  "lang": "git",
+  "label": "Git",
+  "verified": "2026-09-04 · git 2.55.0",
+  "topics": [
+    {
+      "id": "git-setup",
+      "label": "One-time setup",
+      "week": 9
+    },
+    {
+      "id": "git-loop",
+      "label": "Fork, clone, and the core loop",
+      "week": 9
+    },
+    {
+      "id": "git-update",
+      "label": "Staying up to date",
+      "week": 9
+    }
+  ],
+  "entries": [
+    {
+      "id": "git/git-vs-github",
+      "title": "git vs GitHub, and what a repository is",
+      "topic": "git-setup",
+      "week": 9,
+      "no_run": true,
+      "summary": "git is the version-control program on your computer that records snapshots (commits) of a project folder; GitHub is a website that hosts git repositories so people can share them. A repository is just a folder that git is tracking.",
+      "syntax": "git      → the tool, runs on your machine\nGitHub   → the website that hosts repositories online\nrepo     → a project folder tracked by git\nfork     → your own copy of someone's repo on GitHub\nclone    → a download of a repo onto your machine\ncommit   → a saved snapshot with a message",
+      "gotcha": "You can use git without GitHub (snapshots stay on your machine). You cannot use GitHub without git.",
+      "related": [
+        "git/fork",
+        "git/clone",
+        "git/commit"
+      ],
+      "keywords": [
+        "version control",
+        "definition",
+        "repository",
+        "what is git",
+        "concept"
+      ],
+      "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.1"
+    },
+    {
+      "id": "git/version",
+      "title": "Do I have git? git --version",
+      "topic": "git-setup",
+      "week": 9,
+      "summary": "Prints the installed version; if the terminal instead says the command is not found, install git from git-scm.com.",
+      "syntax": "git --version",
+      "example": "git --version",
+      "output": "git version 2.55.0",
+      "volatile": true,
+      "gotcha": "On a Mac, typing `git` for the first time may offer to install the Xcode command-line tools; accept it.",
+      "related": [
+        "git/config",
+        "git/clone"
+      ],
+      "keywords": [
+        "installed",
+        "check",
+        "install git",
+        "git-scm"
+      ],
+      "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.2"
+    },
+    {
+      "id": "git/config",
+      "title": "git config — tell git who you are",
+      "topic": "git-setup",
+      "week": 9,
+      "summary": "Stores your name and email once, so every commit you make is labelled with them.",
+      "syntax": "git config --global user.name \"Your Name\"\ngit config --global user.email \"you@email.com\"",
+      "example": "git config --global user.name \"Student Example\"\ngit config --global user.email \"student@example.com\"\ngit config --global --list",
+      "output": "user.name=Student Example\nuser.email=student@example.com",
+      "gotcha": "Use the email attached to your GitHub account, or GitHub will not link the commits to you.",
+      "related": [
+        "git/personal-access-token",
+        "git/commit"
+      ],
+      "keywords": [
+        "identity",
+        "name",
+        "email",
+        "setup",
+        "global"
+      ],
+      "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.2"
+    },
+    {
+      "id": "git/personal-access-token",
+      "title": "Personal access token (GitHub)",
+      "topic": "git-setup",
+      "week": 9,
+      "no_run": true,
+      "summary": "GitHub does not accept your account password on the command line; a personal access token (PAT) is the password you paste when `git push` asks for one.",
+      "syntax": "GitHub → Settings (top-right avatar) → Developer settings → Personal access tokens\n       → Tokens (classic) → Generate new token → copy it somewhere safe",
+      "gotcha": "GitHub shows the token only once. When git asks for a password, paste the token, not your GitHub password.",
+      "related": [
+        "git/push",
+        "git/config"
+      ],
+      "keywords": [
+        "pat",
+        "token",
+        "authentication",
+        "password",
+        "login"
+      ],
+      "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.2"
+    },
+    {
+      "id": "git/fork",
+      "title": "Fork — your own copy on GitHub",
+      "topic": "git-loop",
+      "week": 9,
+      "no_run": true,
+      "summary": "Forking copies someone else's repository into your GitHub account, where you are free to change it.",
+      "syntax": "open https://github.com/cgpan/hudm5001  →  click Fork (top right)\n→ you now own https://github.com/<your-username>/hudm5001",
+      "gotcha": "Fork on the website first, then clone your fork, not the original. Pushing to the original course repo is not allowed.",
+      "related": [
+        "git/clone",
+        "git/sync-fork"
+      ],
+      "keywords": [
+        "copy repo",
+        "github button",
+        "own copy",
+        "course repo"
+      ],
+      "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.3"
+    },
+    {
+      "id": "git/clone",
+      "title": "git clone — download a repo",
+      "topic": "git-loop",
+      "week": 9,
+      "summary": "Copies a repository from GitHub (or any location) onto your machine, into a new folder with the repo's name.",
+      "syntax": "cd path/to/where/you/keep/projects\ngit clone https://github.com/<your-username>/hudm5001.git\ncd hudm5001",
+      "setup": "cd ~\ngit init -q --bare course-repo.git\ngit clone -q course-repo.git seed 2>/dev/null && cd seed\necho \"# HUDM 5001 course materials\" > README.md\ngit add README.md && git commit -q -m \"Initial commit\" && git push -q origin main\ncd ~ && rm -rf seed",
+      "setup_note": "a small course repo to clone from (standing in for GitHub)",
+      "example": "cd ~\ngit clone course-repo.git hudm5001-demo\ncd hudm5001-demo\nls",
+      "output": "Cloning into 'hudm5001-demo'...\ndone.\nREADME.md",
+      "gotcha": "The URL comes from the green Code button on the repo page. Clone once; after that use `git pull` to get updates, never clone again into the same folder.",
+      "related": [
+        "git/fork",
+        "git/pull",
+        "git/status"
+      ],
+      "keywords": [
+        "download repo",
+        "copy to computer",
+        "url",
+        "code button"
+      ],
+      "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.4"
+    },
+    {
+      "id": "git/status",
+      "title": "git status — what changed?",
+      "topic": "git-loop",
+      "week": 9,
+      "summary": "Shows which files are new (untracked), modified, or staged for the next commit. Run it before and after every other git command.",
+      "syntax": "git status",
+      "setup": "git init -q hudm5001-demo && cd hudm5001-demo\necho \"print('assignment 1')\" > assignment1.py",
+      "setup_note": "a fresh repo with one new file",
+      "example": "git status",
+      "output": "On branch main\n\nNo commits yet\n\nUntracked files:\n  (use \"git add <file>...\" to include in what will be committed)\n\tassignment1.py\n\nnothing added to commit but untracked files present (use \"git add\" to track)",
+      "gotcha": "“Untracked” means git has never seen the file; it is not saved anywhere until you `add` and `commit` it.",
+      "related": [
+        "git/add",
+        "git/commit"
+      ],
+      "keywords": [
+        "untracked",
+        "modified",
+        "staged",
+        "changes",
+        "check"
+      ],
+      "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.5"
+    },
+    {
+      "id": "git/add",
+      "title": "git add — stage a file",
+      "topic": "git-loop",
+      "week": 9,
+      "summary": "Marks a file to be included in the next snapshot; `git add .` stages everything in the folder. Think: put items in the box.",
+      "syntax": "git add file\ngit add .",
+      "setup": "git init -q hudm5001-demo && cd hudm5001-demo\necho \"print('assignment 1')\" > assignment1.py",
+      "setup_note": "a fresh repo with one new file",
+      "example": "git add assignment1.py\ngit status",
+      "output": "On branch main\n\nNo commits yet\n\nChanges to be committed:\n  (use \"git rm --cached <file>...\" to unstage)\n\tnew file:   assignment1.py",
+      "gotcha": "Staging is not saving. Nothing is recorded until `git commit`.",
+      "related": [
+        "git/status",
+        "git/commit"
+      ],
+      "keywords": [
+        "stage",
+        "track",
+        "index",
+        "put in the box"
+      ],
+      "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.5"
+    },
+    {
+      "id": "git/commit",
+      "title": "git commit -m — save a snapshot",
+      "topic": "git-loop",
+      "week": 9,
+      "summary": "Records the staged files as a snapshot with a message saying what you did and why. Think: seal and label the box.",
+      "syntax": "git commit -m \"short message\"",
+      "setup": "git init -q hudm5001-demo && cd hudm5001-demo\necho \"print('assignment 1')\" > assignment1.py\ngit add assignment1.py",
+      "setup_note": "a fresh repo with one staged file",
+      "example": "git commit -m \"Finish assignment 1\"",
+      "output": "[main (root-commit) ddee85a] Finish assignment 1\n 1 file changed, 1 insertion(+)\n create mode 100644 assignment1.py",
+      "output_note": "The 7-character code is the commit's id; every commit gets a different one.",
+      "gotcha": "The message must be in quotes. Forget `-m` and git opens a text editor waiting for a message.",
+      "related": [
+        "git/add",
+        "git/log",
+        "git/push"
+      ],
+      "keywords": [
+        "snapshot",
+        "save",
+        "message",
+        "record",
+        "seal the box"
+      ],
+      "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.5"
+    },
+    {
+      "id": "git/push",
+      "title": "git push — upload your commits",
+      "topic": "git-loop",
+      "week": 9,
+      "summary": "Sends your committed snapshots up to your GitHub fork. Think: mail the box. The first push asks for your username and personal access token.",
+      "syntax": "git push",
+      "setup": "cd ~ && git init -q --bare course-repo.git\ngit clone -q course-repo.git seed 2>/dev/null && cd seed && echo \"# HUDM 5001\" > README.md && git add README.md && git commit -q -m \"Initial commit\" && git push -q origin main && cd ~ && rm -rf seed\ngit clone -q course-repo.git hudm5001-demo && cd hudm5001-demo\necho \"print('assignment 1')\" > assignment1.py\ngit add assignment1.py && git commit -q -m \"Finish assignment 1\"",
+      "setup_note": "a clone of the course repo with one new commit not yet uploaded",
+      "example": "git push",
+      "output": "To /Users/student/course-repo.git\n   903e38a..7c668e1  main -> main",
+      "gotcha": "Push only after `commit`; there is nothing to push otherwise (“Everything up-to-date”). Never paste your token into a shared notebook.",
+      "related": [
+        "git/commit",
+        "git/pull",
+        "git/personal-access-token"
+      ],
+      "keywords": [
+        "upload",
+        "send",
+        "github",
+        "publish",
+        "mail the box"
+      ],
+      "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.5"
+    },
+    {
+      "id": "git/log",
+      "title": "git log --oneline — view history",
+      "topic": "git-loop",
+      "week": 9,
+      "summary": "Lists commits, newest first, one per line with the short id and the message.",
+      "syntax": "git log --oneline\ngit log --oneline -5    # only the last 5",
+      "setup": "git init -q hudm5001-demo && cd hudm5001-demo\necho \"print('assignment 1')\" > assignment1.py\ngit add assignment1.py && git commit -q -m \"Finish assignment 1\"\necho \"# notes\" > README.md\ngit add README.md && git commit -q -m \"Add README\"",
+      "setup_note": "a repo with two commits",
+      "example": "git log --oneline",
+      "output": "d7b6e5f Add README\nddee85a Finish assignment 1",
+      "gotcha": "Press `q` to leave the log view if it opens in a pager.",
+      "related": [
+        "git/commit",
+        "git/status"
+      ],
+      "keywords": [
+        "history",
+        "commits",
+        "list",
+        "oneline",
+        "past"
+      ],
+      "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.4"
+    },
+    {
+      "id": "git/diff",
+      "title": "git diff — what exactly changed",
+      "topic": "git-loop",
+      "week": 9,
+      "tags": [
+        "extra"
+      ],
+      "summary": "Shows the line-by-line difference between your edited files and the last commit; `-` lines were removed, `+` lines were added.",
+      "syntax": "git diff\ngit diff file",
+      "setup": "git init -q hudm5001-demo && cd hudm5001-demo\necho \"print('assignment 1')\" > assignment1.py\ngit add assignment1.py && git commit -q -m \"Finish assignment 1\"\necho \"print('assignment 1, revised')\" > assignment1.py",
+      "setup_note": "a committed file that has since been edited",
+      "example": "git diff",
+      "output": "diff --git a/assignment1.py b/assignment1.py\nindex 12502de..5e030fd 100644\n--- a/assignment1.py\n+++ b/assignment1.py\n@@ -1 +1 @@\n-print('assignment 1')\n+print('assignment 1, revised')",
+      "gotcha": "`git diff` shows unstaged edits only. After `git add`, use `git diff --staged` to see what is about to be committed.",
+      "related": [
+        "git/status",
+        "git/add",
+        "shell/diff"
+      ],
+      "keywords": [
+        "changes",
+        "compare",
+        "modified lines",
+        "before commit"
+      ],
+      "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.5 (mentioned)"
+    },
+    {
+      "id": "git/sync-fork",
+      "title": "Sync fork — update your GitHub copy",
+      "topic": "git-update",
+      "week": 9,
+      "no_run": true,
+      "summary": "When the instructor adds material to the original repo, the website can copy those commits into your fork with two clicks.",
+      "syntax": "open your fork on GitHub  →  “Sync fork” dropdown  →  “Update branch”",
+      "gotcha": "This updates the copy on GitHub only. Follow it with `git pull` on your machine to bring the files down.",
+      "related": [
+        "git/pull",
+        "git/fork",
+        "git/fetch-merge"
+      ],
+      "keywords": [
+        "update fork",
+        "course updates",
+        "new materials",
+        "upstream",
+        "website"
+      ],
+      "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.6"
+    },
+    {
+      "id": "git/pull",
+      "title": "git pull — download the latest commits",
+      "topic": "git-update",
+      "week": 9,
+      "summary": "Fetches new commits from GitHub and merges them into your local copy in one step.",
+      "syntax": "cd hudm5001\ngit pull",
+      "setup": "cd ~ && git init -q --bare course-repo.git\ngit clone -q course-repo.git instructor 2>/dev/null && cd instructor && echo \"# HUDM 5001\" > README.md && git add README.md && git commit -q -m \"Initial commit\" && git push -q origin main && cd ~\ngit clone -q course-repo.git hudm5001-demo\ncd instructor && echo \"Week 2 notes\" > week02.md && git add week02.md && git commit -q -m \"Add week 2 notes\" && git push -q origin main && cd ~\ncd hudm5001-demo",
+      "setup_note": "your clone, made before the instructor pushed a new file",
+      "example": "git pull\nls",
+      "output": "From /Users/student/course-repo\n   903e38a..3b50d58  main       -> origin/main\nUpdating 903e38a..3b50d58\nFast-forward\n week02.md | 1 +\n 1 file changed, 1 insertion(+)\n create mode 100644 week02.md\nREADME.md\nweek02.md",
+      "gotcha": "If you edited the same lines the instructor changed, the merge stops with a conflict and git prints instructions. Commit or set aside your own edits before pulling.",
+      "related": [
+        "git/sync-fork",
+        "git/fetch-merge",
+        "git/clone"
+      ],
+      "keywords": [
+        "update",
+        "download changes",
+        "sync",
+        "fast-forward",
+        "merge"
+      ],
+      "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.6"
+    },
+    {
+      "id": "git/remote",
+      "title": "git remote — where does this repo push and pull?",
+      "topic": "git-update",
+      "week": 9,
+      "summary": "A remote is a nickname for a repository address. `origin` is where you cloned from (your fork); `upstream` is the convention for the original repo.",
+      "syntax": "git remote -v\ngit remote add upstream https://github.com/cgpan/hudm5001.git",
+      "setup": "cd ~ && git init -q --bare my-fork.git && git init -q --bare original-repo.git\ngit clone -q my-fork.git hudm5001-demo 2>/dev/null && cd hudm5001-demo",
+      "setup_note": "a clone of your fork, with the original repo standing by",
+      "example": "git remote -v\ngit remote add upstream ~/original-repo.git\ngit remote -v",
+      "output": "origin\t/Users/student/my-fork.git (fetch)\norigin\t/Users/student/my-fork.git (push)\norigin\t/Users/student/my-fork.git (fetch)\norigin\t/Users/student/my-fork.git (push)\nupstream\t/Users/student/original-repo.git (fetch)\nupstream\t/Users/student/original-repo.git (push)",
+      "gotcha": "Each remote is listed twice, once for fetch and once for push. Run `git remote -v` whenever you are unsure where `git push` will send your work.",
+      "related": [
+        "git/fetch-merge",
+        "git/clone",
+        "git/push"
+      ],
+      "keywords": [
+        "origin",
+        "upstream",
+        "remote url",
+        "add remote",
+        "where"
+      ],
+      "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.7"
+    },
+    {
+      "id": "git/fetch-merge",
+      "title": "git fetch + git merge — pull from the original repo",
+      "topic": "git-update",
+      "week": 9,
+      "summary": "The two halves of `git pull`, done by hand against the `upstream` remote: download the original repo's new commits, then merge them into your branch.",
+      "syntax": "git fetch upstream\ngit merge upstream/main",
+      "setup": "cd ~ && git init -q --bare original-repo.git\ngit clone -q original-repo.git author 2>/dev/null && cd author && echo \"# HUDM 5001\" > README.md && git add README.md && git commit -q -m \"Initial commit\" && git push -q origin main && cd ~\ngit clone -q --bare original-repo.git my-fork.git\ngit clone -q my-fork.git hudm5001-demo\ncd author && echo \"Week 2 notes\" > week02.md && git add week02.md && git commit -q -m \"Add week 2 notes\" && git push -q origin main && cd ~\ncd hudm5001-demo\ngit remote add upstream ~/original-repo.git",
+      "setup_note": "your clone of your fork, after the original repo gained a commit",
+      "example": "git fetch upstream\ngit merge upstream/main\nls",
+      "output": "From /Users/student/original-repo\n * [new branch]      main       -> upstream/main\nUpdating 903e38a..3b50d58\nFast-forward\n week02.md | 1 +\n 1 file changed, 1 insertion(+)\n create mode 100644 week02.md\nREADME.md\nweek02.md",
+      "gotcha": "`fetch` always succeeds and changes nothing in your files; only `merge` touches them. The course repo's main branch is called `main` (older projects use `master`).",
+      "related": [
+        "git/remote",
+        "git/pull",
+        "git/sync-fork"
+      ],
+      "keywords": [
+        "upstream",
+        "original repo",
+        "fetch",
+        "merge",
+        "branch",
+        "main master"
+      ],
+      "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.7"
+    }
+  ]
+}

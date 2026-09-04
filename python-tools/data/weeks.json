@@ -1,0 +1,18 @@
+[
+  { "week": 1,  "date": "2026-09-08", "topic": "Syllabus and Intro to Python" },
+  { "week": 2,  "date": "2026-09-15", "topic": "Data Types, Variables and Expressions" },
+  { "week": 3,  "date": "2026-09-22", "topic": "Operators, Input/Output, NumPy" },
+  { "week": 4,  "date": "2026-09-29", "topic": "pandas" },
+  { "week": 5,  "date": "2026-10-06", "topic": "pandas, SQLite Database" },
+  { "week": 6,  "date": "2026-10-13", "topic": "Control Structures and Iterables" },
+  { "week": 7,  "date": "2026-10-20", "topic": "Functions, Lambdas, List Comprehensions" },
+  { "week": 8,  "date": "2026-10-27", "topic": "Midterm" },
+  { "week": 9,  "date": "2026-11-03", "topic": "Intro to Shell and GitHub" },
+  { "week": 10, "date": "2026-11-10", "topic": "Python Classes, Object-Oriented Programming" },
+  { "week": 11, "date": "2026-11-17", "topic": "Unit Testing and Exception Handling" },
+  { "week": 12, "date": "2026-11-24", "topic": "Advanced Topics (1): Coding Practices with AI" },
+  { "week": 13, "date": "2026-12-01", "topic": "Advanced Topics (2): Data Visualization" },
+  { "week": 14, "date": "2026-12-08", "topic": "Jupyter Notebook Presentation" },
+  { "week": 15, "date": "2026-12-15", "topic": "Final Project Discussion" },
+  { "week": 16, "date": "2026-12-22", "topic": "Final Project" }
+]

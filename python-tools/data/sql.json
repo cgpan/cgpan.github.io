@@ -1,0 +1,656 @@
+{
+  "lang": "sql",
+  "label": "SQL",
+  "verified": "2026-09-04 · sqlite3 3.53.2",
+  "topics": [
+    {
+      "id": "sql-tables",
+      "label": "Tables and rows",
+      "week": 5
+    },
+    {
+      "id": "sql-query",
+      "label": "Querying",
+      "week": 5
+    },
+    {
+      "id": "sql-aggregate",
+      "label": "Aggregation",
+      "week": 5
+    },
+    {
+      "id": "sql-join",
+      "label": "Joins",
+      "week": 5
+    },
+    {
+      "id": "sql-tools",
+      "label": "The database itself",
+      "week": 5
+    }
+  ],
+  "entries": [
+    {
+      "id": "sql/create-table",
+      "title": "CREATE TABLE — declare columns and types",
+      "topic": "sql-tables",
+      "week": 5,
+      "summary": "Creates an empty table by naming each column and its type: `TEXT` for words, `REAL` for decimals, `INTEGER` for whole numbers.",
+      "syntax": "CREATE TABLE name (col1 TYPE, col2 TYPE, ...);\n\n-- optional rules on a column\nCREATE TABLE name (id INTEGER PRIMARY KEY, col TEXT NOT NULL);",
+      "example": "CREATE TABLE holdings (ticker TEXT, price REAL, chg REAL);\n\n-- prove it exists: sqlite keeps the list of tables in sqlite_master\nSELECT name FROM sqlite_master WHERE type = 'table';",
+      "output": "  name\n--------\nholdings",
+      "gotcha": "Running `CREATE TABLE` twice fails with “table holdings already exists”. In a notebook, put `DROP TABLE IF EXISTS holdings;` first so the cell can be re-run.",
+      "related": [
+        "sql/drop-table-if-exists",
+        "sql/insert",
+        "python/sqlite-execute-commit"
+      ],
+      "keywords": [
+        "schema",
+        "new table",
+        "column types",
+        "text real integer",
+        "primary key",
+        "not null"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.8; Class_asset/why_sql_not_excel.html"
+    },
+    {
+      "id": "sql/drop-table-if-exists",
+      "title": "DROP TABLE IF EXISTS — start clean",
+      "topic": "sql-tables",
+      "week": 5,
+      "summary": "Deletes a whole table (and its rows) if it is there, and does nothing if it is not, so a notebook cell can be run again and again.",
+      "syntax": "DROP TABLE IF EXISTS name;",
+      "setup": "CREATE TABLE holdings (ticker TEXT, price REAL, chg REAL);\nINSERT INTO holdings VALUES ('NVDA', 219.00, -3.42);",
+      "setup_note": "a holdings table with one row already in the database",
+      "example": "DROP TABLE IF EXISTS holdings;\nCREATE TABLE holdings (ticker TEXT, price REAL, chg REAL);\n\nSELECT COUNT(*) AS n_rows FROM holdings;",
+      "output": "n_rows\n------\n     0",
+      "gotcha": "It really deletes the data. `DROP TABLE` is for scratch tables you can rebuild, never for a table you cannot recreate.",
+      "related": [
+        "sql/create-table",
+        "sql/delete"
+      ],
+      "keywords": [
+        "reset",
+        "re-run",
+        "remove table",
+        "delete table",
+        "idempotent"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.8"
+    },
+    {
+      "id": "sql/insert",
+      "title": "INSERT INTO — add rows",
+      "topic": "sql-tables",
+      "week": 5,
+      "summary": "Adds one or more rows; values are listed in the same order as the table's columns.",
+      "syntax": "INSERT INTO table VALUES (v1, v2, v3);\nINSERT INTO table VALUES (v1, v2, v3), (v1, v2, v3);",
+      "setup": "CREATE TABLE holdings (ticker TEXT, price REAL, chg REAL);",
+      "setup_note": "an empty holdings table",
+      "example": "INSERT INTO holdings VALUES ('NVDA', 219.00, -3.42);\nINSERT INTO holdings VALUES ('AAPL', 146.00, -2.73), ('GOOG', 2829.27, -58.20);\n\nSELECT * FROM holdings;",
+      "output": "ticker   price    chg\n------  -------  -----\nNVDA      219.0  -3.42\nAAPL      146.0  -2.73\nGOOG    2829.27  -58.2",
+      "gotcha": "Text goes in single quotes (`'NVDA'`), numbers do not. From Python, insert many rows at once with `executemany` and `?` placeholders instead of pasting values into the string.",
+      "related": [
+        "sql/create-table",
+        "python/sqlite-executemany",
+        "python/pd-to-sql"
+      ],
+      "keywords": [
+        "add row",
+        "values",
+        "populate",
+        "write data"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.8"
+    },
+    {
+      "id": "sql/delete",
+      "title": "DELETE FROM — remove rows",
+      "topic": "sql-tables",
+      "week": 5,
+      "summary": "Removes the rows that match a condition; without a `WHERE` it empties the whole table.",
+      "syntax": "DELETE FROM table WHERE condition;\nDELETE FROM table;              -- every row",
+      "setup": "CREATE TABLE holdings (ticker TEXT, price REAL, chg REAL);\nINSERT INTO holdings VALUES ('NVDA', 219.00, -3.42), ('AAPL', 146.00, -2.73), ('GOOG', 2829.27, -58.20);",
+      "setup_note": "a holdings table with three rows",
+      "example": "DELETE FROM holdings WHERE ticker = 'AAPL';\n\nSELECT * FROM holdings;",
+      "output": "ticker   price    chg\n------  -------  -----\nNVDA      219.0  -3.42\nGOOG    2829.27  -58.2",
+      "gotcha": "There is no undo. The notebooks use `DELETE FROM holdings;` right before re-inserting rows so a cell does not pile up duplicates each time it runs.",
+      "related": [
+        "sql/drop-table-if-exists",
+        "sql/where"
+      ],
+      "keywords": [
+        "remove rows",
+        "clear table",
+        "empty",
+        "truncate"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.8"
+    },
+    {
+      "id": "sql/select-star",
+      "title": "SELECT * — every column, every row",
+      "topic": "sql-query",
+      "week": 5,
+      "summary": "The simplest query: `*` means all columns, and with no `WHERE` you get all rows.",
+      "syntax": "SELECT * FROM table;",
+      "setup": "CREATE TABLE holdings (ticker TEXT, price REAL, chg REAL);\nINSERT INTO holdings VALUES ('NVDA', 219.00, -3.42), ('AAPL', 146.00, -2.73), ('GOOG', 2829.27, -58.20);",
+      "setup_note": "a holdings table with three rows",
+      "example": "SELECT * FROM holdings;",
+      "output": "ticker   price    chg\n------  -------  -----\nNVDA      219.0  -3.42\nAAPL      146.0  -2.73\nGOOG    2829.27  -58.2",
+      "gotcha": "On a big table `SELECT *` pulls everything into memory. Add `LIMIT 5` while exploring.",
+      "related": [
+        "sql/select-columns",
+        "sql/limit",
+        "python/pd-read-sql-query"
+      ],
+      "keywords": [
+        "all columns",
+        "show table",
+        "star",
+        "asterisk",
+        "everything"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.9"
+    },
+    {
+      "id": "sql/select-columns",
+      "title": "SELECT a, b — pick columns",
+      "topic": "sql-query",
+      "week": 5,
+      "summary": "Name the columns you want, separated by commas, in the order you want them back.",
+      "syntax": "SELECT col1, col2 FROM table;",
+      "setup": "CREATE TABLE holdings (ticker TEXT, price REAL, chg REAL);\nINSERT INTO holdings VALUES ('NVDA', 219.00, -3.42), ('AAPL', 146.00, -2.73), ('GOOG', 2829.27, -58.20);",
+      "setup_note": "a holdings table with three rows",
+      "example": "SELECT ticker, price FROM holdings;",
+      "output": "ticker   price\n------  -------\nNVDA      219.0\nAAPL      146.0\nGOOG    2829.27",
+      "gotcha": "Column names are not quoted. `SELECT 'ticker' FROM holdings` returns the word ticker three times, not the column.",
+      "related": [
+        "sql/select-star",
+        "sql/as-alias",
+        "python/pd-select-columns"
+      ],
+      "keywords": [
+        "choose columns",
+        "projection",
+        "fields",
+        "subset columns"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.9"
+    },
+    {
+      "id": "sql/where",
+      "title": "WHERE — keep the rows that match",
+      "topic": "sql-query",
+      "week": 5,
+      "summary": "A condition after `WHERE` keeps only the rows for which it is true, exactly like a boolean mask in pandas.",
+      "syntax": "SELECT ... FROM table WHERE condition;\n-- comparisons: =  !=  <  <=  >  >=",
+      "setup": "CREATE TABLE passengers (passenger_id INTEGER, survived INTEGER, pclass INTEGER, sex TEXT, age REAL, fare REAL, embarked TEXT);\nINSERT INTO passengers VALUES\n  (1, 0, 3, 'male',   22.0,  7.25, 'S'),\n  (2, 1, 1, 'female', 38.0, 71.28, 'C'),\n  (3, 1, 3, 'female', 26.0,  7.92, 'S'),\n  (4, 1, 1, 'female', 35.0, 53.10, 'S'),\n  (5, 0, 3, 'male',   35.0,  8.05, 'S'),\n  (6, 0, 3, 'male',   NULL,  8.46, 'Q');",
+      "setup_note": "a passengers table with the first six Titanic rows",
+      "example": "SELECT passenger_id, sex, fare\nFROM passengers\nWHERE fare > 50;",
+      "output": "passenger_id   sex    fare\n------------  ------  -----\n           2  female  71.28\n           4  female   53.1",
+      "gotcha": "SQL compares with a single `=` (`WHERE pclass = 3`), and text goes in single quotes: `WHERE sex = 'female'`.",
+      "related": [
+        "sql/where-and",
+        "sql/order-by",
+        "python/pd-boolean-filter"
+      ],
+      "keywords": [
+        "filter",
+        "condition",
+        "subset rows",
+        "mask",
+        "criteria"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.9"
+    },
+    {
+      "id": "sql/where-and",
+      "title": "WHERE … AND / OR — combine conditions",
+      "topic": "sql-query",
+      "week": 5,
+      "summary": "Join two conditions with `AND` (both must hold) or `OR` (either one).",
+      "syntax": "WHERE condition1 AND condition2\nWHERE condition1 OR condition2",
+      "setup": "CREATE TABLE passengers (passenger_id INTEGER, survived INTEGER, pclass INTEGER, sex TEXT, age REAL, fare REAL, embarked TEXT);\nINSERT INTO passengers VALUES\n  (1, 0, 3, 'male',   22.0,  7.25, 'S'),\n  (2, 1, 1, 'female', 38.0, 71.28, 'C'),\n  (3, 1, 3, 'female', 26.0,  7.92, 'S'),\n  (4, 1, 1, 'female', 35.0, 53.10, 'S'),\n  (5, 0, 3, 'male',   35.0,  8.05, 'S'),\n  (6, 0, 3, 'male',   NULL,  8.46, 'Q');",
+      "setup_note": "a passengers table with the first six Titanic rows",
+      "example": "-- third-class passengers who survived\nSELECT passenger_id, sex, age\nFROM passengers\nWHERE pclass = 3 AND survived = 1;",
+      "output": "passenger_id   sex    age\n------------  ------  ----\n           3  female  26.0",
+      "gotcha": "In SQL you write the words `AND` / `OR`; in pandas the same idea uses `&` / `|` with parentheses around each condition.",
+      "related": [
+        "sql/where",
+        "python/pd-combine-conditions"
+      ],
+      "keywords": [
+        "two conditions",
+        "both",
+        "either",
+        "logical",
+        "and or"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb Exercise 5 (c)"
+    },
+    {
+      "id": "sql/order-by",
+      "title": "ORDER BY — sort the result",
+      "topic": "sql-query",
+      "week": 5,
+      "summary": "Sorts the returned rows by a column, smallest first; add `DESC` for largest first.",
+      "syntax": "SELECT ... FROM table ORDER BY col;        -- ascending\nSELECT ... FROM table ORDER BY col DESC;   -- descending",
+      "setup": "CREATE TABLE passengers (passenger_id INTEGER, survived INTEGER, pclass INTEGER, sex TEXT, age REAL, fare REAL, embarked TEXT);\nINSERT INTO passengers VALUES\n  (1, 0, 3, 'male',   22.0,  7.25, 'S'),\n  (2, 1, 1, 'female', 38.0, 71.28, 'C'),\n  (3, 1, 3, 'female', 26.0,  7.92, 'S'),\n  (4, 1, 1, 'female', 35.0, 53.10, 'S'),\n  (5, 0, 3, 'male',   35.0,  8.05, 'S'),\n  (6, 0, 3, 'male',   NULL,  8.46, 'Q');",
+      "setup_note": "a passengers table with the first six Titanic rows",
+      "example": "SELECT passenger_id, fare\nFROM passengers\nORDER BY fare DESC;",
+      "output": "passenger_id  fare\n------------  -----\n           2  71.28\n           4   53.1\n           6   8.46\n           5   8.05\n           3   7.92\n           1   7.25",
+      "gotcha": "The clauses have a fixed order: `SELECT`, `FROM`, `WHERE`, `GROUP BY`, `ORDER BY`, `LIMIT`. `ORDER BY` before `WHERE` is a syntax error.",
+      "related": [
+        "sql/limit",
+        "python/pd-sort-values"
+      ],
+      "keywords": [
+        "sort",
+        "descending",
+        "ascending",
+        "rank",
+        "largest first"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.9"
+    },
+    {
+      "id": "sql/limit",
+      "title": "LIMIT — only the first n rows",
+      "topic": "sql-query",
+      "week": 5,
+      "summary": "Cuts the result down to the first n rows, SQL's version of `.head(n)`; with `ORDER BY` it gives you the top n.",
+      "syntax": "SELECT ... FROM table LIMIT n;\nSELECT ... FROM table ORDER BY col DESC LIMIT n;",
+      "setup": "CREATE TABLE passengers (passenger_id INTEGER, survived INTEGER, pclass INTEGER, sex TEXT, age REAL, fare REAL, embarked TEXT);\nINSERT INTO passengers VALUES\n  (1, 0, 3, 'male',   22.0,  7.25, 'S'),\n  (2, 1, 1, 'female', 38.0, 71.28, 'C'),\n  (3, 1, 3, 'female', 26.0,  7.92, 'S'),\n  (4, 1, 1, 'female', 35.0, 53.10, 'S'),\n  (5, 0, 3, 'male',   35.0,  8.05, 'S'),\n  (6, 0, 3, 'male',   NULL,  8.46, 'Q');",
+      "setup_note": "a passengers table with the first six Titanic rows",
+      "example": "-- the three most expensive tickets\nSELECT passenger_id, age, fare\nFROM passengers\nORDER BY fare DESC\nLIMIT 3;",
+      "output": "passenger_id  age   fare\n------------  ----  -----\n           2  38.0  71.28\n           4  35.0   53.1\n           6  NULL   8.46",
+      "gotcha": "`LIMIT` is always the last clause. Without `ORDER BY` you get the first n rows in whatever order the database stores them.",
+      "related": [
+        "sql/order-by",
+        "python/pd-inspect"
+      ],
+      "keywords": [
+        "top n",
+        "head",
+        "first rows",
+        "preview",
+        "sample"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.11, Exercise 5 (a)"
+    },
+    {
+      "id": "sql/as-alias",
+      "title": "AS — rename a column in the output",
+      "topic": "sql-query",
+      "week": 5,
+      "summary": "Gives a column, or a computed value, a readable name in the result; the table itself is not changed.",
+      "syntax": "SELECT col AS new_name FROM table;\nSELECT ROUND(AVG(col), 2) AS avg_col FROM table;",
+      "setup": "CREATE TABLE holdings (ticker TEXT, price REAL, chg REAL);\nINSERT INTO holdings VALUES ('NVDA', 219.00, -3.42), ('AAPL', 146.00, -2.73), ('GOOG', 2829.27, -58.20);",
+      "setup_note": "a holdings table with three rows",
+      "example": "SELECT ticker AS symbol, price AS closing_price\nFROM holdings;",
+      "output": "symbol  closing_price\n------  -------------\nNVDA            219.0\nAAPL            146.0\nGOOG          2829.27",
+      "gotcha": "Without `AS`, a computed column comes back with an ugly name such as `ROUND(AVG(fare), 2)`, which is awkward to use from pandas.",
+      "related": [
+        "sql/select-columns",
+        "sql/aggregate-functions",
+        "python/pd-rename"
+      ],
+      "keywords": [
+        "alias",
+        "rename",
+        "column name",
+        "label",
+        "output name"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.10"
+    },
+    {
+      "id": "sql/is-null",
+      "title": "IS NULL / IS NOT NULL — find missing values",
+      "topic": "sql-query",
+      "week": 5,
+      "tags": [
+        "extra"
+      ],
+      "summary": "A missing value in SQL is `NULL`, and you test for it with `IS NULL`; comparisons like `= NULL` never match.",
+      "syntax": "WHERE col IS NULL\nWHERE col IS NOT NULL",
+      "setup": "CREATE TABLE passengers (passenger_id INTEGER, survived INTEGER, pclass INTEGER, sex TEXT, age REAL, fare REAL, embarked TEXT);\nINSERT INTO passengers VALUES\n  (1, 0, 3, 'male',   22.0,  7.25, 'S'),\n  (2, 1, 1, 'female', 38.0, 71.28, 'C'),\n  (3, 1, 3, 'female', 26.0,  7.92, 'S'),\n  (4, 1, 1, 'female', 35.0, 53.10, 'S'),\n  (5, 0, 3, 'male',   35.0,  8.05, 'S'),\n  (6, 0, 3, 'male',   NULL,  8.46, 'Q');",
+      "setup_note": "a passengers table with the first six Titanic rows (one age is missing)",
+      "example": "-- who has no recorded age?\nSELECT passenger_id, age FROM passengers WHERE age IS NULL;\n\n-- average age over the rows that do have one\nSELECT ROUND(AVG(age), 1) AS avg_age FROM passengers WHERE age IS NOT NULL;",
+      "output": "passenger_id  age\n------------  ----\n           6  NULL\navg_age\n-------\n   31.2",
+      "gotcha": "`WHERE age = NULL` returns nothing, ever. `NULL` is “unknown”, so it is not equal to anything, not even to another `NULL`. Aggregates such as `AVG` already skip `NULL`s.",
+      "related": [
+        "sql/count",
+        "python/pd-missing-basics"
+      ],
+      "keywords": [
+        "missing",
+        "nan",
+        "none",
+        "empty",
+        "null",
+        "blank"
+      ],
+      "source": "Class_asset/why_sql_not_excel.html"
+    },
+    {
+      "id": "sql/distinct",
+      "title": "SELECT DISTINCT — unique values",
+      "topic": "sql-query",
+      "week": 5,
+      "tags": [
+        "extra"
+      ],
+      "summary": "Returns each different value once, like `.unique()` in pandas.",
+      "syntax": "SELECT DISTINCT col FROM table;",
+      "setup": "CREATE TABLE passengers (passenger_id INTEGER, survived INTEGER, pclass INTEGER, sex TEXT, age REAL, fare REAL, embarked TEXT);\nINSERT INTO passengers VALUES\n  (1, 0, 3, 'male',   22.0,  7.25, 'S'),\n  (2, 1, 1, 'female', 38.0, 71.28, 'C'),\n  (3, 1, 3, 'female', 26.0,  7.92, 'S'),\n  (4, 1, 1, 'female', 35.0, 53.10, 'S'),\n  (5, 0, 3, 'male',   35.0,  8.05, 'S'),\n  (6, 0, 3, 'male',   NULL,  8.46, 'Q');",
+      "setup_note": "a passengers table with the first six Titanic rows",
+      "example": "SELECT DISTINCT embarked FROM passengers;",
+      "output": "embarked\n--------\nS\nC\nQ",
+      "gotcha": "`DISTINCT` applies to the whole row of selected columns: `SELECT DISTINCT pclass, sex` lists every different class-and-sex pair.",
+      "related": [
+        "sql/group-by",
+        "python/pd-value-counts",
+        "python/set"
+      ],
+      "keywords": [
+        "unique",
+        "deduplicate",
+        "different values",
+        "levels",
+        "categories"
+      ],
+      "source": "Class_asset/why_sql_not_excel.html"
+    },
+    {
+      "id": "sql/count",
+      "title": "COUNT(*) vs COUNT(col)",
+      "topic": "sql-aggregate",
+      "week": 5,
+      "summary": "`COUNT(*)` counts rows; `COUNT(col)` counts the rows where that column is not `NULL`.",
+      "syntax": "SELECT COUNT(*) FROM table;\nSELECT COUNT(col) FROM table;",
+      "setup": "CREATE TABLE passengers (passenger_id INTEGER, survived INTEGER, pclass INTEGER, sex TEXT, age REAL, fare REAL, embarked TEXT);\nINSERT INTO passengers VALUES\n  (1, 0, 3, 'male',   22.0,  7.25, 'S'),\n  (2, 1, 1, 'female', 38.0, 71.28, 'C'),\n  (3, 1, 3, 'female', 26.0,  7.92, 'S'),\n  (4, 1, 1, 'female', 35.0, 53.10, 'S'),\n  (5, 0, 3, 'male',   35.0,  8.05, 'S'),\n  (6, 0, 3, 'male',   NULL,  8.46, 'Q');",
+      "setup_note": "a passengers table with the first six Titanic rows (one age is missing)",
+      "example": "SELECT COUNT(*) AS n_rows, COUNT(age) AS n_ages FROM passengers;",
+      "output": "n_rows  n_ages\n------  ------\n     6       5",
+      "gotcha": "pandas' `.count()` behaves like `COUNT(col)`, so a SQL `COUNT(*)` and a pandas count can legitimately disagree by exactly the number of missing values.",
+      "related": [
+        "sql/aggregate-functions",
+        "sql/is-null",
+        "python/pd-groupby-size"
+      ],
+      "keywords": [
+        "how many",
+        "number of rows",
+        "size",
+        "length",
+        "non-missing"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.10"
+    },
+    {
+      "id": "sql/aggregate-functions",
+      "title": "AVG, MIN, MAX, SUM and ROUND",
+      "topic": "sql-aggregate",
+      "week": 5,
+      "summary": "Summary functions collapse a column into one number; `ROUND(x, 2)` tidies the decimals.",
+      "syntax": "SELECT AVG(col), MIN(col), MAX(col), SUM(col) FROM table;\nSELECT ROUND(AVG(col), 2) AS avg_col FROM table;",
+      "setup": "CREATE TABLE passengers (passenger_id INTEGER, survived INTEGER, pclass INTEGER, sex TEXT, age REAL, fare REAL, embarked TEXT);\nINSERT INTO passengers VALUES\n  (1, 0, 3, 'male',   22.0,  7.25, 'S'),\n  (2, 1, 1, 'female', 38.0, 71.28, 'C'),\n  (3, 1, 3, 'female', 26.0,  7.92, 'S'),\n  (4, 1, 1, 'female', 35.0, 53.10, 'S'),\n  (5, 0, 3, 'male',   35.0,  8.05, 'S'),\n  (6, 0, 3, 'male',   NULL,  8.46, 'Q');",
+      "setup_note": "a passengers table with the first six Titanic rows",
+      "example": "SELECT ROUND(AVG(fare), 2) AS avg_fare,\n       MIN(fare)           AS min_fare,\n       MAX(fare)           AS max_fare,\n       ROUND(SUM(fare), 2) AS total_fare\nFROM passengers;",
+      "output": "avg_fare  min_fare  max_fare  total_fare\n--------  --------  --------  ----------\n   26.01      7.25     71.28      156.06",
+      "gotcha": "The mean of a 0/1 column is a proportion: `AVG(survived)` is the survival rate, no extra work needed.",
+      "related": [
+        "sql/count",
+        "sql/group-by",
+        "python/pd-agg"
+      ],
+      "keywords": [
+        "average",
+        "mean",
+        "minimum",
+        "maximum",
+        "total",
+        "summary statistic",
+        "round"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.10"
+    },
+    {
+      "id": "sql/group-by",
+      "title": "GROUP BY — one summary line per group",
+      "topic": "sql-aggregate",
+      "week": 5,
+      "summary": "Collapses the rows into one line per distinct value of a column and computes the summaries inside each group, SQL's `groupby().agg()`.",
+      "syntax": "SELECT group_col, COUNT(*) AS n, AVG(value_col) AS avg_value\nFROM table\nGROUP BY group_col;",
+      "setup": "CREATE TABLE passengers (passenger_id INTEGER, survived INTEGER, pclass INTEGER, sex TEXT, age REAL, fare REAL, embarked TEXT);\nINSERT INTO passengers VALUES\n  (1, 0, 3, 'male',   22.0,  7.25, 'S'),\n  (2, 1, 1, 'female', 38.0, 71.28, 'C'),\n  (3, 1, 3, 'female', 26.0,  7.92, 'S'),\n  (4, 1, 1, 'female', 35.0, 53.10, 'S'),\n  (5, 0, 3, 'male',   35.0,  8.05, 'S'),\n  (6, 0, 3, 'male',   NULL,  8.46, 'Q');",
+      "setup_note": "a passengers table with the first six Titanic rows",
+      "example": "SELECT pclass,\n       COUNT(*)                AS n_passengers,\n       ROUND(AVG(survived), 3) AS survival_rate,\n       ROUND(AVG(fare), 2)     AS avg_fare\nFROM passengers\nGROUP BY pclass\nORDER BY pclass;",
+      "output": "pclass  n_passengers  survival_rate  avg_fare\n------  ------------  -------------  --------\n     1             2            1.0     62.19\n     3             4           0.25      7.92",
+      "gotcha": "Every selected column must be either the grouping column or wrapped in a summary function. `SELECT pclass, fare … GROUP BY pclass` is ambiguous: which fare?",
+      "related": [
+        "python/pd-groupby",
+        "python/pd-groupby-agg",
+        "sql/having",
+        "shell/pipe"
+      ],
+      "keywords": [
+        "aggregate",
+        "summary per group",
+        "groupby",
+        "split apply combine",
+        "per category"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.10"
+    },
+    {
+      "id": "sql/having",
+      "title": "HAVING — filter the groups",
+      "topic": "sql-aggregate",
+      "week": 5,
+      "tags": [
+        "extra"
+      ],
+      "summary": "`WHERE` filters rows before grouping; `HAVING` filters the groups after the summaries are computed.",
+      "syntax": "SELECT group_col, COUNT(*) AS n\nFROM table\nGROUP BY group_col\nHAVING COUNT(*) > k;",
+      "setup": "CREATE TABLE passengers (passenger_id INTEGER, survived INTEGER, pclass INTEGER, sex TEXT, age REAL, fare REAL, embarked TEXT);\nINSERT INTO passengers VALUES\n  (1, 0, 3, 'male',   22.0,  7.25, 'S'),\n  (2, 1, 1, 'female', 38.0, 71.28, 'C'),\n  (3, 1, 3, 'female', 26.0,  7.92, 'S'),\n  (4, 1, 1, 'female', 35.0, 53.10, 'S'),\n  (5, 0, 3, 'male',   35.0,  8.05, 'S'),\n  (6, 0, 3, 'male',   NULL,  8.46, 'Q');",
+      "setup_note": "a passengers table with the first six Titanic rows",
+      "example": "-- ports with more than one passenger\nSELECT embarked, COUNT(*) AS n\nFROM passengers\nGROUP BY embarked\nHAVING COUNT(*) > 1;",
+      "output": "embarked  n\n--------  -\nS         4",
+      "gotcha": "`WHERE COUNT(*) > 1` is an error: `WHERE` runs before the counting exists. Conditions on a summary belong in `HAVING`.",
+      "related": [
+        "sql/group-by",
+        "sql/where"
+      ],
+      "keywords": [
+        "filter groups",
+        "after grouping",
+        "aggregate condition",
+        "count greater than"
+      ],
+      "source": "Class_asset/why_sql_not_excel.html"
+    },
+    {
+      "id": "sql/left-join",
+      "title": "LEFT JOIN … ON — the SQL cousin of merge",
+      "topic": "sql-join",
+      "week": 5,
+      "summary": "Glues a second table onto the first by matching a shared key column; `LEFT JOIN` keeps every row of the left table, like `pd.merge(how=\"left\")`.",
+      "syntax": "SELECT a.col, b.col\nFROM left_table AS a\nLEFT JOIN right_table AS b\n  ON a.key = b.key;",
+      "setup": "CREATE TABLE passengers (passenger_id INTEGER, survived INTEGER, pclass INTEGER, sex TEXT, age REAL, fare REAL, embarked TEXT);\nINSERT INTO passengers VALUES\n  (1, 0, 3, 'male',   22.0,  7.25, 'S'),\n  (2, 1, 1, 'female', 38.0, 71.28, 'C'),\n  (3, 1, 3, 'female', 26.0,  7.92, 'S'),\n  (4, 1, 1, 'female', 35.0, 53.10, 'S'),\n  (5, 0, 3, 'male',   35.0,  8.05, 'S'),\n  (6, 0, 3, 'male',   NULL,  8.46, 'Q'),\n  (62, 1, 1, 'female', 38.0, 80.00, NULL);\nCREATE TABLE ports (embarked TEXT, port_name TEXT, country TEXT);\nINSERT INTO ports VALUES ('S', 'Southampton', 'England'), ('C', 'Cherbourg', 'France'), ('Q', 'Queenstown', 'Ireland');",
+      "setup_note": "seven Titanic passengers (one with no port recorded) plus a 3-row ports lookup table",
+      "example": "SELECT p.passenger_id, p.embarked, o.port_name, o.country\nFROM passengers AS p\nLEFT JOIN ports AS o\n  ON p.embarked = o.embarked;",
+      "output": "passenger_id  embarked   port_name   country\n------------  --------  -----------  -------\n           1  S         Southampton  England\n           2  C         Cherbourg    France\n           3  S         Southampton  England\n           4  S         Southampton  England\n           5  S         Southampton  England\n           6  Q         Queenstown   Ireland\n          62  NULL      NULL         NULL",
+      "gotcha": "Passenger 62 has no port, so the join fills her port columns with `NULL` instead of dropping her. Always check the row count after a join.",
+      "related": [
+        "python/pd-merge",
+        "python/pd-merge-how",
+        "sql/inner-join",
+        "sql/table-alias"
+      ],
+      "keywords": [
+        "merge",
+        "join",
+        "combine tables",
+        "lookup",
+        "key",
+        "outer"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.11"
+    },
+    {
+      "id": "sql/inner-join",
+      "title": "INNER JOIN — only the rows that match",
+      "topic": "sql-join",
+      "week": 5,
+      "summary": "Keeps only rows whose key appears in both tables; unmatched rows silently vanish.",
+      "syntax": "SELECT ...\nFROM a\nINNER JOIN b ON a.key = b.key;",
+      "setup": "CREATE TABLE passengers (passenger_id INTEGER, survived INTEGER, pclass INTEGER, sex TEXT, age REAL, fare REAL, embarked TEXT);\nINSERT INTO passengers VALUES\n  (1, 0, 3, 'male',   22.0,  7.25, 'S'),\n  (2, 1, 1, 'female', 38.0, 71.28, 'C'),\n  (3, 1, 3, 'female', 26.0,  7.92, 'S'),\n  (4, 1, 1, 'female', 35.0, 53.10, 'S'),\n  (5, 0, 3, 'male',   35.0,  8.05, 'S'),\n  (6, 0, 3, 'male',   NULL,  8.46, 'Q'),\n  (62, 1, 1, 'female', 38.0, 80.00, NULL);\nCREATE TABLE ports (embarked TEXT, port_name TEXT, country TEXT);\nINSERT INTO ports VALUES ('S', 'Southampton', 'England'), ('C', 'Cherbourg', 'France'), ('Q', 'Queenstown', 'Ireland');",
+      "setup_note": "seven Titanic passengers (one with no port recorded) plus a 3-row ports lookup table",
+      "example": "SELECT p.passenger_id, p.embarked, o.port_name\nFROM passengers AS p\nINNER JOIN ports AS o\n  ON p.embarked = o.embarked;\n\n-- compare the row counts of the two join types\nSELECT COUNT(*) AS n_inner FROM passengers AS p INNER JOIN ports AS o ON p.embarked = o.embarked;\nSELECT COUNT(*) AS n_left  FROM passengers AS p LEFT JOIN  ports AS o ON p.embarked = o.embarked;",
+      "output": "passenger_id  embarked   port_name\n------------  --------  -----------\n           1  S         Southampton\n           2  C         Cherbourg\n           3  S         Southampton\n           4  S         Southampton\n           5  S         Southampton\n           6  Q         Queenstown\nn_inner\n-------\n      6\nn_left\n------\n     7",
+      "gotcha": "Plain `JOIN` means `INNER JOIN`. If a count shrinks after a join, rows with an unmatched or missing key were dropped, which is what `how=\"inner\"` does in pandas too.",
+      "related": [
+        "sql/left-join",
+        "python/pd-merge-how"
+      ],
+      "keywords": [
+        "join",
+        "merge",
+        "matching rows only",
+        "drop unmatched",
+        "intersection"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.6 and §2.11; hudm5001_youmilab/warm_ups/database_warmup_table_joins.py"
+    },
+    {
+      "id": "sql/table-alias",
+      "title": "Table aliases: passengers AS p",
+      "topic": "sql-join",
+      "week": 5,
+      "summary": "A short nickname for a table lets you write `p.fare` instead of `passengers.fare`, which matters once two tables share column names.",
+      "syntax": "FROM passengers AS p\nLEFT JOIN ports AS o ON p.embarked = o.embarked",
+      "setup": "CREATE TABLE passengers (passenger_id INTEGER, survived INTEGER, pclass INTEGER, sex TEXT, age REAL, fare REAL, embarked TEXT);\nINSERT INTO passengers VALUES\n  (1, 0, 3, 'male',   22.0,  7.25, 'S'),\n  (2, 1, 1, 'female', 38.0, 71.28, 'C'),\n  (3, 1, 3, 'female', 26.0,  7.92, 'S');\nCREATE TABLE ports (embarked TEXT, port_name TEXT, country TEXT);\nINSERT INTO ports VALUES ('S', 'Southampton', 'England'), ('C', 'Cherbourg', 'France'), ('Q', 'Queenstown', 'Ireland');",
+      "setup_note": "three Titanic passengers plus the ports lookup table",
+      "example": "-- both tables have a column called embarked: the alias says which one you mean\nSELECT p.passenger_id, p.embarked, o.embarked AS port_code, o.port_name\nFROM passengers AS p\nLEFT JOIN ports AS o ON p.embarked = o.embarked;",
+      "output": "passenger_id  embarked  port_code   port_name\n------------  --------  ---------  -----------\n           1  S         S          Southampton\n           2  C         C          Cherbourg\n           3  S         S          Southampton",
+      "gotcha": "Once you alias a table you must use the alias: after `FROM passengers AS p`, writing `passengers.fare` is an error.",
+      "related": [
+        "sql/left-join",
+        "sql/as-alias"
+      ],
+      "keywords": [
+        "nickname",
+        "alias",
+        "qualify column",
+        "table.column",
+        "ambiguous column"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.11"
+    },
+    {
+      "id": "sql/join-plus-group-by",
+      "title": "Join and aggregate in one query",
+      "topic": "sql-join",
+      "week": 5,
+      "summary": "A join can feed straight into `GROUP BY`, so a lookup table's labels become the group names of a summary.",
+      "syntax": "SELECT b.label, COUNT(*) AS n, AVG(a.value) AS avg_value\nFROM a\nLEFT JOIN b ON a.key = b.key\nGROUP BY b.label\nORDER BY n DESC;",
+      "setup": "CREATE TABLE passengers (passenger_id INTEGER, survived INTEGER, pclass INTEGER, sex TEXT, age REAL, fare REAL, embarked TEXT);\nINSERT INTO passengers VALUES\n  (1, 0, 3, 'male',   22.0,  7.25, 'S'),\n  (2, 1, 1, 'female', 38.0, 71.28, 'C'),\n  (3, 1, 3, 'female', 26.0,  7.92, 'S'),\n  (4, 1, 1, 'female', 35.0, 53.10, 'S'),\n  (5, 0, 3, 'male',   35.0,  8.05, 'S'),\n  (6, 0, 3, 'male',   NULL,  8.46, 'Q');\nCREATE TABLE ports (embarked TEXT, port_name TEXT, country TEXT);\nINSERT INTO ports VALUES ('S', 'Southampton', 'England'), ('C', 'Cherbourg', 'France'), ('Q', 'Queenstown', 'Ireland');",
+      "setup_note": "six Titanic passengers plus the ports lookup table",
+      "example": "SELECT o.port_name,\n       COUNT(*)                  AS n_passengers,\n       ROUND(AVG(p.fare), 2)     AS avg_fare,\n       ROUND(AVG(p.survived), 3) AS survival_rate\nFROM passengers AS p\nLEFT JOIN ports AS o ON p.embarked = o.embarked\nGROUP BY o.port_name\nORDER BY n_passengers DESC;",
+      "output": " port_name   n_passengers  avg_fare  survival_rate\n-----------  ------------  --------  -------------\nSouthampton             4     19.08            0.5\nQueenstown              1      8.46            0.0\nCherbourg               1     71.28            1.0",
+      "gotcha": "You can `ORDER BY` an alias you defined in `SELECT` (`n_passengers`), but you cannot use it in `WHERE`.",
+      "related": [
+        "sql/left-join",
+        "sql/group-by",
+        "python/pd-merge",
+        "python/pd-groupby-agg"
+      ],
+      "keywords": [
+        "join then group",
+        "summary by lookup",
+        "combine and aggregate"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.11"
+    },
+    {
+      "id": "sql/sqlite-master",
+      "title": "List the tables: sqlite_master",
+      "topic": "sql-tools",
+      "week": 5,
+      "summary": "SQLite keeps its own catalog in a table called `sqlite_master`; query it to see which tables exist and how they were created.",
+      "syntax": "SELECT name FROM sqlite_master WHERE type = 'table';\nSELECT sql  FROM sqlite_master WHERE name = 'table_name';",
+      "setup": "CREATE TABLE passengers (passenger_id INTEGER, survived INTEGER, pclass INTEGER, sex TEXT, age REAL, fare REAL, embarked TEXT);\nCREATE TABLE ports (embarked TEXT, port_name TEXT, country TEXT);",
+      "setup_note": "two empty tables",
+      "example": "SELECT name FROM sqlite_master WHERE type = 'table';\n\nSELECT sql FROM sqlite_master WHERE name = 'ports';",
+      "output": "   name\n----------\npassengers\nports\n                              sql\n----------------------------------------------------------------\nCREATE TABLE ports (embarked TEXT, port_name TEXT, country TEXT)",
+      "gotcha": "The catalog is read-only. To change a table, use `CREATE`, `DROP` or `ALTER TABLE`, not an `UPDATE` on `sqlite_master`.",
+      "related": [
+        "python/sqlite-list-tables",
+        "sql/create-table",
+        "sql/sqlite3-cli"
+      ],
+      "keywords": [
+        "which tables",
+        "catalog",
+        "schema",
+        "list tables",
+        "show tables"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.10"
+    },
+    {
+      "id": "sql/sqlite3-cli",
+      "title": "The sqlite3 command-line shell",
+      "topic": "sql-tools",
+      "week": 5,
+      "runner": "shell",
+      "summary": "`sqlite3 file.db` opens (or creates) a database file in the terminal, where you type SQL ending in `;` and dot-commands such as `.tables` and `.q`.",
+      "syntax": "$ sqlite3 stocks.db          # open or create the file; the prompt becomes sqlite>\nsqlite> .databases            # which file is open\nsqlite> .tables               # list tables\nsqlite> SELECT * FROM holdings;\nsqlite> .q                    # quit",
+      "example": "# the same session, run non-interactively: statements piped into sqlite3\nsqlite3 stocks.db <<'SQL'\nCREATE TABLE holdings (ticker TEXT, price REAL, chg REAL);\nINSERT INTO holdings VALUES ('NVDA', 219.0, -3.42), ('AAPL', 146.0, -2.73);\n.tables\nSELECT * FROM holdings;\nSQL\nls -l stocks.db",
+      "output": "holdings\nNVDA|219.0|-3.42\nAAPL|146.0|-2.73\n-rw-r--r--  1 student  staff  8192 Sep  4 15:42 stocks.db",
+      "gotcha": "Inside the shell every SQL statement must end with a semicolon or it waits for more input. Dot-commands (`.tables`, `.q`) take no semicolon.",
+      "related": [
+        "python/sqlite-connect",
+        "sql/sqlite-master"
+      ],
+      "keywords": [
+        "terminal",
+        "command line",
+        "sqlite shell",
+        ".tables",
+        ".q",
+        "database file"
+      ],
+      "source": "hudm5001_youmilab/lecture_notes/python/interacting_w_relational_database.py",
+      "volatile": true,
+      "output_note": "The last line is `ls -l` on the new database file; its size, date and time will differ on your machine."
+    },
+    {
+      "id": "sql/pandas-vs-sql",
+      "title": "pandas ↔ SQL, side by side",
+      "topic": "sql-tools",
+      "week": 5,
+      "no_run": true,
+      "summary": "The same handful of ideas in both languages. Learn one, translate the other.",
+      "syntax": "task                pandas                                      SQL\n----------------    ------------------------------------------  -----------------------------------\nall rows & columns  df                                          SELECT * FROM t\npick columns        df[[\"a\", \"b\"]]                              SELECT a, b FROM t\nfilter rows         df[df[\"x\"] > 5]                             SELECT * FROM t WHERE x > 5\ntwo conditions      df[(df.x > 5) & (df.y == 1)]                ... WHERE x > 5 AND y = 1\nsort                df.sort_values(\"x\", ascending=False)        ... ORDER BY x DESC\nfirst rows          df.head(5)                                  ... LIMIT 5\ncount rows          df.shape[0]                                 SELECT COUNT(*) FROM t\ngroup summary       df.groupby(\"g\")[\"x\"].mean()                 SELECT g, AVG(x) FROM t GROUP BY g\njoin tables         pd.merge(a, b, on=\"k\", how=\"left\")          FROM a LEFT JOIN b ON a.k = b.k\nrename output       df.rename(columns={\"x\": \"y\"})               SELECT x AS y FROM t",
+      "gotcha": "One real difference: `COUNT(*)` counts rows, pandas' `.count()` counts non-missing values. Write the same question both ways and check that the answers agree.",
+      "related": [
+        "python/pd-read-sql-query",
+        "sql/group-by",
+        "sql/left-join"
+      ],
+      "keywords": [
+        "translate",
+        "equivalent",
+        "comparison",
+        "cheat sheet",
+        "both"
+      ],
+      "source": "hudm5001_mini/04_Pandas_SQLite.ipynb §2.12"
+    }
+  ]
+}
