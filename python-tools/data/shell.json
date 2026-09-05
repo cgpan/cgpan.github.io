@@ -132,15 +132,15 @@
     },
     {
       "id": "shell/pip-install",
-      "title": "pip install — the other package installer",
+      "title": "python -m pip install — install a package into the Python you are using",
       "topic": "environment",
       "week": 1,
       "no_run": true,
-      "summary": "Installs a package from PyPI into the active environment; it works inside a conda environment too, and it is what Colab uses.",
-      "syntax": "pip install package\n!pip install -q package        # inside a Colab cell",
-      "example": "pip install dash",
-      "output_note": "pip prints the download and `Successfully installed dash-…`. Inside Colab the `-q` flag keeps it quiet.",
-      "gotcha": "`sqlite3` needs no install; it ships with Python. Prefer `conda install` for the core scientific packages and `pip` for the rest.",
+      "summary": "Installs a package from PyPI into the environment that `python` belongs to. Write it as `python -m pip …` rather than plain `pip …`: the bare `pip` command is whichever pip is first on your PATH, and on a machine with Anaconda plus a system Python that is not always the one that goes with your `python`. `python -m pip` runs the pip module of that exact interpreter, so the install always lands where `import` will look.",
+      "syntax": "python -m pip install package\npython -m pip install package1 package2      # several at once\npython -m pip install -e .                   # a project of your own, in editable mode\npython -m pip --version                      # which pip, and which Python it belongs to",
+      "example": "conda activate hudm5001\npython -m pip --version\npython -m pip install dash",
+      "output_note": "`python -m pip --version` prints a path such as `/opt/anaconda3/envs/hudm5001/lib/python3.12/site-packages/pip (python 3.12)`: the environment name in that path is your proof that the right Python is doing the installing. The install then prints the download and `Successfully installed dash-…`. Inside a Colab cell `!pip install -q package` is fine, because Colab has only one Python.",
+      "gotcha": "The same idea applies to every tool that has a `-m` form: `python -m pip`, `python -m unittest`, `python -m venv`. `sqlite3` needs no install; it ships with Python. Prefer `conda install` for the core scientific packages and `python -m pip` for the rest, and do not run `conda install` after pip in the same environment (conda does not know what pip installed).",
       "related": [
         "shell/conda-install",
         "python/pip-install"
@@ -149,9 +149,25 @@
         "pypi",
         "install package",
         "pip",
+        "python -m pip",
+        "wrong pip",
         "colab install"
       ],
-      "source": "hudm5001/class_notes/00_environment_setup.md §4.2"
+      "source": "hudm5001/class_notes/00_environment_setup.md §4.2",
+      "lines": [
+        [
+          "conda activate hudm5001",
+          "Turn the environment on first; `python` now means the environment's Python."
+        ],
+        [
+          "python -m pip --version",
+          "`-m pip` runs the pip module that ships with *this* `python`. The path it prints must contain `envs/hudm5001`."
+        ],
+        [
+          "python -m pip install dash",
+          "Installs `dash` into that same environment. A bare `pip install dash` usually does the same, but if the first `pip` on the PATH belongs to another Python you get the classic “installed it, still can't import it” problem."
+        ]
+      ]
     },
     {
       "id": "shell/conda-env-commands",

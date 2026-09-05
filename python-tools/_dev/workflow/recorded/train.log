@@ -1,0 +1,23 @@
+10.79M parameters on mps
+iter     0 | train 4.2108 | val 4.2192 |   18.0s
+iter   250 | train 2.2935 | val 2.3299 |   82.6s
+iter   500 | train 1.8763 | val 1.9956 |  147.5s
+iter   750 | train 1.6141 | val 1.7890 |  212.4s
+iter  1000 | train 1.4701 | val 1.6657 |  277.7s
+iter  1250 | train 1.3806 | val 1.6025 |  343.0s
+iter  1500 | train 1.3275 | val 1.5561 |  408.2s
+iter  1750 | train 1.2713 | val 1.5290 |  473.4s
+iter  2000 | train 1.2295 | val 1.5020 |  539.1s
+iter  2250 | train 1.1870 | val 1.4797 |  604.8s
+iter  2500 | train 1.1594 | val 1.4751 |  670.7s
+iter  2750 | train 1.1238 | val 1.4663 |  735.6s
+iter  3000 | train 1.0999 | val 1.4673 |  800.8s
+iter  3250 | train 1.0716 | val 1.4668 |  865.4s
+iter  3500 | train 1.0441 | val 1.4717 |  930.0s
+iter  3750 | train 1.0188 | val 1.4752 |  994.7s
+iter  4000 | train 0.9893 | val 1.4865 | 1059.6s
+iter  4250 | train 0.9591 | val 1.5020 | 1124.7s
+iter  4500 | train 0.9312 | val 1.5015 | 1189.7s
+iter  4750 | train 0.9051 | val 1.5192 | 1254.2s
+iter  5000 | train 0.8749 | val 1.5435 | 1318.9s
+best validation loss 1.4663 -> runs/base/best.pt

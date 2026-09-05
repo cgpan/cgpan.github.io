@@ -1,0 +1,9 @@
+block_size: 32
+n_layer: 2
+n_head: 2
+n_embd: 64
+dropout: 0.0
+batch_size: 16
+max_iters: 100
+eval_interval: 50
+eval_iters: 20

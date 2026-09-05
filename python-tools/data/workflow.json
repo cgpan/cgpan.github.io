@@ -1,0 +1,1456 @@
+{
+  "language": "workflow",
+  "topics": [
+    {
+      "id": "wf-setup",
+      "label": "Part I · Set up the workspace"
+    },
+    {
+      "id": "wf-data",
+      "label": "Part II · Data"
+    },
+    {
+      "id": "wf-models",
+      "label": "Part III · Models"
+    },
+    {
+      "id": "wf-run",
+      "label": "Part IV · Train, evaluate, test"
+    },
+    {
+      "id": "wf-ship",
+      "label": "Part V · Ship it"
+    }
+  ],
+  "entries": [
+    {
+      "id": "workflow/00-the-plan",
+      "title": "Step 0 · The plan, and five rules that prevent predictable failures",
+      "topic": "wf-setup",
+      "week": 9,
+      "no_run": true,
+      "code_lang": "text",
+      "summary": "Every Python project follows the same spine: folder → environment → Git → package scaffold → data → code with tests → run and log → ship. This tab walks it once, building a small character-level GPT from an empty folder, so you can copy the sequence for your own project. Each step shows the exact commands, what every line does, and the real output.",
+      "example": "Part I    Set up    1 folder · 2 conda env · 3 check · 4 git init\n                    5 GitHub repo · 6 connect · 7 scaffold\nPart II   Data      8 download script · 9 clean · 10 tokenizer · 11 split & batch\nPart III  Models    12 baseline · 13 config · 14 transformer\nPart IV   Run       15 smoke run · 16 full run · 17 evaluate · 18 test suite\nPart V    Ship      19 Colab · 20 branches · 21 pull request · 22 README",
+      "lines": [
+        [
+          "Environment before Git",
+          "Create the conda environment and install the packages first, so the very first commit already records what the code needs to run. A repository whose first commit cannot be installed is one nobody can reproduce."
+        ],
+        [
+          ".gitignore before the first commit",
+          "Commit a 1 MB data file once and it lives in the history forever. Ignore rules go in before anything is staged."
+        ],
+        [
+          "A walking skeleton before the real model",
+          "Get a tiny model running end to end in seconds, then scale up. Otherwise your first debugging session and your first long training run happen at the same time, and you will not know which is broken."
+        ],
+        [
+          "A baseline before the neural network",
+          "Thirty lines of counting give you a number to beat. Without it, “my loss is 2.1” means nothing; with it you know 2.1 is worse than counting letter pairs."
+        ],
+        [
+          "Tests alongside, not at the end",
+          "Every module gets its test in the same sitting. Unit tests (does the code do what I said) and evaluation (is the model any good) are different jobs and live in different folders."
+        ]
+      ],
+      "gotcha": "The order matters more than the tools. With venv instead of conda, or pytest instead of unittest, the spine is exactly the same.",
+      "related": [
+        "shell/conda-create",
+        "git/init",
+        "python/unittest-testcase",
+        "workflow/01-project-folder"
+      ],
+      "keywords": [
+        "project",
+        "workflow",
+        "from scratch",
+        "empty folder",
+        "checklist",
+        "plan"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), “Changes to the original plan”",
+      "output": ""
+    },
+    {
+      "id": "workflow/01-project-folder",
+      "title": "Step 1 · Make the project folder",
+      "topic": "wf-setup",
+      "week": 1,
+      "summary": "One folder holds everything: code, tests, configuration and the (ignored) data. Create it somewhere you can find again and move into it; every command in this workflow is typed from inside this folder.",
+      "example": "mkdir minigpt\ncd minigpt\npwd",
+      "lines": [
+        [
+          "mkdir minigpt",
+          "Makes a new, empty folder named `minigpt` inside the folder you are in (here the home folder)."
+        ],
+        [
+          "cd minigpt",
+          "Moves into it. The prompt does not always show it, so the next line checks."
+        ],
+        [
+          "pwd",
+          "Prints the working directory: the full path of the folder you are in."
+        ]
+      ],
+      "gotcha": "Short, lowercase, no spaces or hyphens: `minigpt`, not `My GPT Project`. The folder name becomes the package name in step 7, and Python cannot import a name with a space or a dash.",
+      "related": [
+        "shell/mkdir",
+        "shell/cd",
+        "shell/pwd",
+        "shell/file-naming"
+      ],
+      "keywords": [
+        "mkdir",
+        "new project",
+        "folder"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 1",
+      "output": "/Users/student/minigpt"
+    },
+    {
+      "id": "workflow/02-conda-env",
+      "title": "Step 2 · Create an isolated conda environment",
+      "topic": "wf-setup",
+      "week": 1,
+      "no_run": true,
+      "summary": "An environment is a private Python installation that belongs to this project only. Create it with conda, turn it on with `conda activate`, then install the project's packages with pip. From now on everything you install lands here and nowhere else, and “somewhere else” is never your system Python.",
+      "example": "conda create --name minigpt python=3.12 -y\nconda activate minigpt\npython -m pip install torch numpy pandas pyyaml matplotlib",
+      "output_note": "conda lists what it will install and continues without asking because of `-y`. When activation works, your prompt starts with `(minigpt)` instead of `(base)`. That prefix is the single most useful signal in the whole project: if it says `(base)`, you are about to install into your Anaconda installation instead of your project.",
+      "lines": [
+        [
+          "conda create --name minigpt python=3.12 -y",
+          "Makes a new environment called `minigpt` with its own Python 3.12. `--name` gives it a name, `python=3.12` pins the version (the course default, and a version every package supports), `-y` answers “yes” to the confirmation question."
+        ],
+        [
+          "conda activate minigpt",
+          "Turns the environment on for this terminal window. Do it every time you open a new terminal to work on the project; the `(minigpt)` prefix tells you it worked."
+        ],
+        [
+          "python -m pip install torch numpy pandas pyyaml matplotlib",
+          "Installs the packages into the active environment: PyTorch for the model, NumPy and pandas for arrays and tables, PyYAML to read the config files, matplotlib for plots. `python -m pip` (rather than a bare `pip`) runs the pip that belongs to this `python`: a bare `pip` is whichever pip is first on the PATH, which on a computer with Anaconda plus a system Python is not always the same one, and then packages land where `import` cannot find them."
+        ]
+      ],
+      "gotcha": "Use conda to create the environment and choose the Python version; use `python -m pip` for everything inside it, and do not run `conda install` afterwards: conda does not know what pip installed and can overwrite it, and the environment fails later on an import with an error that points nowhere. If an environment breaks, do not repair it: `conda deactivate`, `conda env remove --name minigpt -y`, and create it again in thirty seconds. Nothing of value lives inside one; your code is in Git and your data is regenerable.",
+      "related": [
+        "shell/conda-create",
+        "shell/conda-activate",
+        "shell/pip-install",
+        "shell/conda-env-commands"
+      ],
+      "keywords": [
+        "conda create",
+        "activate",
+        "virtual environment",
+        "venv",
+        "pip install",
+        "python -m pip"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 1",
+      "output": ""
+    },
+    {
+      "id": "workflow/03-check-env",
+      "title": "Step 3 · Check that the right Python is active",
+      "topic": "wf-setup",
+      "week": 1,
+      "summary": "Before writing anything, prove that the terminal is using the environment you just made. Four commands answer four questions: which version, which `python` file, which pip goes with it, and do the packages import.",
+      "example": "python -V\nwhich python\npython -m pip --version\npython -c \"import torch; print(torch.__version__, torch.backends.mps.is_available())\"",
+      "output_note": "Recorded on an Apple-silicon Mac, so the GPU check prints `True`. On Windows or Linux without an NVIDIA card it prints `False`, and on Colab the check that prints `True` is `torch.cuda.is_available()`. All of these are fine: step 13 picks the device automatically.",
+      "lines": [
+        [
+          "python -V",
+          "Prints the version. It must say 3.12, the version you pinned in step 2."
+        ],
+        [
+          "which python",
+          "Prints the path of the `python` command this terminal runs. The path must contain `envs/minigpt`; if it says `base` or `/usr/bin`, the environment is not active. On Windows use `where python`."
+        ],
+        [
+          "python -m pip --version",
+          "Runs pip as a module of that same `python` and prints where it lives. The path must also contain `envs/minigpt`: this is the pip that step 2 installed into, and the one every `python -m pip install` will use."
+        ],
+        [
+          "python -c \"import torch; print(...)\"",
+          "`-c` runs the quoted code without a file. Importing torch proves the install worked; the second value says whether the Apple GPU (MPS) can be used."
+        ]
+      ],
+      "gotcha": "If a package imports in the terminal but not in VS Code, VS Code is using a different Python: open the Command Palette, run “Python: Select Interpreter” and choose `minigpt`, then restart the kernel.",
+      "related": [
+        "shell/vscode-select-interpreter",
+        "shell/python-dash-c",
+        "python/verify-setup",
+        "shell/conda-activate"
+      ],
+      "keywords": [
+        "which python",
+        "python -V",
+        "interpreter",
+        "wrong environment"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 1 checkpoint",
+      "output": "Python 3.12.14\n/opt/anaconda3/envs/minigpt/bin/python\npip 26.2.1 from /opt/anaconda3/envs/minigpt/lib/python3.12/site-packages/pip (python 3.12)\n2.14.0 True"
+    },
+    {
+      "id": "workflow/04-git-init",
+      "title": "Step 4 · git init, ignore first, commit second",
+      "topic": "wf-setup",
+      "week": 9,
+      "summary": "Turn the folder into a Git repository, write the ignore rules and a README, and make the first commit. The order matters: Git history is append-only in practice, so anything large or private must be ignored before it is ever staged.",
+      "files": [
+        {
+          "path": ".gitignore",
+          "content": "# environment folders (conda environments live outside the project, but be safe)\n.venv/\n__pycache__/\n*.egg-info/\n\n# data and artefacts: regenerable from the code, so never committed\ndata/\ncheckpoints/\nruns/\n*.pt\n*.npy\n\n# notebook checkpoints and operating-system noise\n.ipynb_checkpoints/\n.DS_Store\n",
+          "lang": "text"
+        },
+        {
+          "path": "README.md",
+          "content": "# miniGPT\n\nA character-level language model built from an empty folder, following the\nHUDM 5001 standard workflow: environment first, Git second, tests alongside.\n",
+          "lang": "markdown"
+        }
+      ],
+      "example": "git init\ngit add .gitignore README.md\ngit commit -m \"Initialise repository with ignore rules\"\ngit status",
+      "lines": [
+        [
+          ".gitignore: .venv/  __pycache__/  *.egg-info/",
+          "Folders Python and pip create while you work. They are regenerated every time and belong to your machine, not to the project."
+        ],
+        [
+          ".gitignore: data/  checkpoints/  runs/  *.pt  *.npy",
+          "Everything regenerable from code: the downloaded corpus, cached arrays, trained weights, training logs. A collaborator should rebuild them by running your scripts, not download them from your repository. Rule of thumb: commit the recipe, never the result."
+        ],
+        [
+          ".gitignore: .ipynb_checkpoints/  .DS_Store",
+          "Notebook autosaves and macOS folder metadata: pure noise in a diff."
+        ],
+        [
+          "README.md",
+          "One paragraph for now: what the project is. Step 22 turns it into a real README with reproduce instructions and results."
+        ],
+        [
+          "git init",
+          "Creates the hidden `.git` folder that will store every snapshot. Run once per project."
+        ],
+        [
+          "git add .gitignore README.md",
+          "Stages exactly these two files. Naming them instead of `git add .` is a habit that keeps surprises out of the first commit."
+        ],
+        [
+          "git commit -m \"Initialise repository with ignore rules\"",
+          "Saves the snapshot with a message. The output names the branch, the new commit id, and the files it contains."
+        ],
+        [
+          "git status",
+          "“nothing to commit, working tree clean” means every tracked file is saved. You will see this line a lot."
+        ]
+      ],
+      "gotcha": "Write ignore rules for things that do not exist yet (`runs/`, `*.pt`). The point is that they never get the chance to be staged.",
+      "related": [
+        "git/init",
+        "git/gitignore",
+        "git/add",
+        "git/commit",
+        "git/status",
+        "markdown/headings"
+      ],
+      "keywords": [
+        "git init",
+        "gitignore",
+        "first commit",
+        "readme"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 2",
+      "output": "Initialized empty Git repository in /Users/student/minigpt/.git/\n[main (root-commit) eac20d1] Initialise repository with ignore rules\n 2 files changed, 19 insertions(+)\n create mode 100644 .gitignore\n create mode 100644 README.md\nOn branch main\nnothing to commit, working tree clean"
+    },
+    {
+      "id": "workflow/05-github-repo",
+      "title": "Step 5 · Create an empty repository on GitHub",
+      "topic": "wf-setup",
+      "week": 9,
+      "no_run": true,
+      "code_lang": "text",
+      "harness": "git init -q --bare \"$HOME/github/minigpt.git\"",
+      "summary": "GitHub is where the project lives outside your laptop: backup, sharing, and later Colab. Create the repository completely empty, so the history starts on your computer and GitHub simply receives it. Two ways to do it, same result: click through the website (A), or one command with the GitHub CLI (B). Either way, step 6 is next.",
+      "example": "A · In the browser\ngithub.com → \"+\" (top right) → New repository\n  Repository name:  minigpt           ← the same name as your folder\n  Visibility:       Public or Private\n  Leave UNTICKED:   Add a README, Add .gitignore, Choose a license\n→ Create repository\n\nB · In the terminal, with the GitHub CLI\nconda install -c conda-forge gh        # one time (a Mac can also use: brew install gh)\ngh auth login                          # one time per computer: GitHub.com → HTTPS → Login with a web browser\ngh repo create minigpt --private       # or --public\ngh repo view minigpt --web             # optional: open the new page to check",
+      "output_note": "Route A ends on a page with a box titled “…or push an existing repository from the command line”; its three commands are step 6. Route B prints the address of the new repository, `https://github.com/<your-username>/minigpt`. Neither is recorded here because both need your GitHub account.",
+      "lines": [
+        [
+          "A · Repository name",
+          "Use the folder name so the URL and the folder match: `github.com/<your-username>/minigpt`."
+        ],
+        [
+          "A · Leave the three boxes unticked",
+          "You already have a README and a .gitignore from step 4. Ticking a box makes GitHub create a first commit that your computer does not have, and your first push is rejected."
+        ],
+        [
+          "A · Create repository",
+          "Nothing is uploaded yet. The repository is an empty shell waiting for `git push`."
+        ],
+        [
+          "B · conda install -c conda-forge gh",
+          "Installs the GitHub CLI into the `minigpt` environment. `gh` is a separate program from `git`: git manages your history, gh talks to the GitHub website for you."
+        ],
+        [
+          "B · gh auth login",
+          "A one-time login per computer. Answer the questions (GitHub.com, HTTPS, Yes, Login with a web browser), copy the one-time code it shows, press Enter, paste the code on the GitHub page that opens. From now on `git push` never asks for a password: gh stored a token that git reuses."
+        ],
+        [
+          "B · gh repo create minigpt --private",
+          "Creates an empty repository named `minigpt` under your account. `--private` or `--public` is required in this form; with no name and no flag, `gh repo create` asks questions instead. Nothing is uploaded and no README is added, so it matches route A exactly."
+        ],
+        [
+          "B · gh repo view minigpt --web",
+          "Opens the repository page in your browser, the quickest check that it exists."
+        ],
+        [
+          "B · the one-command shortcut, for later",
+          "`gh repo create minigpt --private --source=. --remote=origin --push`, run inside the project folder, does steps 5 and 6 together: creates the repository, adds it as `origin`, and pushes. Learn the two-step version first so you know what it does."
+        ]
+      ],
+      "gotcha": "If you did tick “Add a README” (route A) or added `--add-readme` (route B), the simplest fix is to delete the repository on GitHub (Settings → Danger zone) and create it again empty.",
+      "related": [
+        "git/github-new-repo",
+        "git/gh-repo-create",
+        "git/git-vs-github",
+        "git/personal-access-token",
+        "workflow/06-connect-and-push"
+      ],
+      "keywords": [
+        "github",
+        "new repository",
+        "create repo"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 2",
+      "output": ""
+    },
+    {
+      "id": "workflow/06-connect-and-push",
+      "title": "Step 6 · Connect the folder to GitHub and push",
+      "topic": "wf-setup",
+      "week": 9,
+      "summary": "Copy the three commands GitHub printed. They tell Git the address of the remote copy, name the branch `main`, and upload the first commit while remembering the link, so that later pushes are just `git push`.",
+      "example": "git remote add origin https://github.com/YOUR-USERNAME/minigpt.git\ngit branch -M main\ngit push -u origin main",
+      "output_note": "Replace `YOUR-USERNAME` with your GitHub user name. On your machine the output names your GitHub URL; in this recorded run a local folder stands in for GitHub, so the output names that folder instead.",
+      "lines": [
+        [
+          "git remote add origin https://github.com/YOUR-USERNAME/minigpt.git",
+          "`origin` is the conventional nickname for your GitHub copy. The URL is the one on the empty-repository page (or the green **Code** button, HTTPS tab)."
+        ],
+        [
+          "git branch -M main",
+          "Renames the current branch to `main`; older Git versions start on `master`. `-M` renames even if `main` already exists."
+        ],
+        [
+          "git push -u origin main",
+          "Uploads your commits. `-u` records that local `main` follows `origin/main`, so plain `git push` and `git pull` work from now on. The output ends with the branch tracking line."
+        ],
+        [
+          "If you used the gh shortcut in step 5",
+          "`gh repo create … --source=. --remote=origin --push` already did all three lines; run `git remote -v` and you will see `origin` pointing at GitHub. Skip to step 7."
+        ]
+      ],
+      "gotcha": "GitHub does not accept your account password over HTTPS. When asked for a password, paste a personal access token, or sign in once through GitHub Desktop or the `gh` command-line tool.",
+      "related": [
+        "git/remote-add-origin",
+        "git/gh-repo-create",
+        "git/push",
+        "git/personal-access-token",
+        "git/remote"
+      ],
+      "keywords": [
+        "remote add origin",
+        "push -u",
+        "first push",
+        "connect github",
+        "gh"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 2",
+      "output": "To /Users/student/github/minigpt.git\n * [new branch]      main -> main\nbranch 'main' set up to track 'origin/main'."
+    },
+    {
+      "id": "workflow/07-scaffold",
+      "title": "Step 7 · Scaffold the package and install it in editable mode",
+      "topic": "wf-setup",
+      "week": 9,
+      "summary": "Create the folder layout the project will grow into, describe the package in `pyproject.toml`, and install it with `pip install -e .` so that `import minigpt` works from anywhere on your machine and always points at your source folder. Make all the folders now, even the empty ones: an empty `tests/` that is waiting for you is worth more than a perfect one you meant to create later.",
+      "files": [
+        {
+          "path": "pyproject.toml",
+          "content": "[build-system]\nrequires = [\"setuptools>=68\"]\nbuild-backend = \"setuptools.build_meta\"\n\n[project]\nname = \"minigpt\"\nversion = \"0.1.0\"\nrequires-python = \">=3.12,<3.13\"\ndependencies = [\"torch\", \"numpy\", \"pandas\", \"pyyaml\", \"matplotlib\"]\n\n[tool.setuptools.packages.find]\nwhere = [\"src\"]\n",
+          "lang": "toml"
+        }
+      ],
+      "example": "mkdir -p src/minigpt tests configs scripts notebooks data checkpoints\ntouch src/minigpt/__init__.py\npython -m pip install -q -e .\npython -m pip show minigpt\ncd ..\npython -c \"import minigpt; print(minigpt.__file__)\"\ncd minigpt\ngit add pyproject.toml src\ngit commit -m \"Scaffold the package\"",
+      "lines": [
+        [
+          "mkdir -p src/minigpt tests configs scripts notebooks data checkpoints",
+          "Seven folders at once; `-p` creates parents and does not complain if one exists. `src/minigpt/` is the importable package where all real code lives; `tests/` mirrors it; `configs/` holds YAML settings; `scripts/` one-off jobs; `notebooks/` thin demos; `data/` and `checkpoints/` are ignored by Git."
+        ],
+        [
+          "touch src/minigpt/__init__.py",
+          "Creates an empty file. Its presence tells Python that `src/minigpt` is a package."
+        ],
+        [
+          "pyproject.toml: [build-system]",
+          "Which tool builds the package (setuptools). Boilerplate you copy between projects."
+        ],
+        [
+          "pyproject.toml: [project]",
+          "Name, version, the Python range it supports, and the packages it depends on. pip reads this list."
+        ],
+        [
+          "pyproject.toml: [tool.setuptools.packages.find] where = [\"src\"]",
+          "Tells setuptools that packages live under `src/`. This “src layout” makes it impossible to import a half-written package from the current folder by accident."
+        ],
+        [
+          "python -m pip install -q -e .",
+          "Installs the package from the current folder (`.`) in editable mode (`-e`): Python records a link to `src/`, so every edit is live with no reinstall. `python -m pip` guarantees it is this environment's pip (step 3 checked that); `-q` hides the long list of `Requirement already satisfied` lines, the packages from step 2."
+        ],
+        [
+          "python -m pip show minigpt",
+          "Proves the install: the version from `pyproject.toml`, `Editable project location` pointing at your folder, and `Requires` listing the dependencies."
+        ],
+        [
+          "cd .. / python -c \"import minigpt; print(minigpt.__file__)\" / cd minigpt",
+          "The test that matters: import from a folder that is *not* the project. The printed path must end in `src/minigpt/__init__.py`. Then go back into the project."
+        ],
+        [
+          "git add pyproject.toml src / git commit",
+          "Commits the scaffold. The `src/minigpt.egg-info/` folder that the install created is ignored by the `*.egg-info/` rule."
+        ]
+      ],
+      "gotcha": "`ImportError: minigpt` later on has two usual causes: the environment is not activated (the prompt says `(base)`), or `python -m pip install -e .` was never run in this environment. A bare `pip install -e .` that used another Python's pip is the sneaky third cause; `python -m pip show minigpt` settles it.",
+      "related": [
+        "shell/mkdir",
+        "shell/touch",
+        "shell/pip-install",
+        "python/import-module",
+        "python/name-main"
+      ],
+      "keywords": [
+        "pyproject",
+        "pip install -e",
+        "python -m pip",
+        "editable",
+        "src layout",
+        "package",
+        "scaffold"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 3",
+      "output": "Name: minigpt\nVersion: 0.1.0\nSummary:\nHome-page:\nAuthor:\nAuthor-email:\nLicense:\nLocation: /opt/anaconda3/envs/minigpt/lib/python3.12/site-packages\nEditable project location: /Users/student/minigpt\nRequires: matplotlib, numpy, pandas, pyyaml, torch\nRequired-by:\n/Users/student/minigpt/src/minigpt/__init__.py\n[main 8c6fdd8] Scaffold the package\n 2 files changed, 12 insertions(+)\n create mode 100644 pyproject.toml\n create mode 100644 src/minigpt/__init__.py"
+    },
+    {
+      "id": "workflow/08-download-script",
+      "title": "Step 8 · Fetch the data with a script, not by hand",
+      "topic": "wf-data",
+      "week": 3,
+      "summary": "Downloading a file by hand is fine exactly once and then becomes the thing nobody can reproduce. A twenty-line script downloads the corpus, checks its size and fingerprint, and is safe to run again. The corpus is tinyshakespeare: 1.1 MB of plays, one character at a time.",
+      "files": [
+        {
+          "path": "scripts/get_data.py",
+          "content": "\"\"\"Download tinyshakespeare into data/. Safe to re-run.\"\"\"\nimport hashlib\nimport urllib.request\nfrom pathlib import Path\n\nURL = (\"https://raw.githubusercontent.com/karpathy/char-rnn/\"\n       \"master/data/tinyshakespeare/input.txt\")\nDEST = Path(\"data/input.txt\")\nEXPECTED_BYTES = 1_115_394\n\ndef main() -> None:\n    DEST.parent.mkdir(parents=True, exist_ok=True)\n    if not DEST.exists():\n        print(f\"downloading -> {DEST}\")\n        urllib.request.urlretrieve(URL, DEST)\n    raw = DEST.read_bytes()\n    digest = hashlib.sha256(raw).hexdigest()[:12]\n    print(f\"{len(raw):,} bytes  sha256:{digest}\")\n    if len(raw) != EXPECTED_BYTES:\n        raise SystemExit(\"unexpected file size - the source may have changed\")\n\nif __name__ == \"__main__\":\n    main()\n",
+          "lang": "python"
+        }
+      ],
+      "example": "python scripts/get_data.py\npython scripts/get_data.py\ngit status --short\ngit add scripts/get_data.py\ngit commit -m \"Add the data download script\"",
+      "lines": [
+        [
+          "import hashlib, urllib.request, from pathlib import Path",
+          "Standard library only: hashing, downloading, and paths. Nothing to install."
+        ],
+        [
+          "URL, DEST, EXPECTED_BYTES",
+          "Three constants at the top: where the file comes from, where it goes, how big it must be. For another dataset you change these, not the code."
+        ],
+        [
+          "DEST.parent.mkdir(parents=True, exist_ok=True)",
+          "Creates `data/` if needed and does not fail if it already exists."
+        ],
+        [
+          "if not DEST.exists(): ... urlretrieve(URL, DEST)",
+          "Downloads only when the file is missing, so the second run costs nothing."
+        ],
+        [
+          "digest = hashlib.sha256(raw).hexdigest()[:12]",
+          "A fingerprint of the bytes. If it changes later, the data changed, not your code; three lines that settle arguments."
+        ],
+        [
+          "if len(raw) != EXPECTED_BYTES: raise SystemExit(...)",
+          "Stops with a message instead of continuing with a wrong file."
+        ],
+        [
+          "if __name__ == \"__main__\": main()",
+          "Runs `main()` only when the file is executed as a script, not when it is imported."
+        ],
+        [
+          "python scripts/get_data.py  (twice)",
+          "The first run downloads and reports; the second only reports: same size, same fingerprint."
+        ],
+        [
+          "git status --short",
+          "Shows `?? scripts/` (untracked, new) and nothing about `data/`: the ignore rule from step 4 is doing its job."
+        ]
+      ],
+      "gotcha": "If `git status` lists `data/input.txt`, your `.gitignore` is missing the `data/` line or has a typo. Fix it before you commit.",
+      "related": [
+        "python/os-path",
+        "python/open-read",
+        "python/name-main",
+        "python/run-script",
+        "git/gitignore",
+        "shell/wget"
+      ],
+      "keywords": [
+        "download",
+        "urllib",
+        "dataset",
+        "sha256",
+        "reproducible"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 4",
+      "output": "downloading -> data/input.txt\n1,115,394 bytes  sha256:86c4e6aa9db7\n1,115,394 bytes  sha256:86c4e6aa9db7\n?? scripts/\n[main ffb5442] Add the data download script\n 1 file changed, 23 insertions(+)\n create mode 100644 scripts/get_data.py"
+    },
+    {
+      "id": "workflow/09-clean",
+      "title": "Step 9 · Clean the text, and write the test in the same sitting",
+      "topic": "wf-data",
+      "week": 3,
+      "volatile": true,
+      "summary": "Cleaning is a list of explicit decisions about what you will and will not model, written as code so you can still see them in six weeks: normalise Unicode, flatten curly quotes, unify line endings, collapse repeated spaces and blank lines. The test checks a property (cleaning twice changes nothing) rather than one exact output.",
+      "files": [
+        {
+          "path": "src/minigpt/clean.py",
+          "content": "\"\"\"Corpus cleaning: normalise whitespace and drop characters we will not model.\"\"\"\nfrom __future__ import annotations\n\nimport re\nimport unicodedata\nfrom collections import Counter\n\nSMART = {\"‘\": \"'\", \"’\": \"'\", \"“\": '\"', \"”\": '\"',\n         \"–\": \"-\", \"—\": \"--\", \"…\": \"...\"}\n\ndef clean_text(raw: str, min_char_count: int = 0) -> str:\n    text = unicodedata.normalize(\"NFKC\", raw)\n    for bad, good in SMART.items():\n        text = text.replace(bad, good)\n    text = text.replace(\"\\r\\n\", \"\\n\").replace(\"\\r\", \"\\n\")\n    text = re.sub(r\"[ \\t]+\", \" \", text)      # runs of spaces -> one\n    text = re.sub(r\" *\\n\", \"\\n\", text)       # trailing spaces on a line\n    text = re.sub(r\"\\n{3,}\", \"\\n\\n\", text)   # at most one blank line\n    text = text.strip() + \"\\n\"\n\n    if min_char_count > 0:\n        counts = Counter(text)\n        rare = {ch for ch, n in counts.items() if n < min_char_count}\n        text = \"\".join(ch for ch in text if ch not in rare)\n    return text\n\ndef describe(text: str) -> dict:\n    counts = Counter(text)\n    return {\"n_chars\": len(text),\n            \"n_lines\": text.count(\"\\n\") + 1,\n            \"vocab_size\": len(counts),\n            \"most_common\": counts.most_common(5)}\n",
+          "lang": "python"
+        },
+        {
+          "path": "tests/test_clean.py",
+          "content": "import unittest\n\nfrom minigpt.clean import clean_text, describe\n\n\nclass CleanTests(unittest.TestCase):\n    def test_cleaning_twice_changes_nothing(self):\n        raw = \"To be,  or not to be.\\r\\n\\r\\n\\r\\nThat is the question.  \\n\"\n        once = clean_text(raw)\n        self.assertEqual(clean_text(once), once)\n\n    def test_smart_quotes_and_spaces_are_normalised(self):\n        self.assertEqual(clean_text(\"“Hi”   there\"), '\"Hi\" there\\n')\n\n    def test_describe_counts(self):\n        info = describe(\"aab\\n\")\n        self.assertEqual(info[\"n_chars\"], 4)\n        self.assertEqual(info[\"vocab_size\"], 3)\n        self.assertEqual(info[\"most_common\"][0], (\"a\", 2))\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n",
+          "lang": "python"
+        },
+        {
+          "path": "scripts/inspect_corpus.py",
+          "content": "\"\"\"Print what cleaning did to the corpus: size, vocabulary, and the most common characters.\"\"\"\nfrom pathlib import Path\n\nfrom minigpt.clean import clean_text, describe\n\nraw = Path(\"data/input.txt\").read_text(encoding=\"utf-8\")\ntext = clean_text(raw)\nr, c = describe(raw), describe(text)\nprint(f\"raw:    {r['n_chars']:,} chars   vocab {r['vocab_size']}\")\nprint(f\"clean:  {c['n_chars']:,} chars   vocab {c['vocab_size']}   lines {c['n_lines']:,}\")\nprint(\"most common:\", \" | \".join(f\"{ch!r} {n:,}\" for ch, n in c[\"most_common\"]))\n",
+          "lang": "python"
+        }
+      ],
+      "example": "python scripts/inspect_corpus.py\npython -m unittest discover -s tests -v\ngit add src tests scripts\ngit commit -m \"Add the corpus cleaner and its tests\"",
+      "lines": [
+        [
+          "unicodedata.normalize(\"NFKC\", raw)",
+          "Turns look-alike characters into one standard form (full-width letters, odd spaces), so the model does not learn two spellings of the same thing."
+        ],
+        [
+          "for bad, good in SMART.items(): text = text.replace(bad, good)",
+          "Replaces curly quotes and long dashes with their plain keyboard versions, one pair at a time."
+        ],
+        [
+          "text.replace(\"\\r\\n\", \"\\n\").replace(\"\\r\", \"\\n\")",
+          "Windows and old-Mac line endings become plain `\\n`."
+        ],
+        [
+          "re.sub(r\"[ \\t]+\", \" \", text)",
+          "A regular expression: one or more spaces or tabs become a single space."
+        ],
+        [
+          "re.sub(r\"\\n{3,}\", \"\\n\\n\", text)",
+          "Three or more line breaks in a row become two: at most one blank line."
+        ],
+        [
+          "text.strip() + \"\\n\"",
+          "No leading or trailing whitespace, and exactly one newline at the end."
+        ],
+        [
+          "describe(text)",
+          "Returns the counts you want to print: characters, lines, vocabulary size, the five most common characters."
+        ],
+        [
+          "test_cleaning_twice_changes_nothing",
+          "The most valuable cleaner test: `clean(clean(x)) == clean(x)`. If cleaning twice differs from cleaning once, two of your rules are fighting."
+        ],
+        [
+          "scripts/inspect_corpus.py",
+          "Prints the before-and-after numbers. Only twenty characters were removed and the vocabulary stayed at 65: correct for a corpus that was already tidy."
+        ],
+        [
+          "python -m unittest discover -s tests -v",
+          "Finds every `test_*.py` file under `tests/` and runs it; `-v` prints one line per test. `OK` at the end is what you want; the time it reports varies."
+        ]
+      ],
+      "output_note": "If your cleaner deletes thousands of characters or changes the vocabulary size, one rule is too aggressive: go and find out which.",
+      "gotcha": "Test the property, not the output. A test that pins the exact cleaned text of a whole file breaks the moment you improve one rule, and tells you nothing when it does.",
+      "related": [
+        "python/str-methods",
+        "python/str-replace",
+        "python/unittest-testcase",
+        "python/unittest-run-notebook",
+        "python/import-module"
+      ],
+      "keywords": [
+        "clean",
+        "normalize",
+        "regex",
+        "unicode",
+        "idempotent",
+        "unittest"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 5",
+      "output": "raw:    1,115,394 chars   vocab 65\nclean:  1,115,374 chars   vocab 65   lines 39,999\nmost common: ' ' 169,874 | 'e' 94,611 | 't' 67,009 | 'o' 65,798 | 'a' 55,507\ntest_cleaning_twice_changes_nothing (test_clean.CleanTests.test_cleaning_twice_changes_nothing) ... ok\ntest_describe_counts (test_clean.CleanTests.test_describe_counts) ... ok\ntest_smart_quotes_and_spaces_are_normalised (test_clean.CleanTests.test_smart_quotes_and_spaces_are_normalised) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n[main 47c315d] Add the corpus cleaner and its tests\n 3 files changed, 66 insertions(+)\n create mode 100644 scripts/inspect_corpus.py\n create mode 100644 src/minigpt/clean.py\n create mode 100644 tests/test_clean.py"
+    },
+    {
+      "id": "workflow/10-tokenizer",
+      "title": "Step 10 · Write the tokenizer: a class with a round-trip test",
+      "topic": "wf-data",
+      "week": 10,
+      "volatile": true,
+      "summary": "A tokenizer maps text to integers and back. For a character-level model it is genuinely this small, and writing it yourself removes most of the mystery from the word “tokenization”. Five tests, and the round trip is the one that really matters.",
+      "files": [
+        {
+          "path": "src/minigpt/tokenizer.py",
+          "content": "\"\"\"Character-level tokenizer: text <-> list[int].\"\"\"\nfrom __future__ import annotations\n\nimport json\nfrom pathlib import Path\n\nclass CharTokenizer:\n    def __init__(self, chars: list[str]):\n        if len(set(chars)) != len(chars):\n            raise ValueError(\"vocabulary contains duplicate characters\")\n        self.chars = list(chars)\n        self.stoi = {ch: i for i, ch in enumerate(self.chars)}\n        self.itos = {i: ch for i, ch in enumerate(self.chars)}\n\n    @classmethod\n    def from_text(cls, text: str) -> \"CharTokenizer\":\n        return cls(sorted(set(text)))\n\n    @property\n    def vocab_size(self) -> int:\n        return len(self.chars)\n\n    def encode(self, text: str) -> list[int]:\n        try:\n            return [self.stoi[ch] for ch in text]\n        except KeyError as e:\n            raise ValueError(f\"character {e.args[0]!r} not in vocabulary\") from None\n\n    def decode(self, ids) -> str:\n        return \"\".join(self.itos[int(i)] for i in ids)\n\n    def save(self, path) -> None:\n        Path(path).write_text(json.dumps({\"chars\": self.chars}), encoding=\"utf-8\")\n\n    @classmethod\n    def load(cls, path) -> \"CharTokenizer\":\n        return cls(json.loads(Path(path).read_text(encoding=\"utf-8\"))[\"chars\"])\n",
+          "lang": "python"
+        },
+        {
+          "path": "tests/test_tokenizer.py",
+          "content": "import tempfile\nimport unittest\nfrom pathlib import Path\n\nfrom minigpt.tokenizer import CharTokenizer\n\nTEXT = \"To be, or not to be.\\n\"\n\n\nclass TokenizerTests(unittest.TestCase):\n    def setUp(self):\n        self.tok = CharTokenizer.from_text(TEXT)\n\n    def test_roundtrip_is_lossless(self):\n        self.assertEqual(self.tok.decode(self.tok.encode(TEXT)), TEXT)\n\n    def test_vocab_size_matches_unique_chars(self):\n        self.assertEqual(self.tok.vocab_size, len(set(TEXT)))\n\n    def test_ids_are_in_range(self):\n        ids = self.tok.encode(TEXT)\n        self.assertTrue(all(0 <= i < self.tok.vocab_size for i in ids))\n\n    def test_unknown_character_raises(self):\n        with self.assertRaises(ValueError):\n            CharTokenizer.from_text(\"abc\").encode(\"z\")\n\n    def test_save_and_load(self):\n        with tempfile.TemporaryDirectory() as tmp:\n            path = Path(tmp) / \"vocab.json\"\n            self.tok.save(path)\n            self.assertEqual(CharTokenizer.load(path).encode(TEXT), self.tok.encode(TEXT))\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n",
+          "lang": "python"
+        }
+      ],
+      "example": "python -c \"from minigpt.tokenizer import CharTokenizer; tok = CharTokenizer.from_text('hello'); print(tok.chars, tok.encode('hello'), tok.decode([1, 2]))\"\npython -m unittest discover -s tests -v\ngit add src tests\ngit commit -m \"Add the character tokenizer and its tests\"",
+      "lines": [
+        [
+          "class CharTokenizer: def __init__(self, chars)",
+          "The vocabulary is a list of characters. `stoi` (string to int) and `itos` (int to string) are two dictionaries built from it; a duplicate character is refused with a clear error."
+        ],
+        [
+          "@classmethod def from_text(cls, text)",
+          "A second way to build one, from the text itself: `sorted(set(text))` is every distinct character in a fixed order."
+        ],
+        [
+          "@property def vocab_size(self)",
+          "A method you read like an attribute: `tok.vocab_size`, no parentheses."
+        ],
+        [
+          "encode / decode",
+          "Lists of integers from text and back. `encode` turns a missing character into a clear `ValueError` instead of a `KeyError` deep inside a loop."
+        ],
+        [
+          "save / load",
+          "The vocabulary is written to JSON and read back. A saved model is useless without its tokenizer, so this file ships with every checkpoint."
+        ],
+        [
+          "python -c \"... CharTokenizer.from_text('hello') ...\"",
+          "A concrete look: `hello` has four distinct characters, so `encode` gives numbers 0–3 and `decode([1, 2])` returns `hl`."
+        ],
+        [
+          "test_roundtrip_is_lossless",
+          "`decode(encode(text)) == text`. If this fails, nothing else matters."
+        ],
+        [
+          "test_save_and_load",
+          "Uses `tempfile.TemporaryDirectory()` so the test never writes into your project folder. A test that touches `data/` passes the first time and fails the second, and the reason is never obvious."
+        ],
+        [
+          "python -m unittest discover -s tests -v",
+          "Finds every `test_*.py` file under `tests/` and runs it; `-v` prints one line per test. `OK` at the end is what you want; the time it reports varies."
+        ]
+      ],
+      "gotcha": "The numbering comes from the text the tokenizer was built on. Build it once on the cleaned corpus (step 11 saves it), and load that file everywhere else; rebuilding it on different text silently renumbers the characters.",
+      "related": [
+        "python/class",
+        "python/init",
+        "python/self",
+        "python/dict",
+        "python/json-dump-load",
+        "python/unittest-assert-methods"
+      ],
+      "keywords": [
+        "tokenizer",
+        "encode",
+        "decode",
+        "vocabulary",
+        "class",
+        "classmethod",
+        "property"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 6",
+      "output": "['e', 'h', 'l', 'o'] [1, 0, 2, 2, 3] hl\ntest_cleaning_twice_changes_nothing (test_clean.CleanTests.test_cleaning_twice_changes_nothing) ... ok\ntest_describe_counts (test_clean.CleanTests.test_describe_counts) ... ok\ntest_smart_quotes_and_spaces_are_normalised (test_clean.CleanTests.test_smart_quotes_and_spaces_are_normalised) ... ok\ntest_ids_are_in_range (test_tokenizer.TokenizerTests.test_ids_are_in_range) ... ok\ntest_roundtrip_is_lossless (test_tokenizer.TokenizerTests.test_roundtrip_is_lossless) ... ok\ntest_save_and_load (test_tokenizer.TokenizerTests.test_save_and_load) ... ok\ntest_unknown_character_raises (test_tokenizer.TokenizerTests.test_unknown_character_raises) ... ok\ntest_vocab_size_matches_unique_chars (test_tokenizer.TokenizerTests.test_vocab_size_matches_unique_chars) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.001s\n\nOK\n[main 93ef7d7] Add the character tokenizer and its tests\n 2 files changed, 73 insertions(+)\n create mode 100644 src/minigpt/tokenizer.py\n create mode 100644 tests/test_tokenizer.py"
+    },
+    {
+      "id": "workflow/11-split-batch",
+      "title": "Step 11 · Split the data and produce training batches",
+      "topic": "wf-data",
+      "week": 7,
+      "summary": "Two jobs: hold out a validation slice you never train on, and turn the integer array into batches of (context, next character) pairs. The second is where most beginners write their first off-by-one bug, so a small script prints one pair for you to read.",
+      "files": [
+        {
+          "path": "src/minigpt/data.py",
+          "content": "from __future__ import annotations\n\nfrom pathlib import Path\n\nimport numpy as np\nimport torch\n\nfrom minigpt.clean import clean_text\nfrom minigpt.tokenizer import CharTokenizer\n\ndef build_arrays(src=\"data/input.txt\", out_dir=\"data\", val_frac=0.1):\n    \"\"\"Clean, tokenize, split, and cache to .npy. Returns the tokenizer.\"\"\"\n    out = Path(out_dir)\n    text = clean_text(Path(src).read_text(encoding=\"utf-8\"))\n    tok = CharTokenizer.from_text(text)\n    ids = np.array(tok.encode(text), dtype=np.uint16)\n\n    n = int(len(ids) * (1 - val_frac))\n    np.save(out / \"train.npy\", ids[:n])\n    np.save(out / \"val.npy\", ids[n:])\n    tok.save(out / \"vocab.json\")\n    print(f\"vocab {tok.vocab_size} | train {n:,} | val {len(ids) - n:,}\")\n    return tok\n\ndef get_batch(split_array, block_size, batch_size, device, generator=None):\n    \"\"\"One batch of contexts x and their next-character targets y.\"\"\"\n    ix = torch.randint(len(split_array) - block_size - 1,\n                       (batch_size,), generator=generator)\n    data = torch.from_numpy(split_array.astype(np.int64))\n    x = torch.stack([data[i:i + block_size] for i in ix])\n    y = torch.stack([data[i + 1:i + block_size + 1] for i in ix])\n    return x.to(device), y.to(device)\n",
+          "lang": "python"
+        },
+        {
+          "path": "scripts/check_batch.py",
+          "content": "\"\"\"Print one training example so you can see that y is x shifted by one character.\"\"\"\nimport numpy as np\nimport torch\n\nfrom minigpt.data import get_batch\nfrom minigpt.tokenizer import CharTokenizer\n\ntok = CharTokenizer.load(\"data/vocab.json\")\ntrain = np.load(\"data/train.npy\")\ng = torch.Generator().manual_seed(0)\nx, y = get_batch(train, block_size=8, batch_size=1, device=\"cpu\", generator=g)\nprint(\"x:\", repr(tok.decode(x[0])))\nprint(\"y:\", repr(tok.decode(y[0])))\n",
+          "lang": "python"
+        }
+      ],
+      "example": "python -c \"from minigpt.data import build_arrays; build_arrays()\"\npython scripts/check_batch.py\nls data\ngit add src scripts\ngit commit -m \"Add the split-and-batch code\"",
+      "lines": [
+        [
+          "build_arrays(src, out_dir, val_frac=0.1)",
+          "Reads the raw file, cleans it, builds the tokenizer, encodes the whole corpus as one `uint16` array (65 values fit easily), and splits it 90/10 by position."
+        ],
+        [
+          "np.save(out / \"train.npy\", ids[:n])",
+          "Caches the arrays as `.npy` files so later steps load in milliseconds instead of re-cleaning. Both are ignored by Git."
+        ],
+        [
+          "tok.save(out / \"vocab.json\")",
+          "The tokenizer is saved next to the arrays; sampling in step 17 loads it."
+        ],
+        [
+          "get_batch(split_array, block_size, batch_size, device, generator=None)",
+          "Picks `batch_size` random start positions, cuts `block_size` characters from each for `x`, and the same window moved one character to the right for `y`."
+        ],
+        [
+          "x = data[i : i + block_size]   y = data[i + 1 : i + block_size + 1]",
+          "The one line to get right: position t of `x` is asked to predict position t of `y`, the character that actually came next. Every position in the block is a training example, which is why transformers train efficiently."
+        ],
+        [
+          "python scripts/check_batch.py",
+          "Prints one `x` and its `y` (seeded, so it reproduces). The second string must be the first moved one character along; if it is not, fix it now, because this bug is nearly invisible later and quietly caps the model's quality."
+        ],
+        [
+          "ls data",
+          "Four files: the raw text, two arrays, and the vocabulary."
+        ]
+      ],
+      "gotcha": "Split by position, not at random. Text is sequential; a random 10% of characters would leak the neighbours of every validation character into training.",
+      "related": [
+        "python/np-index-slice",
+        "python/np-array",
+        "python/return-multiple",
+        "python/np-random"
+      ],
+      "keywords": [
+        "train validation split",
+        "batch",
+        "block size",
+        "npy",
+        "off by one"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 7",
+      "output": "vocab 65 | train 1,003,836 | val 111,538\nx: 'nk\\nMight'\ny: 'k\\nMight '\ninput.txt\ntrain.npy\nval.npy\nvocab.json\n[main 36aa632] Add the split-and-batch code\n 2 files changed, 45 insertions(+)\n create mode 100644 scripts/check_batch.py\n create mode 100644 src/minigpt/data.py"
+    },
+    {
+      "id": "workflow/12-baseline",
+      "title": "Step 12 · Build the dumbest model first: a counting baseline",
+      "topic": "wf-models",
+      "week": 6,
+      "volatile": true,
+      "summary": "Before any neural network, count how often each character follows each other character, normalise the rows into probabilities, and score the validation text. No PyTorch, no gradients, under a second, and it gives you a number the transformer has to beat.",
+      "files": [
+        {
+          "path": "src/minigpt/baseline.py",
+          "content": "\"\"\"Count-based bigram model. The number the transformer has to beat.\"\"\"\nfrom __future__ import annotations\n\nimport numpy as np\n\nclass CountBigram:\n    def __init__(self, vocab_size: int, alpha: float = 1.0):\n        self.vocab_size = vocab_size\n        self.alpha = alpha                       # add-alpha smoothing\n        self.counts = np.zeros((vocab_size, vocab_size), dtype=np.float64)\n\n    def fit(self, ids) -> \"CountBigram\":\n        ids = np.asarray(ids)\n        np.add.at(self.counts, (ids[:-1], ids[1:]), 1.0)\n        return self\n\n    @property\n    def probs(self) -> np.ndarray:\n        smoothed = self.counts + self.alpha\n        return smoothed / smoothed.sum(axis=1, keepdims=True)\n\n    def nll(self, ids) -> float:\n        \"\"\"Mean negative log likelihood in nats - same units as cross_entropy.\"\"\"\n        ids = np.asarray(ids)\n        p = self.probs[ids[:-1], ids[1:]]\n        return float(-np.log(p).mean())\n\n    def generate(self, n: int, start: int = 0, seed: int = 0) -> list[int]:\n        rng = np.random.default_rng(seed)\n        probs, out, cur = self.probs, [start], start\n        for _ in range(n):\n            cur = int(rng.choice(self.vocab_size, p=probs[cur]))\n            out.append(cur)\n        return out\n",
+          "lang": "python"
+        },
+        {
+          "path": "tests/test_baseline.py",
+          "content": "import math\nimport unittest\n\nimport numpy as np\n\nfrom minigpt.baseline import CountBigram\n\n\nclass BaselineTests(unittest.TestCase):\n    def test_untrained_model_is_uniform(self):\n        model = CountBigram(vocab_size=5)\n        self.assertAlmostEqual(model.nll([0, 1, 2, 3]), math.log(5), places=6)\n\n    def test_rows_are_probability_distributions(self):\n        model = CountBigram(vocab_size=4).fit([0, 1, 1, 2, 3, 0])\n        np.testing.assert_allclose(model.probs.sum(axis=1), 1.0)\n\n    def test_fitting_lowers_the_loss(self):\n        ids = [0, 1] * 50\n        model = CountBigram(vocab_size=2)\n        before = model.nll(ids)\n        after = model.fit(ids).nll(ids)\n        self.assertLess(after, before)\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n",
+          "lang": "python"
+        },
+        {
+          "path": "scripts/eval_baseline.py",
+          "content": "\"\"\"Score the counting bigram on the cached arrays: the number the transformer has to beat.\"\"\"\nimport math\n\nimport numpy as np\n\nfrom minigpt.baseline import CountBigram\nfrom minigpt.tokenizer import CharTokenizer\n\ntok = CharTokenizer.load(\"data/vocab.json\")\ntrain = np.load(\"data/train.npy\")\nval = np.load(\"data/val.npy\")\n\nuntrained = CountBigram(tok.vocab_size)\nprint(f\"uniform (untrained)   {untrained.nll(val):.4f}   = ln({tok.vocab_size})\")\n\nmodel = CountBigram(tok.vocab_size).fit(train)\nval_loss = model.nll(val)\nprint(f\"bigram, train         {model.nll(train):.4f}\")\nprint(f\"bigram, validation    {val_loss:.4f}   perplexity {math.exp(val_loss):.2f}\")\n",
+          "lang": "python"
+        }
+      ],
+      "example": "python scripts/eval_baseline.py\npython -m unittest discover -s tests\ngit add src tests scripts\ngit commit -m \"Add the counting-bigram baseline\"",
+      "lines": [
+        [
+          "self.counts = np.zeros((vocab_size, vocab_size))",
+          "A 65 × 65 table: row = current character, column = the character that follows."
+        ],
+        [
+          "np.add.at(self.counts, (ids[:-1], ids[1:]), 1.0)",
+          "Counts every consecutive pair in one vectorised call: `ids[:-1]` are the current characters, `ids[1:]` the next ones."
+        ],
+        [
+          "probs = (counts + alpha) / row sums",
+          "Turns counts into probabilities per row. `alpha = 1` (add-one smoothing) means no pair is ever impossible; a zero would make the loss infinite."
+        ],
+        [
+          "nll(ids) = -np.log(p).mean()",
+          "Mean negative log-likelihood in nats, the same unit PyTorch's `cross_entropy` reports, so the two models can be compared directly."
+        ],
+        [
+          "generate(n, start, seed)",
+          "Samples one character at a time from the row of the current character. Seeded, so it reproduces."
+        ],
+        [
+          "uniform (untrained)   4.1744 = ln(65)",
+          "A model that knows nothing gives 1/65 to every character; its loss is exactly ln 65. Every model must start here."
+        ],
+        [
+          "bigram, validation   2.4819   perplexity 11.96",
+          "Counting letter pairs already halves the confusion. Perplexity is `exp(loss)`: “as unsure as choosing among 12 characters”. Write 2.48 on a sticky note; it is the bar."
+        ],
+        [
+          "tests: uniform when untrained · rows sum to one · fitting lowers the loss",
+          "Three properties that must hold whatever the data. They catch broken smoothing, a wrong axis in the row sum, and a `fit` that does nothing."
+        ],
+        [
+          "python -m unittest discover -s tests",
+          "Without `-v`: one dot per test, then the count and `OK`."
+        ]
+      ],
+      "output_note": "These numbers are exact for this corpus. If your bigram lands on 2.48 on the validation split, your cleaning, tokenizer and split are all correct: three components verified by one number.",
+      "gotcha": "Nats, not bits. `np.log` and PyTorch's `cross_entropy` both use the natural logarithm; a `log2` from somewhere else makes the comparison meaningless.",
+      "related": [
+        "python/np-summaries",
+        "python/np-vectorized",
+        "python/class",
+        "python/np-random",
+        "python/unittest-assert-methods"
+      ],
+      "keywords": [
+        "baseline",
+        "bigram",
+        "perplexity",
+        "cross-entropy",
+        "nats",
+        "smoothing"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 8",
+      "output": "uniform (untrained)   4.1744   = ln(65)\nbigram, train         2.4544\nbigram, validation    2.4819   perplexity 11.96\n...........\n----------------------------------------------------------------------\nRan 11 tests in 0.013s\n\nOK\n[main cd87785] Add the counting-bigram baseline\n 3 files changed, 80 insertions(+)\n create mode 100644 scripts/eval_baseline.py\n create mode 100644 src/minigpt/baseline.py\n create mode 100644 tests/test_baseline.py"
+    },
+    {
+      "id": "workflow/13-config",
+      "title": "Step 13 · Put every knob in one place",
+      "topic": "wf-models",
+      "week": 10,
+      "summary": "Every hyperparameter lives in one `Config` object, loaded from a small YAML file. The moment `block_size` is written in three files you will change two of them and spend an hour on the third. Two configs: `tiny.yaml` runs end to end in seconds, `base.yaml` is the real model.",
+      "files": [
+        {
+          "path": "src/minigpt/config.py",
+          "content": "from __future__ import annotations\n\nfrom dataclasses import asdict, dataclass\n\nimport torch\nimport yaml\n\ndef get_device() -> str:\n    if torch.cuda.is_available():\n        return \"cuda\"\n    if torch.backends.mps.is_available():\n        return \"mps\"\n    return \"cpu\"\n\n@dataclass\nclass Config:\n    # model\n    vocab_size: int = 65\n    block_size: int = 256\n    n_layer: int = 6\n    n_head: int = 6\n    n_embd: int = 384\n    dropout: float = 0.2\n    # optimisation\n    batch_size: int = 64\n    learning_rate: float = 3e-4\n    max_iters: int = 5000\n    eval_interval: int = 250\n    eval_iters: int = 200\n    # housekeeping\n    seed: int = 1337\n    device: str = \"\"\n\n    def __post_init__(self):\n        if self.n_embd % self.n_head != 0:\n            raise ValueError(\"n_embd must be divisible by n_head\")\n        if not self.device:\n            self.device = get_device()\n\n    @classmethod\n    def from_yaml(cls, path) -> \"Config\":\n        with open(path) as f:\n            return cls(**(yaml.safe_load(f) or {}))\n\n    def to_dict(self) -> dict:\n        return asdict(self)\n",
+          "lang": "python"
+        },
+        {
+          "path": "configs/tiny.yaml",
+          "content": "block_size: 32\nn_layer: 2\nn_head: 2\nn_embd: 64\ndropout: 0.0\nbatch_size: 16\nmax_iters: 100\neval_interval: 50\neval_iters: 20\n",
+          "lang": "yaml"
+        },
+        {
+          "path": "configs/base.yaml",
+          "content": "block_size: 256\nn_layer: 6\nn_head: 6\nn_embd: 384\ndropout: 0.2\nbatch_size: 64\nlearning_rate: 3.0e-4\nmax_iters: 5000\n",
+          "lang": "yaml"
+        }
+      ],
+      "example": "python -c \"from minigpt.config import Config; print(Config.from_yaml('configs/tiny.yaml'))\"\ngit add src configs\ngit commit -m \"Put every hyperparameter in one Config\"",
+      "lines": [
+        [
+          "def get_device()",
+          "Picks the fastest hardware available: NVIDIA (`cuda`, Colab), Apple GPU (`mps`), otherwise `cpu`. The rest of the code never mentions hardware again."
+        ],
+        [
+          "@dataclass class Config",
+          "A dataclass turns a list of typed fields with defaults into a class with `__init__`, a readable `repr` and `==` for free. The defaults are the base model."
+        ],
+        [
+          "def __post_init__(self)",
+          "Runs right after construction: a cheap check (`n_embd` divisible by `n_head`) that turns a twenty-minute shape error deep inside a matrix multiply into a one-line message, and fills in the device."
+        ],
+        [
+          "Config.from_yaml(path)",
+          "`yaml.safe_load` reads the file into a dict; `cls(**dict)` turns its keys into arguments. Keys that are missing keep their defaults."
+        ],
+        [
+          "configs/tiny.yaml",
+          "The walking skeleton: 2 layers, 64 dimensions, 100 iterations. It exists so the whole pipeline can run in seconds and tell you whether anything is wired wrong."
+        ],
+        [
+          "configs/base.yaml",
+          "6 layers, 384 dimensions, 5,000 iterations: about 10.8 million parameters, minutes on a GPU."
+        ],
+        [
+          "print(Config.from_yaml('configs/tiny.yaml'))",
+          "The dataclass prints all its fields, so you see the YAML values and the defaults side by side, plus the device it chose."
+        ]
+      ],
+      "output_note": "`device='mps'` because this was recorded on a Mac with an Apple GPU; you will see `cpu` or `cuda`.",
+      "gotcha": "Put cheap checks where the mistake is made, not where it explodes. `__post_init__` is that place for configuration.",
+      "related": [
+        "python/class",
+        "python/init",
+        "python/default-args",
+        "python/dict",
+        "python/open-read"
+      ],
+      "keywords": [
+        "config",
+        "yaml",
+        "dataclass",
+        "hyperparameters",
+        "device"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 9",
+      "output": "Config(vocab_size=65, block_size=32, n_layer=2, n_head=2, n_embd=64, dropout=0.0, batch_size=16, learning_rate=0.0003, max_iters=100, eval_interval=50, eval_iters=20, seed=1337, device='mps')\n[main 98c348b] Put every hyperparameter in one Config\n 3 files changed, 63 insertions(+)\n create mode 100644 configs/base.yaml\n create mode 100644 configs/tiny.yaml\n create mode 100644 src/minigpt/config.py"
+    },
+    {
+      "id": "workflow/14-model",
+      "title": "Step 14 · The transformer in four classes, with the two tests that catch almost everything",
+      "topic": "wf-models",
+      "week": 10,
+      "volatile": true,
+      "summary": "Build it in order and run the tests after each class. A `Head` is one attention mechanism; `MultiHeadAttention` runs several in parallel; a `Block` wraps attention plus a small feed-forward network in residual connections; `GPT` stacks blocks between an embedding table and an output layer. Two tests matter most: the loss at initialisation equals ln(65), and information does not flow backwards in time.",
+      "files": [
+        {
+          "path": "src/minigpt/model.py",
+          "content": "from __future__ import annotations\n\nimport torch\nimport torch.nn as nn\nfrom torch.nn import functional as F\n\nclass Head(nn.Module):\n    \"\"\"One head of causal self-attention.\"\"\"\n\n    def __init__(self, cfg, head_size):\n        super().__init__()\n        self.key = nn.Linear(cfg.n_embd, head_size, bias=False)\n        self.query = nn.Linear(cfg.n_embd, head_size, bias=False)\n        self.value = nn.Linear(cfg.n_embd, head_size, bias=False)\n        self.register_buffer(\n            \"tril\", torch.tril(torch.ones(cfg.block_size, cfg.block_size)))\n        self.dropout = nn.Dropout(cfg.dropout)\n\n    def forward(self, x):\n        B, T, C = x.shape\n        k, q, v = self.key(x), self.query(x), self.value(x)\n        att = q @ k.transpose(-2, -1) * k.shape[-1] ** -0.5   # (B,T,T)\n        att = att.masked_fill(self.tril[:T, :T] == 0, float(\"-inf\"))\n        att = self.dropout(F.softmax(att, dim=-1))\n        return att @ v\n\nclass MultiHeadAttention(nn.Module):\n    def __init__(self, cfg):\n        super().__init__()\n        head_size = cfg.n_embd // cfg.n_head\n        self.heads = nn.ModuleList(\n            [Head(cfg, head_size) for _ in range(cfg.n_head)])\n        self.proj = nn.Linear(cfg.n_embd, cfg.n_embd)\n        self.dropout = nn.Dropout(cfg.dropout)\n\n    def forward(self, x):\n        out = torch.cat([h(x) for h in self.heads], dim=-1)\n        return self.dropout(self.proj(out))\n\nclass FeedForward(nn.Module):\n    def __init__(self, cfg):\n        super().__init__()\n        self.net = nn.Sequential(\n            nn.Linear(cfg.n_embd, 4 * cfg.n_embd),\n            nn.GELU(),\n            nn.Linear(4 * cfg.n_embd, cfg.n_embd),\n            nn.Dropout(cfg.dropout),\n        )\n\n    def forward(self, x):\n        return self.net(x)\n\nclass Block(nn.Module):\n    \"\"\"Pre-norm transformer block: normalise, transform, add back.\"\"\"\n\n    def __init__(self, cfg):\n        super().__init__()\n        self.ln1, self.ln2 = nn.LayerNorm(cfg.n_embd), nn.LayerNorm(cfg.n_embd)\n        self.attn, self.ff = MultiHeadAttention(cfg), FeedForward(cfg)\n\n    def forward(self, x):\n        x = x + self.attn(self.ln1(x))\n        x = x + self.ff(self.ln2(x))\n        return x\n\nclass GPT(nn.Module):\n    def __init__(self, cfg):\n        super().__init__()\n        self.cfg = cfg\n        self.tok_emb = nn.Embedding(cfg.vocab_size, cfg.n_embd)\n        self.pos_emb = nn.Embedding(cfg.block_size, cfg.n_embd)\n        self.drop = nn.Dropout(cfg.dropout)\n        self.blocks = nn.Sequential(*[Block(cfg) for _ in range(cfg.n_layer)])\n        self.ln_f = nn.LayerNorm(cfg.n_embd)\n        self.head = nn.Linear(cfg.n_embd, cfg.vocab_size)\n        self.apply(self._init_weights)\n\n    @staticmethod\n    def _init_weights(module):\n        if isinstance(module, nn.Linear):\n            nn.init.normal_(module.weight, mean=0.0, std=0.02)\n            if module.bias is not None:\n                nn.init.zeros_(module.bias)\n        elif isinstance(module, nn.Embedding):\n            nn.init.normal_(module.weight, mean=0.0, std=0.02)\n\n    def n_params(self) -> int:\n        return sum(p.numel() for p in self.parameters())\n\n    def forward(self, idx, targets=None):\n        B, T = idx.shape\n        if T > self.cfg.block_size:\n            raise ValueError(f\"sequence of {T} exceeds block_size {self.cfg.block_size}\")\n        pos = torch.arange(T, device=idx.device)\n        x = self.drop(self.tok_emb(idx) + self.pos_emb(pos))\n        x = self.ln_f(self.blocks(x))\n        logits = self.head(x)                                 # (B,T,vocab)\n\n        loss = None\n        if targets is not None:\n            loss = F.cross_entropy(logits.view(B * T, -1), targets.reshape(B * T))\n        return logits, loss\n\n    @torch.no_grad()\n    def generate(self, idx, max_new_tokens, temperature=1.0, top_k=None):\n        self.eval()\n        for _ in range(max_new_tokens):\n            idx_cond = idx[:, -self.cfg.block_size:]\n            logits, _ = self(idx_cond)\n            logits = logits[:, -1, :] / temperature\n            if top_k is not None:\n                v, _ = torch.topk(logits, min(top_k, logits.size(-1)))\n                logits[logits < v[:, [-1]]] = -float(\"inf\")\n            probs = F.softmax(logits, dim=-1)\n            idx = torch.cat((idx, torch.multinomial(probs, 1)), dim=1)\n        return idx\n",
+          "lang": "python"
+        },
+        {
+          "path": "tests/test_model.py",
+          "content": "import math\nimport unittest\n\nimport torch\n\nfrom minigpt.config import Config\nfrom minigpt.model import GPT\n\n\ndef tiny():\n    return Config(vocab_size=65, block_size=8, n_layer=2,\n                  n_head=2, n_embd=32, dropout=0.0, device=\"cpu\")\n\n\nclass ModelTests(unittest.TestCase):\n    def test_output_shape(self):\n        cfg = tiny()\n        logits, _ = GPT(cfg)(torch.randint(0, cfg.vocab_size, (4, 8)))\n        self.assertEqual(tuple(logits.shape), (4, 8, cfg.vocab_size))\n\n    def test_loss_at_init_is_uniform(self):\n        cfg = tiny()\n        torch.manual_seed(0)\n        x = torch.randint(0, cfg.vocab_size, (16, 8))\n        y = torch.randint(0, cfg.vocab_size, (16, 8))\n        _, loss = GPT(cfg)(x, y)\n        self.assertAlmostEqual(loss.item(), math.log(cfg.vocab_size), delta=0.15)\n\n    def test_attention_is_causal(self):\n        cfg = tiny()\n        torch.manual_seed(0)\n        model = GPT(cfg).eval()\n        a = torch.randint(0, cfg.vocab_size, (1, 8))\n        b = a.clone()\n        b[0, -1] = (b[0, -1] + 1) % cfg.vocab_size          # edit the future only\n        with torch.no_grad():\n            self.assertTrue(torch.equal(model(a)[0][:, :-1], model(b)[0][:, :-1]))\n\n    def test_generate_respects_block_size(self):\n        cfg = tiny()\n        model = GPT(cfg).eval()\n        out = model.generate(torch.zeros((1, 1), dtype=torch.long), 30)\n        self.assertEqual(tuple(out.shape), (1, 31))\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n",
+          "lang": "python"
+        }
+      ],
+      "example": "python -c \"from minigpt.config import Config; from minigpt.model import GPT; m = GPT(Config.from_yaml('configs/base.yaml')); print(f'{m.n_params() / 1e6:.2f}M parameters')\"\npython -m unittest discover -s tests -v\ngit add src tests\ngit commit -m \"Add the transformer and its four tests\"",
+      "lines": [
+        [
+          "class Head(nn.Module)",
+          "Every PyTorch layer is a class that inherits from `nn.Module`: `__init__` declares the pieces (three `nn.Linear` projections: key, query, value) and `forward` says how data flows through them."
+        ],
+        [
+          "self.register_buffer(\"tril\", torch.tril(...))",
+          "A lower-triangular matrix of ones, saved with the model but never trained. It is the causal mask."
+        ],
+        [
+          "att = q @ k.transpose(-2, -1) * k.shape[-1] ** -0.5",
+          "Attention scores: how much each position should look at every other position, scaled so the numbers stay reasonable."
+        ],
+        [
+          "att.masked_fill(self.tril[:T, :T] == 0, float(\"-inf\"))",
+          "Positions in the future are set to minus infinity, so softmax gives them probability zero. This line is what stops the model from cheating."
+        ],
+        [
+          "class MultiHeadAttention",
+          "Runs `n_head` heads side by side (an `nn.ModuleList`), concatenates their outputs, and mixes them with one more linear layer."
+        ],
+        [
+          "class FeedForward",
+          "Two linear layers with a GELU between them, applied to every position separately: the part of the block that “thinks” about what attention gathered."
+        ],
+        [
+          "class Block:  x = x + self.attn(self.ln1(x))",
+          "Pre-norm residual: normalise, transform, add the result back to the input. The `x +` is what lets gradients flow through many layers."
+        ],
+        [
+          "class GPT:  tok_emb + pos_emb",
+          "Each character id becomes a learned vector, plus a learned vector for its position in the block; the sum is what the blocks process."
+        ],
+        [
+          "loss = F.cross_entropy(logits.view(B * T, -1), targets.reshape(B * T))",
+          "Flattens batch and time into one long list of predictions and computes the average loss, in nats."
+        ],
+        [
+          "@torch.no_grad() def generate(...)",
+          "Feeds the last `block_size` characters, takes the logits of the final position, turns them into probabilities, samples one character, appends it, repeats. `temperature` and `top_k` shape the sampling."
+        ],
+        [
+          "test_loss_at_init_is_uniform",
+          "An untrained model must be exactly as confused as guessing: loss ≈ ln(65) = 4.17. If you see 6 or 11, the output layer or the reshape is wrong; if you see 0.02, targets are leaking into the input."
+        ],
+        [
+          "test_attention_is_causal",
+          "Change only the last character of a sequence; the logits at every earlier position must stay bit-for-bit identical. A broken mask produces a beautiful training curve and a useless model."
+        ],
+        [
+          "10.79M parameters",
+          "`n_params()` adds up every trainable tensor. The number to quote in the README."
+        ]
+      ],
+      "gotcha": "If the causal test fails, look at the mask before anything else. Everything downstream will look fine and be wrong.",
+      "related": [
+        "python/class",
+        "python/inheritance",
+        "python/init",
+        "python/self",
+        "python/unittest-testcase"
+      ],
+      "keywords": [
+        "transformer",
+        "attention",
+        "nn.Module",
+        "causal mask",
+        "embedding",
+        "GPT"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 10",
+      "output": "10.79M parameters\ntest_fitting_lowers_the_loss (test_baseline.BaselineTests.test_fitting_lowers_the_loss) ... ok\ntest_rows_are_probability_distributions (test_baseline.BaselineTests.test_rows_are_probability_distributions) ... ok\ntest_untrained_model_is_uniform (test_baseline.BaselineTests.test_untrained_model_is_uniform) ... ok\ntest_cleaning_twice_changes_nothing (test_clean.CleanTests.test_cleaning_twice_changes_nothing) ... ok\ntest_describe_counts (test_clean.CleanTests.test_describe_counts) ... ok\ntest_smart_quotes_and_spaces_are_normalised (test_clean.CleanTests.test_smart_quotes_and_spaces_are_normalised) ... ok\ntest_attention_is_causal (test_model.ModelTests.test_attention_is_causal) ... ok\ntest_generate_respects_block_size (test_model.ModelTests.test_generate_respects_block_size) ... ok\ntest_loss_at_init_is_uniform (test_model.ModelTests.test_loss_at_init_is_uniform) ... ok\ntest_output_shape (test_model.ModelTests.test_output_shape) ... ok\ntest_ids_are_in_range (test_tokenizer.TokenizerTests.test_ids_are_in_range) ... ok\ntest_roundtrip_is_lossless (test_tokenizer.TokenizerTests.test_roundtrip_is_lossless) ... ok\ntest_save_and_load (test_tokenizer.TokenizerTests.test_save_and_load) ... ok\ntest_unknown_character_raises (test_tokenizer.TokenizerTests.test_unknown_character_raises) ... ok\ntest_vocab_size_matches_unique_chars (test_tokenizer.TokenizerTests.test_vocab_size_matches_unique_chars) ... ok\n\n----------------------------------------------------------------------\nRan 15 tests in 0.025s\n\nOK\n[main 538e0b4] Add the transformer and its four tests\n 2 files changed, 163 insertions(+)\n create mode 100644 src/minigpt/model.py\n create mode 100644 tests/test_model.py"
+    },
+    {
+      "id": "workflow/15-smoke-run",
+      "title": "Step 15 · Train the walking skeleton, and log every run",
+      "topic": "wf-run",
+      "week": 13,
+      "volatile": true,
+      "summary": "The training loop is short; what makes it professional is everything around it: a fixed seed, a loss averaged over many batches instead of one noisy one, a CSV you can plot, a `manifest.json` recording which commit produced which number, and a checkpoint of the best validation loss. Always run the tiny config first: seconds, and it tells you whether the whole pipeline is wired correctly.",
+      "files": [
+        {
+          "path": "src/minigpt/train.py",
+          "content": "from __future__ import annotations\n\nimport argparse\nimport csv\nimport json\nimport subprocess\nimport time\nfrom pathlib import Path\n\nimport numpy as np\nimport torch\n\nfrom minigpt.config import Config\nfrom minigpt.data import get_batch\nfrom minigpt.model import GPT\n\ndef git_commit() -> str:\n    try:\n        out = subprocess.run([\"git\", \"rev-parse\", \"--short\", \"HEAD\"],\n                             capture_output=True, text=True, check=True)\n        return out.stdout.strip()\n    except Exception:\n        return \"unknown\"\n\n@torch.no_grad()\ndef estimate_loss(model, splits, cfg):\n    \"\"\"Average loss over many batches - one batch is far too noisy to steer by.\"\"\"\n    model.eval()\n    out = {}\n    for name, arr in splits.items():\n        losses = torch.zeros(cfg.eval_iters)\n        for k in range(cfg.eval_iters):\n            x, y = get_batch(arr, cfg.block_size, cfg.batch_size, cfg.device)\n            losses[k] = model(x, y)[1].item()\n        out[name] = losses.mean().item()\n    model.train()\n    return out\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument(\"--config\", default=\"configs/base.yaml\")\n    ap.add_argument(\"--run-name\", default=None)\n    args = ap.parse_args()\n\n    cfg = Config.from_yaml(args.config)\n    torch.manual_seed(cfg.seed)\n    np.random.seed(cfg.seed)\n\n    run = args.run_name or time.strftime(\"%Y%m%d-%H%M%S\")\n    run_dir = Path(\"runs\") / run\n    run_dir.mkdir(parents=True, exist_ok=True)\n\n    splits = {\"train\": np.load(\"data/train.npy\"),\n              \"val\": np.load(\"data/val.npy\")}\n    model = GPT(cfg).to(cfg.device)\n    print(f\"{model.n_params() / 1e6:.2f}M parameters on {cfg.device}\")\n\n    # the manifest ties every number you report to the exact code that made it\n    (run_dir / \"manifest.json\").write_text(json.dumps(\n        {\"config\": cfg.to_dict(), \"commit\": git_commit(),\n         \"params\": model.n_params(), \"started\": run}, indent=2))\n\n    opt = torch.optim.AdamW(model.parameters(), lr=cfg.learning_rate)\n    log = open(run_dir / \"log.csv\", \"w\", newline=\"\")\n    writer = csv.writer(log)\n    writer.writerow([\"iter\", \"train_loss\", \"val_loss\", \"seconds\"])\n\n    best, t0 = float(\"inf\"), time.time()\n    for it in range(cfg.max_iters + 1):\n        if it % cfg.eval_interval == 0 or it == cfg.max_iters:\n            losses = estimate_loss(model, splits, cfg)\n            dt = time.time() - t0\n            print(f\"iter {it:5d} | train {losses['train']:.4f} \"\n                  f\"| val {losses['val']:.4f} | {dt:6.1f}s\")\n            writer.writerow([it, losses[\"train\"], losses[\"val\"], round(dt, 1)])\n            log.flush()\n            if losses[\"val\"] < best:\n                best = losses[\"val\"]\n                torch.save({\"model\": model.state_dict(),\n                            \"config\": cfg.to_dict(), \"iter\": it, \"val_loss\": best},\n                           run_dir / \"best.pt\")\n\n        x, y = get_batch(splits[\"train\"], cfg.block_size, cfg.batch_size, cfg.device)\n        loss = model(x, y)[1]\n        opt.zero_grad(set_to_none=True)\n        loss.backward()\n        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)\n        opt.step()\n\n    log.close()\n    print(f\"best validation loss {best:.4f} -> {run_dir / 'best.pt'}\")\n\nif __name__ == \"__main__\":\n    main()\n",
+          "lang": "python"
+        }
+      ],
+      "example": "python -m minigpt.train --config configs/tiny.yaml --run-name smoke\ncat runs/smoke/log.csv\ngit add src\ngit commit -m \"Add the training loop\"",
+      "lines": [
+        [
+          "python -m minigpt.train --config configs/tiny.yaml --run-name smoke",
+          "`-m` runs a module inside the installed package (`src/minigpt/train.py`) as a script, which is why its imports work from any folder."
+        ],
+        [
+          "argparse: --config, --run-name",
+          "Command-line options with defaults, so the same script serves every experiment without being edited."
+        ],
+        [
+          "torch.manual_seed(cfg.seed); np.random.seed(cfg.seed)",
+          "Fixed seeds make a run repeatable: same batches, same initial weights."
+        ],
+        [
+          "run_dir = Path(\"runs\") / run",
+          "One folder per run, named by you or by the time. Everything the run produces goes there, and `runs/` is ignored by Git."
+        ],
+        [
+          "manifest.json: config, commit, params",
+          "`git_commit()` asks Git for the current commit id, so every number you report is tied to the exact code that made it."
+        ],
+        [
+          "estimate_loss(model, splits, cfg)",
+          "Averages the loss over `eval_iters` batches for train and validation. One batch is far too noisy to steer by."
+        ],
+        [
+          "for it in range(cfg.max_iters + 1): ...",
+          "The loop: get a batch, forward pass, `zero_grad`, `backward`, clip the gradient norm, `opt.step()`. Every `eval_interval` steps it evaluates, writes a CSV row, and saves `best.pt` when validation improved."
+        ],
+        [
+          "iter 0 | train 4.18 | val 4.18",
+          "Must match the untrained number from step 12. After 100 tiny iterations the loss is already falling; the point is not quality, it is that nothing crashed."
+        ],
+        [
+          "cat runs/smoke/log.csv",
+          "The same numbers as a table: this file is what step 17 plots."
+        ]
+      ],
+      "output_note": "Timings and the device (`mps`) depend on your hardware, and the losses can differ in the last decimals between CPU and GPU.",
+      "gotcha": "If the loss starts near 11, the reshape in `cross_entropy` is wrong or `vocab_size` does not match the tokenizer; near 0, the targets are leaking into the inputs; stuck above 2.48, the transformer is losing to counting and the learning rate is the first suspect.",
+      "related": [
+        "python/for-loop",
+        "python/open-write",
+        "python/json-dump-load",
+        "python/sys-argv",
+        "python/time-perf-counter",
+        "shell/python-script"
+      ],
+      "keywords": [
+        "train",
+        "training loop",
+        "checkpoint",
+        "log",
+        "seed",
+        "smoke test"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 11",
+      "output": "0.11M parameters on mps\niter     0 | train 4.1869 | val 4.1855 |    0.2s\niter    50 | train 3.2869 | val 3.3245 |    0.7s\niter   100 | train 2.9508 | val 2.9675 |    1.1s\nbest validation loss 2.9675 -> runs/smoke/best.pt\niter,train_loss,val_loss,seconds\n0,4.186901569366455,4.185519218444824,0.2\n50,3.286853790283203,3.324455976486206,0.7\n100,2.9508256912231445,2.9674997329711914,1.1\n[main e7c140d] Add the training loop\n 1 file changed, 94 insertions(+)\n create mode 100644 src/minigpt/train.py"
+    },
+    {
+      "id": "workflow/16-full-run",
+      "title": "Step 16 · The full run, and how to read the curve",
+      "topic": "wf-run",
+      "week": 13,
+      "manual_run": "once, 2026-09-04, on an Apple M5 Max GPU (`mps`), 22 minutes for the training run; the verifier does not repeat it",
+      "harness": "mkdir -p runs/base\ncat > runs/base/log.csv <<'PT_LOG'\niter,train_loss,val_loss,seconds\n0,4.210818290710449,4.219174861907959,18.0\n250,2.2935235500335693,2.3299245834350586,82.6\n500,1.8762916326522827,1.9956130981445312,147.5\n750,1.6141104698181152,1.7889844179153442,212.4\n1000,1.4701359272003174,1.6656585931777954,277.7\n1250,1.3806110620498657,1.6025429964065552,343.0\n1500,1.3275320529937744,1.5561082363128662,408.2\n1750,1.2713432312011719,1.5289981365203857,473.4\n2000,1.2295188903808594,1.5019967555999756,539.1\n2250,1.1870008707046509,1.479681134223938,604.8\n2500,1.1594158411026,1.4751229286193848,670.7\n2750,1.123795986175537,1.4663445949554443,735.6\n3000,1.09989595413208,1.4672906398773193,800.8\n3250,1.0716254711151123,1.4667590856552124,865.4\n3500,1.0440798997879028,1.471694827079773,930.0\n3750,1.0187891721725464,1.4752256870269775,994.7\n4000,0.9892772436141968,1.4865233898162842,1059.6\n4250,0.9591320753097534,1.5019534826278687,1124.7\n4500,0.9311650991439819,1.5014933347702026,1189.7\n4750,0.9050582647323608,1.5191502571105957,1254.2\n5000,0.8749182224273682,1.5434728860855103,1318.9\nPT_LOG",
+      "summary": "The same command with the real config: about 10.8 million parameters for 5,000 iterations. Three things to check, in order. It starts at 4.18 like the untrained model. It passes 2.48 within a few hundred iterations: the moment the transformer overtakes counting. Train and validation stay close. Then sample from the best checkpoint and read what it learned.",
+      "example": "python -m minigpt.train --config configs/base.yaml --run-name base\npython -m minigpt.sample --checkpoint runs/base/best.pt --n 600 --temperature 0.8 --seed 0",
+      "output": "10.79M parameters on mps\niter     0 | train 4.2108 | val 4.2192 |   18.0s\niter   250 | train 2.2935 | val 2.3299 |   82.6s\niter   500 | train 1.8763 | val 1.9956 |  147.5s\niter   750 | train 1.6141 | val 1.7890 |  212.4s\niter  1000 | train 1.4701 | val 1.6657 |  277.7s\niter  1250 | train 1.3806 | val 1.6025 |  343.0s\niter  1500 | train 1.3275 | val 1.5561 |  408.2s\niter  1750 | train 1.2713 | val 1.5290 |  473.4s\niter  2000 | train 1.2295 | val 1.5020 |  539.1s\niter  2250 | train 1.1870 | val 1.4797 |  604.8s\niter  2500 | train 1.1594 | val 1.4751 |  670.7s\niter  2750 | train 1.1238 | val 1.4663 |  735.6s\niter  3000 | train 1.0999 | val 1.4673 |  800.8s\niter  3250 | train 1.0716 | val 1.4668 |  865.4s\niter  3500 | train 1.0441 | val 1.4717 |  930.0s\niter  3750 | train 1.0188 | val 1.4752 |  994.7s\niter  4000 | train 0.9893 | val 1.4865 | 1059.6s\niter  4250 | train 0.9591 | val 1.5020 | 1124.7s\niter  4500 | train 0.9312 | val 1.5015 | 1189.7s\niter  4750 | train 0.9051 | val 1.5192 | 1254.2s\niter  5000 | train 0.8749 | val 1.5435 | 1318.9s\nbest validation loss 1.4663 -> runs/base/best.pt\n\n\nWell, shall help the reason her heart debattly.\n\nGLOUCESTER:\nI'll tell the prince me to the world;\nAnd, not therefore, you have the country and state\nPut the presence of the nature of the golden foolish\nA gentleman; but whither my lord, as I do,\nMore and would make the place to cruel thee.\n\nLUCIO:\n\nLUCIO:\nAy, sir, I had sand well my husband on thee.\n\nISABELLA:\nYonder shall be to the liberty at this head.\n\nDUKE VINCENTIO:\nGo and since too late: good deep to my soul.\n\nLUCIO:\n\nISABELLA:\nTo the mouse of such dissembling mends.\n\nLUCIO:\nSir, in that's sworn not to have made thee but me.\n\nDUKE VINCEN",
+      "output_note": "Recorded from one run of exactly these commands on an Apple M5 Max GPU (22 minutes). Your numbers will differ slightly with different hardware and random draws; that is expected. Note how the run overfits after the best checkpoint: stopping earlier, or more dropout, would be the next experiment.",
+      "lines": [
+        [
+          "iter 0 · train 4.21 · val 4.22",
+          "Untrained: within a few hundredths of ln(65) = 4.17 (the extra comes from the random initial weights). If it is 6 or 11, stop and fix the model before spending GPU minutes."
+        ],
+        [
+          "iter 250 · val 2.33, already below 2.48",
+          "After 250 iterations the transformer has overtaken the counting baseline. Everything after this is refinement."
+        ],
+        [
+          "iter 2750 · val 1.4663, the best",
+          "Validation stops improving here while the training loss keeps falling (0.87 by iteration 5000, with validation back up to 1.54): from this point the model is memorising the training text. `best.pt` keeps this checkpoint, which is what the sampler loads."
+        ],
+        [
+          "best validation loss 1.4663 -> runs/base/best.pt",
+          "The headline number, in nats. Perplexity exp(1.4663) = 4.3, against 12.0 for counting letter pairs and 65 for guessing."
+        ],
+        [
+          "python -m minigpt.sample ... --temperature 0.8 --seed 0",
+          "Generates 600 characters from the best checkpoint. Below temperature 1.0 the text looks better than the model really is, because its uncertainty is suppressed: report the loss at 1.0, and say which temperature produced any sample you show."
+        ]
+      ],
+      "gotcha": "Keep any single run under about ten minutes while developing; a project you cannot iterate on inside one sitting gets abandoned. On Apple silicon set `PYTORCH_ENABLE_MPS_FALLBACK=1` in the terminal first; on Colab the same config runs on a T4 unchanged.",
+      "related": [
+        "workflow/15-smoke-run",
+        "workflow/17-evaluate",
+        "python/plt-plot"
+      ],
+      "keywords": [
+        "full run",
+        "training curve",
+        "overfitting",
+        "temperature",
+        "sample"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), steps 11–12"
+    },
+    {
+      "id": "workflow/17-evaluate",
+      "title": "Step 17 · Evaluate: sample text and plot the curve",
+      "topic": "wf-run",
+      "week": 13,
+      "volatile": true,
+      "figure_file": "runs/base/curve.png",
+      "summary": "Evaluation is a different job from unit testing. Tests ask “does the code do what I said”; evaluation asks “is the model any good”, has no assertions, and produces evidence you show a reader: validation loss, perplexity, the loss curves, and a table of samples.",
+      "files": [
+        {
+          "path": "src/minigpt/sample.py",
+          "content": "from __future__ import annotations\n\nimport argparse\n\nimport torch\n\nfrom minigpt.config import Config\nfrom minigpt.model import GPT\nfrom minigpt.tokenizer import CharTokenizer\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument(\"--checkpoint\", required=True)\n    ap.add_argument(\"--n\", type=int, default=500)\n    ap.add_argument(\"--temperature\", type=float, default=0.8)\n    ap.add_argument(\"--top-k\", type=int, default=None)\n    ap.add_argument(\"--seed\", type=int, default=None)\n    args = ap.parse_args()\n    if args.seed is not None:\n        torch.manual_seed(args.seed)\n\n    ck = torch.load(args.checkpoint, map_location=\"cpu\", weights_only=False)\n    cfg = Config(**ck[\"config\"])\n    tok = CharTokenizer.load(\"data/vocab.json\")\n\n    model = GPT(cfg)\n    model.load_state_dict(ck[\"model\"])\n    model.to(cfg.device).eval()\n\n    start = torch.zeros((1, 1), dtype=torch.long, device=cfg.device)\n    out = model.generate(start, args.n, args.temperature, args.top_k)\n    print(tok.decode(out[0].tolist()))\n\nif __name__ == \"__main__\":\n    main()\n",
+          "lang": "python"
+        },
+        {
+          "path": "scripts/plot_curve.py",
+          "content": "\"\"\"Plot train and validation loss from a run's log.csv, with the two reference lines.\"\"\"\nimport sys\n\nimport matplotlib\nmatplotlib.use(\"Agg\")\nimport matplotlib.pyplot as plt\nimport pandas as pd\n\nrun = sys.argv[1] if len(sys.argv) > 1 else \"runs/base\"\ndf = pd.read_csv(f\"{run}/log.csv\")\n\nfig, ax = plt.subplots(figsize=(7, 4))\nax.plot(df[\"iter\"], df[\"train_loss\"], label=\"train\")\nax.plot(df[\"iter\"], df[\"val_loss\"], label=\"validation\")\nax.axhline(2.4819, ls=\"--\", lw=1, color=\"gray\", label=\"counting bigram\")\nax.axhline(4.1744, ls=\":\", lw=1, color=\"gray\", label=\"untrained\")\nax.set(xlabel=\"iteration\", ylabel=\"cross-entropy (nats)\")\nax.legend()\nfig.tight_layout()\nfig.savefig(f\"{run}/curve.png\", dpi=110)\nprint(f\"saved {run}/curve.png\")\n",
+          "lang": "python"
+        }
+      ],
+      "example": "python -m minigpt.sample --checkpoint runs/smoke/best.pt --n 150 --seed 0\npython scripts/plot_curve.py runs/base\ngit add src scripts\ngit commit -m \"Add sampling and the loss-curve plot\"",
+      "lines": [
+        [
+          "torch.load(args.checkpoint, map_location=\"cpu\", weights_only=False)",
+          "Reads the checkpoint dictionary the training loop saved: weights, config, iteration, validation loss."
+        ],
+        [
+          "Config(**ck[\"config\"]);  model.load_state_dict(ck[\"model\"])",
+          "Rebuilds the exact model shape from the saved config, then loads the weights into it."
+        ],
+        [
+          "CharTokenizer.load(\"data/vocab.json\")",
+          "The vocabulary saved in step 11 turns the generated ids back into text."
+        ],
+        [
+          "model.generate(start, args.n, args.temperature, args.top_k)",
+          "Starts from a single character and grows the sequence `n` times."
+        ],
+        [
+          "the smoke sample",
+          "After 100 tiny iterations the text is still noise with the shape of words: expected. The sample from the full run is in step 16."
+        ],
+        [
+          "scripts/plot_curve.py",
+          "Reads `log.csv` with pandas, plots train and validation loss, and draws the two reference lines: 4.17 (untrained) and 2.48 (counting bigram). The gap between the two curves is the overfitting story."
+        ],
+        [
+          "fig.savefig(f\"{run}/curve.png\")",
+          "Saves the figure next to the log, in the run folder, so the picture and the numbers that made it stay together. This is the figure that goes in any write-up."
+        ]
+      ],
+      "output_note": "The curve is drawn from the `log.csv` of the full run recorded in step 16.",
+      "gotcha": "Quietly sampling at temperature 0.5 and calling it quality is the most common way people mislead themselves about a language model.",
+      "related": [
+        "python/plt-plot",
+        "python/plt-labels",
+        "python/plt-savefig",
+        "python/pd-read-csv",
+        "python/np-random"
+      ],
+      "keywords": [
+        "evaluate",
+        "sample",
+        "generate",
+        "loss curve",
+        "plot",
+        "perplexity"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 12",
+      "output": "\nWet Aosh I thkl pe E'atnj zJheipecusst  bat\n\nWho! ehe\nIiovh tete qtlornozrf toir\nQcoAexe sth\n\nE& Dn pe, ntr tiwrtvte tror thh e thn o t e\nvtrCyestht c\nsaved runs/base/curve.png\n[main a8e251a] Add sampling and the loss-curve plot\n 2 files changed, 56 insertions(+)\n create mode 100644 scripts/plot_curve.py\n create mode 100644 src/minigpt/sample.py",
+      "image": "img/workflow-17-evaluate.png"
+    },
+    {
+      "id": "workflow/18-test-suite",
+      "title": "Step 18 · Consolidate the test suite: one command, seconds, no data",
+      "topic": "wf-run",
+      "week": 11,
+      "volatile": true,
+      "summary": "By now every module has its tests. Add the one that covers the seams: overfit a single batch on purpose. If the model cannot memorise four sequences it sees two hundred times, the training wiring is broken, and you find out in three seconds instead of after an hour of training. The whole suite must run in seconds without touching `data/` or the network.",
+      "files": [
+        {
+          "path": "tests/test_training.py",
+          "content": "import unittest\n\nimport torch\n\nfrom minigpt.config import Config\nfrom minigpt.model import GPT\n\n\nclass TrainingTests(unittest.TestCase):\n    def test_model_can_overfit_one_batch(self):\n        \"\"\"If it cannot memorise 4 sequences, the training wiring is broken.\"\"\"\n        cfg = Config(vocab_size=65, block_size=8, n_layer=2, n_head=2,\n                     n_embd=32, dropout=0.0, device=\"cpu\")\n        torch.manual_seed(0)\n        model = GPT(cfg)\n        x = torch.randint(0, cfg.vocab_size, (4, 8))\n        y = torch.randint(0, cfg.vocab_size, (4, 8))\n\n        opt = torch.optim.AdamW(model.parameters(), lr=1e-2)\n        first = model(x, y)[1].item()\n        for _ in range(200):\n            loss = model(x, y)[1]\n            opt.zero_grad(set_to_none=True)\n            loss.backward()\n            opt.step()\n        self.assertLess(loss.item(), first / 4)\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n",
+          "lang": "python"
+        }
+      ],
+      "example": "python -m unittest discover -s tests\ngit add tests\ngit commit -m \"Add the overfit-one-batch test\"\ngit log --oneline",
+      "lines": [
+        [
+          "test_model_can_overfit_one_batch",
+          "Builds a tiny model and one random batch, runs 200 optimiser steps on it, and requires the loss to fall below a quarter of its starting value."
+        ],
+        [
+          "python -m unittest discover -s tests",
+          "The whole suite: one dot per test, the count, `OK`. This is the command to run before every commit, and inside Colab."
+        ],
+        [
+          "git log --oneline",
+          "The history so far, one line per commit: a readable record of how the project was built."
+        ]
+      ],
+      "gotcha": "Do not test that the model is accurate; that is slow and flaky. Test properties that must hold regardless of training: shapes, the round trip, loss at initialisation, causality, rows summing to one, idempotent cleaning, and this overfit test.",
+      "related": [
+        "python/unittest-suite",
+        "python/unittest-main",
+        "python/assert",
+        "git/log"
+      ],
+      "keywords": [
+        "test suite",
+        "unittest discover",
+        "overfit",
+        "regression test"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 13",
+      "output": "................\n----------------------------------------------------------------------\nRan 16 tests in 0.760s\n\nOK\n[main 067cc20] Add the overfit-one-batch test\n 1 file changed, 30 insertions(+)\n create mode 100644 tests/test_training.py\n067cc20 Add the overfit-one-batch test\na8e251a Add sampling and the loss-curve plot\ne7c140d Add the training loop\n538e0b4 Add the transformer and its four tests\n98c348b Put every hyperparameter in one Config\ncd87785 Add the counting-bigram baseline\n36aa632 Add the split-and-batch code\n93ef7d7 Add the character tokenizer and its tests\n47c315d Add the corpus cleaner and its tests\nffb5442 Add the data download script\n8c6fdd8 Scaffold the package\neac20d1 Initialise repository with ignore rules"
+    },
+    {
+      "id": "workflow/19-colab",
+      "title": "Step 19 · Use Colab as a thin client",
+      "topic": "wf-ship",
+      "week": 9,
+      "no_run": true,
+      "code_lang": "python",
+      "summary": "The repository is the project; the notebook is a window onto it. The first cell clones your GitHub repository, installs the package and prepares the data; the second checks the GPU, runs the tests and trains; the third copies the results to Google Drive, because Colab disconnects. The notebook contains no model code, which is why the same repository runs identically on your laptop and on Colab's GPU.",
+      "example": "# cell 1 - get the code and the data\n!git clone -q https://github.com/YOUR-USERNAME/minigpt.git\n%cd minigpt\n!pip install -q -e .\n!python scripts/get_data.py\n!python -c \"from minigpt.data import build_arrays; build_arrays()\"\n\n# cell 2 - check the runtime, test, train\nimport torch\nprint(torch.__version__, torch.cuda.is_available())\n!nvidia-smi --query-gpu=name,memory.total --format=csv\n!python -m unittest discover -s tests\n!python -m minigpt.train --config configs/tiny.yaml --run-name smoke\n!python -m minigpt.train --config configs/base.yaml --run-name colab-01\n\n# cell 3 - keep the results (Colab forgets everything when it disconnects)\nfrom google.colab import drive\ndrive.mount('/content/drive')\n!mkdir -p /content/drive/MyDrive/minigpt-runs\n!cp -r runs/colab-01 /content/drive/MyDrive/minigpt-runs/",
+      "output_note": "Runs only in Colab (Runtime → Change runtime type → GPU). Nothing is recorded here because it depends on your GitHub account and a live Colab session.",
+      "lines": [
+        [
+          "!git clone -q https://github.com/YOUR-USERNAME/minigpt.git",
+          "`!` runs a shell command from a notebook cell. Downloads your repository into Colab's `/content` folder; `-q` keeps it quiet."
+        ],
+        [
+          "%cd minigpt",
+          "A Colab magic that changes the notebook's working directory (a plain `!cd` would not stick)."
+        ],
+        [
+          "!pip install -q -e .",
+          "The same editable install as step 7, inside Colab's Python. Plain `pip` is safe here because a Colab runtime has exactly one Python; on your own computer keep writing `python -m pip`."
+        ],
+        [
+          "!python scripts/get_data.py  /  !python -c \"... build_arrays()\"",
+          "Steps 8 and 11 again: the data is never in the repository, so every fresh machine rebuilds it from the scripts."
+        ],
+        [
+          "print(torch.__version__, torch.cuda.is_available())",
+          "Must print `True`; otherwise the runtime has no GPU and the full run will take hours."
+        ],
+        [
+          "!nvidia-smi --query-gpu=name,memory.total --format=csv",
+          "Which GPU Colab gave you and how much memory it has, for the record."
+        ],
+        [
+          "!python -m unittest discover -s tests",
+          "The tests run here too: a fresh machine is exactly where a missing dependency shows up."
+        ],
+        [
+          "the two training lines",
+          "The smoke run first, then the real run under a new name, so both logs are kept."
+        ],
+        [
+          "drive.mount('/content/drive')",
+          "Asks permission to attach your Google Drive as a folder; then `cp -r` copies the run folder there, where it survives the session."
+        ]
+      ],
+      "gotcha": "Never paste a token into a cell: use Colab's Secrets panel and `userdata.get(\"GITHUB_TOKEN\")`. Strip outputs before committing a notebook (`pip install nbstripout` then `nbstripout --install`), and use “Restart and run all” before you trust a result: notebook state is invisible and lies to you.",
+      "related": [
+        "shell/bang-in-colab",
+        "shell/percent-cd",
+        "python/pip-install",
+        "git/clone",
+        "python/colab-files-panel"
+      ],
+      "keywords": [
+        "colab",
+        "clone",
+        "thin client",
+        "drive mount",
+        "gpu"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 14",
+      "output": ""
+    },
+    {
+      "id": "workflow/20-branches",
+      "title": "Step 20 · Every experiment on its own branch",
+      "topic": "wf-ship",
+      "week": 9,
+      "summary": "Once the pipeline works, every change is an experiment and experiments belong on branches. This is also how three people share one codebase without overwriting each other. Put the number in the commit message: six weeks later `git log --oneline` is a readable history of what you tried and what it bought you, which is exactly the material a report is written from.",
+      "example": "git switch -c experiment/wider-model\nsed -i '' 's/n_embd: 384/n_embd: 512/' configs/base.yaml\ngit diff\ngit add configs/base.yaml\ngit commit -m \"Widen to n_embd=512 (experiment)\"\ngit push -u origin experiment/wider-model\ngit switch main",
+      "lines": [
+        [
+          "git switch -c experiment/wider-model",
+          "Creates the branch and moves to it. Nothing on `main` changes. Slashes in the name are just a naming convention."
+        ],
+        [
+          "sed -i '' 's/n_embd: 384/n_embd: 512/' configs/base.yaml",
+          "Edits the file in place: replace `n_embd: 384` with `n_embd: 512`. In real life you open the file in VS Code and change the number; the command is here so the step can be recorded. On Linux the option is `-i` without the quotes."
+        ],
+        [
+          "git diff",
+          "Shows exactly what changed, line by line (`-` old, `+` new), before you commit it."
+        ],
+        [
+          "git commit -m \"Widen to n_embd=512 (experiment)\"",
+          "After running the experiment, put the result in the message as well: “val loss 1.47 (was 1.51)”."
+        ],
+        [
+          "git push -u origin experiment/wider-model",
+          "Publishes the branch under the same name, which is what the pull request in step 21 needs."
+        ],
+        [
+          "git switch main",
+          "Back to the safe branch: `configs/base.yaml` shows 384 again, because the change exists only on the branch."
+        ],
+        [
+          "Your branch is ahead of 'origin/main' by 11 commits",
+          "A reminder from Git: `main` has not been pushed since step 6. Commit often, push at the end of a session; step 22 pushes everything."
+        ]
+      ],
+      "gotcha": "Commit the run's `manifest.json` together with the config change, so the number and the code that produced it travel together.",
+      "related": [
+        "git/branch",
+        "git/diff",
+        "git/push",
+        "git/log",
+        "git/pull-request"
+      ],
+      "keywords": [
+        "branch",
+        "switch",
+        "experiment",
+        "sed",
+        "diff"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 15",
+      "output": "Switched to a new branch 'experiment/wider-model'\ndiff --git a/configs/base.yaml b/configs/base.yaml\nindex 8fcb066..abae6f9 100644\n--- a/configs/base.yaml\n+++ b/configs/base.yaml\n@@ -1,7 +1,7 @@\n block_size: 256\n n_layer: 6\n n_head: 6\n-n_embd: 384\n+n_embd: 512\n dropout: 0.2\n batch_size: 64\n learning_rate: 3.0e-4\n[experiment/wider-model af131fb] Widen to n_embd=512 (experiment)\n 1 file changed, 1 insertion(+), 1 deletion(-)\nTo /Users/student/github/minigpt.git\n * [new branch]      experiment/wider-model -> experiment/wider-model\nbranch 'experiment/wider-model' set up to track 'origin/experiment/wider-model'.\nSwitched to branch 'main'\nYour branch is ahead of 'origin/main' by 11 commits.\n  (use \"git push\" to publish your local commits)"
+    },
+    {
+      "id": "workflow/21-pull-request",
+      "title": "Step 21 · Open a pull request, get a review, merge",
+      "topic": "wf-ship",
+      "week": 9,
+      "no_run": true,
+      "code_lang": "text",
+      "summary": "After the push, GitHub offers to open a pull request: a page that shows the diff, lets a teammate (or future you) comment, and ends with a **Merge** button that folds the branch into `main`. In a solo project it is still the place where you write down what the change achieved.",
+      "example": "GitHub → your repository → \"Compare & pull request\" (the banner shown after a push)\n  base: main   ←   compare: experiment/wider-model\n  Title:        Widen the model to n_embd=512\n  Description:  what changed and what it bought: val loss 1.47 (was 1.51), 14 min on a T4\n→ Create pull request → (review) → Merge pull request → Delete branch\n\nThen, on your computer:\ngit switch main\ngit pull\ngit branch -d experiment/wider-model",
+      "output_note": "Nothing runs locally until the last three commands; they bring the merged result down and delete the finished branch.",
+      "lines": [
+        [
+          "base ← compare",
+          "`base` is where the change goes (`main`); `compare` is the branch that holds it."
+        ],
+        [
+          "Description",
+          "Numbers and a sentence. This text, not your memory, is what the report is written from."
+        ],
+        [
+          "Merge pull request",
+          "GitHub creates a merge commit on `main`. Your laptop does not know yet."
+        ],
+        [
+          "git switch main  /  git pull",
+          "Downloads the merged commits so local `main` matches GitHub."
+        ],
+        [
+          "git branch -d experiment/wider-model",
+          "`-d` deletes the local branch only if it has been merged, so it is safe."
+        ]
+      ],
+      "gotcha": "If GitHub reports conflicts, `main` moved while you worked: run `git pull origin main` on your branch, fix the marked files, commit and push again, and the button turns green.",
+      "related": [
+        "git/pull-request",
+        "git/pull",
+        "git/branch"
+      ],
+      "keywords": [
+        "pull request",
+        "merge",
+        "review",
+        "PR"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 15",
+      "output": ""
+    },
+    {
+      "id": "workflow/22-readme",
+      "title": "Step 22 · A README that earns its place",
+      "topic": "wf-ship",
+      "week": 9,
+      "summary": "One page: what this is, how to reproduce it, and what the numbers are. Someone with your repository and nothing else should reach your headline result with four commands. Commit it and push; the project is now something another person can run.",
+      "files": [
+        {
+          "path": "README.md",
+          "content": "# miniGPT\n\nA character-level GPT trained on tinyshakespeare, built from an empty folder with\nthe HUDM 5001 standard workflow: environment first, Git second, tests alongside.\n\n## Reproduce\n\n    conda create --name minigpt python=3.12 -y && conda activate minigpt\n    python -m pip install -e .\n    python scripts/get_data.py && python -c \"from minigpt.data import build_arrays; build_arrays()\"\n    python -m minigpt.train --config configs/base.yaml --run-name base\n\n## Results\n\n| model               | val loss | perplexity |\n|---------------------|----------|------------|\n| uniform (untrained) |  4.174   |   65.0     |\n| counting bigram     |  2.482   |   12.0     |\n| miniGPT 10.8M       |  1.466   |   4.3     |\n",
+          "lang": "markdown"
+        }
+      ],
+      "example": "git add README.md\ngit commit -m \"Write the README: reproduce and results\"\ngit push\ngit log --oneline",
+      "lines": [
+        [
+          "# miniGPT, then one paragraph",
+          "What it is, in two sentences. Not a tutorial."
+        ],
+        [
+          "## Reproduce: four commands",
+          "Environment, install, data, train: exactly the commands from steps 2, 7, 8, 11 and 16, with `python -m pip` so the reader's install lands in the environment they just created. If a reader cannot paste these and get your number, the README is not finished."
+        ],
+        [
+          "## Results: a table",
+          "Untrained, baseline, model: the three numbers from steps 12 and 16, in the same units, so the improvement is visible at a glance. Markdown tables are pipes and dashes."
+        ],
+        [
+          "git push",
+          "No `-u` needed any more: step 6 recorded where `main` goes."
+        ],
+        [
+          "git log --oneline",
+          "The finished history: a dozen commits that read like a build log."
+        ]
+      ],
+      "gotcha": "Update the results table every time the number changes, in the same commit as the change. A README with stale numbers is worse than one with none.",
+      "related": [
+        "markdown/headings",
+        "markdown/table",
+        "markdown/code-block",
+        "git/push",
+        "git/log"
+      ],
+      "keywords": [
+        "readme",
+        "reproduce",
+        "results table",
+        "documentation"
+      ],
+      "source": "HUDM 5001 advanced track, “Building a miniGPT from an empty folder” (build guide), step 15",
+      "output": "[main 19a7e17] Write the README: reproduce and results\n 1 file changed, 17 insertions(+), 2 deletions(-)\nTo /Users/student/github/minigpt.git\n   eac20d1..19a7e17  main -> main\n19a7e17 Write the README: reproduce and results\n067cc20 Add the overfit-one-batch test\na8e251a Add sampling and the loss-curve plot\ne7c140d Add the training loop\n538e0b4 Add the transformer and its four tests\n98c348b Put every hyperparameter in one Config\ncd87785 Add the counting-bigram baseline\n36aa632 Add the split-and-batch code\n93ef7d7 Add the character tokenizer and its tests\n47c315d Add the corpus cleaner and its tests\nffb5442 Add the data download script\n8c6fdd8 Scaffold the package\neac20d1 Initialise repository with ignore rules"
+    }
+  ],
+  "verified": "2026-09-04 · python 3.12.14 · torch 2.14.0 · git 2.55.0 · macOS"
+}

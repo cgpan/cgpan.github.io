@@ -86,7 +86,7 @@
   function highlight(code, lang) {
     var safe = esc(code);
     if (lang === 'markdown' || lang === 'text') { return safe; }
-    var rx = rxFor(lang === 'git' ? 'shell' : lang);
+    var rx = rxFor((lang === 'git' || lang === 'workflow' || lang === 'toml' || lang === 'yaml') ? 'shell' : lang);
     return safe.replace(rx, function (m, c, s, n, k, d) {
       if (c) { return '<span class="tk-c">' + c + '</span>'; }
       if (s) { return '<span class="tk-s">' + s + '</span>'; }
@@ -119,12 +119,27 @@
     h.push('<a class="pt-entry__id" href="#' + esc(e.id) + '" target="_self" data-copylink title="Copy a link to this entry">' + esc(e.id) + '</a>');
     h.push('</header>');
 
+    var cl = e.code_lang || e.lang;
     if (e.summary) { h.push(row('Summary', '<p>' + inline(e.summary) + '</p>')); }
-    if (e.syntax) { h.push(row('Syntax', codeBlock(e.syntax, e.lang, '', 'syntax'))); }
+    if (e.syntax) { h.push(row('Syntax', codeBlock(e.syntax, cl, '', 'syntax'))); }
     if (e.setup) {
-      h.push(row('Setup', '<details class="pt-setup"><summary>' + inline(e.setup_note || 'Run this first') + '</summary>' + codeBlock(e.setup, e.lang, '', 'setup') + '</details>'));
+      h.push(row('Setup', '<details class="pt-setup"><summary>' + inline(e.setup_note || 'Run this first') + '</summary>' + codeBlock(e.setup, cl, '', 'setup') + '</details>'));
+    } else if (e.setup_note) {
+      h.push(row('Setup', '<p class="pt-note">' + inline(e.setup_note) + '</p>'));
     }
-    if (e.example) { h.push(row('Example', codeBlock(e.example, e.lang, '', 'example'))); }
+    (e.files || []).forEach(function (f) {
+      var n = f.content.split('\n').length;
+      var long = n > 30;
+      h.push(row('File', '<details class="pt-file"' + (long ? '' : ' open') + '><summary class="pt-file__path">' + esc(f.path) +
+        '<span class="pt-file__n">' + n + ' lines' + (long ? ' · click to ' : '') + '</span></summary>' +
+        codeBlock(f.content, f.lang || 'text', '', f.path) + '</details>'));
+    });
+    if (e.example) { h.push(row('Example', codeBlock(e.example, cl, '', 'example'))); }
+    if (e.lines && e.lines.length) {
+      h.push(row('Line by line', '<dl class="pt-lines">' + e.lines.map(function (l) {
+        return '<div class="pt-line"><dt><code>' + esc(l[0]) + '</code></dt><dd>' + inline(l[1]) + '</dd></div>';
+      }).join('') + '</dl>', 'pt-row--lines'));
+    }
     if (e.output_html) {
       h.push(row('Renders as', '<div class="pt-rendered">' + e.output_html + '</div>'));
     } else if (e.image) {
@@ -148,7 +163,8 @@
     var meta = [];
     if (e.source) { meta.push('Source: ' + inline(e.source)); }
     var ver = S.langById[e.lang] && S.langById[e.lang].verified;
-    if (ver && e.output && !e.output_html) { meta.push('Output verified ' + esc(ver)); }
+    if (e.manual_run) { meta.push('Output recorded ' + inline(e.manual_run)); }
+    else if (ver && e.output && !e.output_html) { meta.push('Output verified ' + esc(ver)); }
     if (meta.length) { h.push(row('Source', '<p>' + meta.join(' · ') + '</p>', 'pt-row--meta')); }
     h.push('</article>');
     return h.join('');

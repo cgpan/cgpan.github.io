@@ -9,6 +9,10 @@
       "week": 9
     },
     {
+      "id": "git-start",
+      "label": "Start your own project"
+    },
+    {
       "id": "git-loop",
       "label": "Fork, clone, and the core loop",
       "week": 9
@@ -110,6 +114,334 @@
         "login"
       ],
       "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.2"
+    },
+    {
+      "id": "git/init",
+      "title": "git init — start tracking a folder",
+      "topic": "git-start",
+      "week": 9,
+      "summary": "Turns the current folder into a Git repository by creating a hidden `.git` folder where every snapshot will be stored. Run it once per project, inside the project folder, before the first commit.",
+      "syntax": "cd path/to/project\ngit init",
+      "example": "mkdir minigpt\ncd minigpt\ngit init\nls -a\ngit status",
+      "output": "Initialized empty Git repository in /Users/student/hudm5001/minigpt/.git/\n.\n..\n.git\nOn branch main\n\nNo commits yet\n\nnothing to commit (create/copy files and use \"git add\" to track)",
+      "lines": [
+        [
+          "mkdir minigpt",
+          "Makes the project folder. Keep the name short, lowercase, no spaces."
+        ],
+        [
+          "cd minigpt",
+          "Moves into it. `git init` always acts on the folder you are in."
+        ],
+        [
+          "git init",
+          "Creates the hidden `.git` folder and nothing else. Your files are not tracked until you `git add` them."
+        ],
+        [
+          "ls -a",
+          "`-a` lists hidden entries too, so you can see that `.git` now exists."
+        ],
+        [
+          "git status",
+          "Confirms the branch name (`main`) and that there are no commits yet."
+        ]
+      ],
+      "gotcha": "Run it in the project folder, never in your home folder: a repository that contains your whole home directory tracks everything you own. If `git status` in a fresh folder already reports a branch, you are inside another repository.",
+      "related": [
+        "git/gitignore",
+        "git/add",
+        "git/commit",
+        "git/github-new-repo",
+        "workflow/04-git-init"
+      ],
+      "keywords": [
+        "new repository",
+        "initialize",
+        "start tracking",
+        "create repo"
+      ],
+      "source": "hudm5001/class_notes/02_github_version_control.ipynb §2.3; minigpt_build_guide step 2"
+    },
+    {
+      "id": "git/gitignore",
+      "title": ".gitignore — files Git must never track",
+      "topic": "git-start",
+      "week": 9,
+      "summary": "A plain text file named `.gitignore` in the project root. Each line is a pattern; matching files never appear in `git status` and cannot be added by accident. Write it before the first commit, because a file that is committed once stays in the history forever.",
+      "syntax": "data/           # a whole folder (trailing slash)\n*.pt            # every file with this extension\n__pycache__/\n.DS_Store",
+      "example": "mkdir demo && cd demo && git init -q\nprintf 'data/\\n__pycache__/\\n.DS_Store\\n' > .gitignore\nmkdir data && echo \"passenger,age\" > data/big.csv\necho \"print('hi')\" > analysis.py\ngit status --short\ngit add .gitignore analysis.py\ngit commit -q -m \"First commit, without the data\"\ngit ls-files",
+      "output": "?? .gitignore\n?? analysis.py\n.gitignore\nanalysis.py",
+      "lines": [
+        [
+          "printf '...' > .gitignore",
+          "Writes three lines into the file (`\\n` is a line break). In real life you would type them in VS Code; the effect is the same."
+        ],
+        [
+          "mkdir data && echo ... > data/big.csv",
+          "Creates something that looks like a dataset inside the ignored folder."
+        ],
+        [
+          "git status --short",
+          "Lists changes in a compact form: `??` means untracked. `data/` is missing from the list because it is ignored."
+        ],
+        [
+          "git ls-files",
+          "Shows what the repository actually tracks: the ignore file and the script, no data."
+        ]
+      ],
+      "gotcha": "Ignoring a file that is already committed changes nothing; run `git rm --cached path` first, then commit. A folder pattern needs the trailing slash (`data/`), otherwise it also matches a file named `data`.",
+      "related": [
+        "git/init",
+        "git/status",
+        "git/add",
+        "workflow/04-git-init"
+      ],
+      "keywords": [
+        "ignore",
+        "exclude",
+        "untracked",
+        "data files",
+        "secrets"
+      ],
+      "source": "minigpt_build_guide step 2"
+    },
+    {
+      "id": "git/github-new-repo",
+      "title": "Create an empty repository on GitHub",
+      "topic": "git-start",
+      "week": 9,
+      "no_run": true,
+      "summary": "Your local repository needs a home on GitHub before you can push. Create the GitHub side completely empty, then connect the two with the commands GitHub shows you afterwards. Two ways: click through the website (below), or one command with the GitHub CLI (see `git/gh-repo-create`).",
+      "example": "github.com → \"+\" (top right) → New repository\n  Repository name:  minigpt           ← same name as your folder\n  Visibility:       Public or Private\n  Leave UNTICKED:   Add a README, Add .gitignore, Choose a license\n→ Create repository",
+      "output_note": "GitHub then shows a page with a box titled “…or push an existing repository from the command line”. Its three commands are the next entry.",
+      "lines": [
+        [
+          "Repository name",
+          "Use the folder name so the URL and the folder match; GitHub URLs are `github.com/<user>/<name>`."
+        ],
+        [
+          "Leave the three boxes unticked",
+          "You already have a README and a .gitignore locally. Ticking a box makes GitHub create a first commit that your computer does not have, and your first push is rejected."
+        ],
+        [
+          "Create repository",
+          "Nothing is uploaded yet. The repository is an empty shell waiting for `git push`."
+        ]
+      ],
+      "gotcha": "If you did tick “Add a README”, either delete the repository and recreate it, or run `git pull origin main --allow-unrelated-histories` once before pushing.",
+      "related": [
+        "git/remote-add-origin",
+        "git/gh-repo-create",
+        "git/init",
+        "git/fork",
+        "workflow/05-github-repo"
+      ],
+      "keywords": [
+        "new repo",
+        "create repository",
+        "github website",
+        "empty repository"
+      ],
+      "source": "minigpt_build_guide step 2"
+    },
+    {
+      "id": "git/gh-repo-create",
+      "title": "gh repo create — make the GitHub repository from the terminal",
+      "topic": "git-start",
+      "week": 9,
+      "no_run": true,
+      "summary": "The GitHub CLI, `gh`, does what the website does, from the terminal: log in once, then create repositories, open pull requests and more without leaving the shell. It also removes the password problem: `gh auth login` stores a token that git uses automatically for every push and pull.",
+      "syntax": "conda install -c conda-forge gh      # one time; on a Mac `brew install gh` also works\ngh auth login                        # one time per computer\ngh repo create <name> --private      # or --public: an EMPTY repository on GitHub\ngh repo view <name> --web            # open it in the browser to check",
+      "example": "gh auth login\n#   ? Where do you use GitHub?            GitHub.com\n#   ? Preferred protocol for Git operations?   HTTPS\n#   ? Authenticate Git with your GitHub credentials?   Yes\n#   ? How would you like to authenticate?  Login with a web browser\n#   (copy the one-time code, press Enter, paste it on the GitHub page that opens)\n\ngh repo create minigpt --private\ngh repo view minigpt --web",
+      "output_note": "Not run here because it needs your GitHub account. After `gh auth login` you see “✓ Logged in as <your-username>”; after `gh repo create` a line with the new repository's address, `https://github.com/<your-username>/minigpt`; `gh repo view --web` opens that page in the browser. The repository is empty, exactly as if you had clicked New repository and left every box unticked.",
+      "lines": [
+        [
+          "conda install -c conda-forge gh",
+          "Installs the GitHub CLI into the active conda environment. `gh` is a separate program from `git`; installing it does not install or change git."
+        ],
+        [
+          "gh auth login",
+          "A one-time login per computer. It asks four questions (answer as shown in the comments), shows a one-time code, opens GitHub in your browser, and you paste the code there. From then on `gh` and `git` share the stored token, so `git push` never asks for a password."
+        ],
+        [
+          "gh repo create minigpt --private",
+          "Creates an empty repository named `minigpt` under your account. `--private` or `--public` is required in this non-interactive form; without a name and a flag, `gh repo create` asks questions instead. Nothing is uploaded and no README is added, so the next step (`git remote add origin` … `git push -u origin main`) is the same as after the website route."
+        ],
+        [
+          "gh repo view minigpt --web",
+          "Opens the repository page in the browser: the quickest way to confirm it exists and to copy its URL."
+        ],
+        [
+          "gh repo create minigpt --private --source=. --remote=origin --push",
+          "The all-in-one form, for later: run inside an existing local repository, it creates the GitHub repository, adds it as `origin`, and pushes your commits, doing the create step and the connect step together."
+        ]
+      ],
+      "gotcha": "`gh repo create` only makes the GitHub side. Your folder still needs `git init` and a commit before anything can be pushed. If it answers “Name already exists on this account”, you already have a repository called that; pick another name or delete the old one on GitHub.",
+      "related": [
+        "git/github-new-repo",
+        "git/remote-add-origin",
+        "git/personal-access-token",
+        "git/pull-request",
+        "workflow/05-github-repo"
+      ],
+      "keywords": [
+        "gh",
+        "github cli",
+        "gh repo create",
+        "gh auth login",
+        "command line",
+        "terminal"
+      ],
+      "source": "GitHub CLI manual (cli.github.com), `gh repo create --help`, gh 2.100"
+    },
+    {
+      "id": "git/remote-add-origin",
+      "title": "git remote add origin + git push -u — connect and first push",
+      "topic": "git-start",
+      "week": 9,
+      "summary": "Three commands, the same ones GitHub prints after you create the empty repository: tell Git where the remote lives, make sure the branch is called `main`, and push while remembering the link so that later pushes are just `git push`.",
+      "syntax": "git remote add origin https://github.com/<your-username>/<repo>.git\ngit branch -M main\ngit push -u origin main",
+      "setup": "mkdir minigpt && cd minigpt && git init -q\necho \"# miniGPT\" > README.md && git add README.md && git commit -q -m \"Initialise repository\"\n# verification only: a local folder stands in for GitHub, and git is told to send\n# https://github.com/YOUR-USERNAME/... there instead of over the network\ngit init -q --bare \"$HOME/github/minigpt.git\"\ngit config --global url.\"$HOME/github/\".insteadOf \"https://github.com/YOUR-USERNAME/\"",
+      "setup_note": "a repository with one commit, plus a local folder standing in for GitHub",
+      "example": "git remote add origin https://github.com/YOUR-USERNAME/minigpt.git\ngit branch -M main\ngit push -u origin main\ngit remote -v",
+      "output": "To /Users/student/github/minigpt.git\n * [new branch]      main -> main\nbranch 'main' set up to track 'origin/main'.\norigin\t/Users/student/github/minigpt.git (fetch)\norigin\t/Users/student/github/minigpt.git (push)",
+      "output_note": "On your machine the address is your GitHub URL. Here a local folder stands in for GitHub, so the output names that folder instead.",
+      "lines": [
+        [
+          "git remote add origin <URL>",
+          "`origin` is the conventional nickname for your GitHub copy. The URL comes from the green **Code** button on GitHub (HTTPS tab)."
+        ],
+        [
+          "git branch -M main",
+          "Renames the current branch to `main`; older Git versions start on `master`. `-M` renames even if `main` already exists."
+        ],
+        [
+          "git push -u origin main",
+          "Uploads your commits. `-u` records that local `main` follows `origin/main`, so plain `git push` and `git pull` work from now on."
+        ],
+        [
+          "git remote -v",
+          "Lists the remotes with their addresses, once for fetch and once for push, so you can check the link."
+        ],
+        [
+          "gh repo create minigpt --private --source=. --remote=origin --push",
+          "The GitHub CLI shortcut: creates the repository, adds `origin` and pushes in one command, replacing all three lines above. `git remote -v` afterwards shows the same result."
+        ]
+      ],
+      "gotcha": "GitHub does not accept your account password over HTTPS. When asked for a password, paste a personal access token (see the token entry) or sign in once through GitHub Desktop or the `gh` command-line tool.",
+      "related": [
+        "git/github-new-repo",
+        "git/gh-repo-create",
+        "git/personal-access-token",
+        "git/push",
+        "git/remote",
+        "workflow/06-connect-and-push"
+      ],
+      "keywords": [
+        "origin",
+        "first push",
+        "connect to github",
+        "set-upstream",
+        "push -u"
+      ],
+      "source": "minigpt_build_guide step 2"
+    },
+    {
+      "id": "git/branch",
+      "title": "git switch -c — work on a branch",
+      "topic": "git-start",
+      "week": 9,
+      "summary": "A branch is a separate line of commits. Create one for an experiment or a feature, commit on it freely, and merge it into `main` only when it works. `git switch` moves between branches; your files change to match.",
+      "syntax": "git switch -c experiment/wider-model   # create a branch and move to it\ngit switch main                        # go back\ngit branch                             # list branches; * marks the current one",
+      "setup": "mkdir minigpt && cd minigpt && git init -q\necho \"# miniGPT\" > README.md && git add README.md && git commit -q -m \"Initialise repository\"\n# verification only: a local folder stands in for GitHub, and git is told to send\n# https://github.com/YOUR-USERNAME/... there instead of over the network\ngit init -q --bare \"$HOME/github/minigpt.git\"\ngit config --global url.\"$HOME/github/\".insteadOf \"https://github.com/YOUR-USERNAME/\"\ngit remote add origin https://github.com/YOUR-USERNAME/minigpt.git && git push -q -u origin main",
+      "setup_note": "a repository already connected to (a stand-in for) GitHub",
+      "example": "git switch -c experiment/wider-model\necho \"n_embd: 512\" > config.yaml\ngit add config.yaml\ngit commit -m \"Try a wider model\"\ngit branch\ngit push -u origin experiment/wider-model\ngit switch main\nls",
+      "output": "Switched to a new branch 'experiment/wider-model'\n[experiment/wider-model 0193114] Try a wider model\n 1 file changed, 1 insertion(+)\n create mode 100644 config.yaml\n* experiment/wider-model\n  main\nTo /Users/student/github/minigpt.git\n * [new branch]      experiment/wider-model -> experiment/wider-model\nbranch 'experiment/wider-model' set up to track 'origin/experiment/wider-model'.\nSwitched to branch 'main'\nYour branch is up to date with 'origin/main'.\nREADME.md",
+      "lines": [
+        [
+          "git switch -c experiment/wider-model",
+          "`-c` creates the branch and switches to it in one step. Slashes in the name are just a naming convention (`experiment/…`, `fix/…`)."
+        ],
+        [
+          "echo ... > config.yaml, git add, git commit",
+          "Normal work. The commit lands on the new branch; `main` does not change."
+        ],
+        [
+          "git branch",
+          "Lists both branches; the `*` shows where you are."
+        ],
+        [
+          "git push -u origin experiment/wider-model",
+          "Publishes the branch to GitHub under the same name, which is what a pull request needs."
+        ],
+        [
+          "git switch main / ls",
+          "Back on `main` the file `config.yaml` is gone: it exists only on the branch until you merge."
+        ]
+      ],
+      "gotcha": "Commit before you switch. Uncommitted changes travel with you to the other branch and the two lines of work get mixed up. `git checkout -b` is the older spelling of `git switch -c`; both work.",
+      "related": [
+        "git/pull-request",
+        "git/commit",
+        "git/push",
+        "git/log",
+        "workflow/20-branches"
+      ],
+      "keywords": [
+        "branch",
+        "switch",
+        "checkout -b",
+        "feature branch",
+        "experiment"
+      ],
+      "source": "minigpt_build_guide step 15"
+    },
+    {
+      "id": "git/pull-request",
+      "title": "Pull request — propose merging a branch",
+      "topic": "git-start",
+      "week": 9,
+      "no_run": true,
+      "summary": "After you push a branch, GitHub offers to open a pull request: a page that shows the diff, lets teammates comment and approve, and ends with a **Merge** button that folds the branch into `main`. In a solo project it is still worth using, because it is where you write down what the change achieved.",
+      "example": "GitHub → your repository → \"Compare & pull request\" (banner shown after a push)\n  base: main   ←   compare: experiment/wider-model\n  Title:        Widen the model to n_embd=512\n  Description:  what changed, and the number it bought (val loss 1.47, was 1.51)\n→ Create pull request → (review) → Merge pull request → Delete branch\n\nThen, on your computer:\ngit switch main\ngit pull\ngit branch -d experiment/wider-model",
+      "output_note": "Nothing runs locally until the last three commands; they bring the merged result down and delete the finished branch.",
+      "lines": [
+        [
+          "base ← compare",
+          "`base` is where the change goes (`main`); `compare` is the branch that holds it."
+        ],
+        [
+          "Description",
+          "Put the result in words and numbers. Six weeks later this text, not your memory, is what a report is written from."
+        ],
+        [
+          "Merge pull request",
+          "GitHub creates a merge commit on `main`. Your laptop does not know yet."
+        ],
+        [
+          "git switch main + git pull",
+          "Downloads the merged commits so local `main` matches GitHub."
+        ],
+        [
+          "git branch -d …",
+          "`-d` deletes the local branch only if it has been merged, so it is safe."
+        ]
+      ],
+      "gotcha": "If GitHub says the branch has conflicts, `main` moved while you worked. Run `git pull origin main` on your branch, fix the marked files, commit, push again, and the button turns green.",
+      "related": [
+        "git/branch",
+        "git/pull",
+        "git/fork",
+        "workflow/21-pull-request"
+      ],
+      "keywords": [
+        "PR",
+        "merge",
+        "review",
+        "compare",
+        "merge request"
+      ],
+      "source": "minigpt_build_guide step 15"
     },
     {
       "id": "git/fork",

@@ -1,0 +1,15 @@
+# environment folders (conda environments live outside the project, but be safe)
+.venv/
+__pycache__/
+*.egg-info/
+
+# data and artefacts: regenerable from the code, so never committed
+data/
+checkpoints/
+runs/
+*.pt
+*.npy
+
+# notebook checkpoints and operating-system noise
+.ipynb_checkpoints/
+.DS_Store

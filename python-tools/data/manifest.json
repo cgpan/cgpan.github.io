@@ -27,6 +27,11 @@
       "id": "git",
       "label": "Git",
       "file": "git.json"
+    },
+    {
+      "id": "workflow",
+      "label": "A standard workflow",
+      "file": "workflow.json"
     }
   ],
   "verified": {

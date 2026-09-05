@@ -30,6 +30,13 @@ Entry flags
   "volatile": true       the output changes run to run (dates, timings): record it, never fail
   "figure": true         the example draws a chart; the image is saved to img/ and linked
   "no_run": true         nothing to run (menu paths, conceptual entries)
+  "manual_run": "..."    output recorded once by hand (long training runs); skipped, shown as "recorded"
+  workflow tab           the steps run in order inside ONE sandbox (home shown as /Users/student), with the
+                         `minigpt-verify` conda environment on the PATH shown as `minigpt`, and a local bare
+                         repository standing in for GitHub (git rewrites https://github.com/YOUR-USERNAME/ to it).
+                         Entry fields: "files" [{path, content}] are written before the example runs,
+                         "harness" is a hidden snippet replaying what a no_run step would have done,
+                         "figure_file" names a PNG the example produced (copied to img/).
 """
 import argparse, datetime, getpass, json, os, pathlib, platform, shutil, subprocess, sys, tempfile
 
@@ -41,7 +48,10 @@ FIXTURES = HERE / "fixtures"
 RUNNER = HERE / "runner.py"
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
-LANG_FILES = {"markdown": "markdown.json", "python": "python.json", "sql": "sql.json", "shell": "shell.json", "git": "git.json"}
+LANG_FILES = {"markdown": "markdown.json", "python": "python.json", "sql": "sql.json", "shell": "shell.json", "git": "git.json",
+              "workflow": "workflow.json"}
+WORKFLOW_PYTHON = "/opt/anaconda3/envs/minigpt-verify/bin/python"   # the `minigpt` environment of the workflow tab
+GITHUB_PLACEHOLDER = "https://github.com/YOUR-USERNAME/"
 
 WGET_SHIM = """#!/bin/bash
 # stand-in for wget on machines without it (verification only): wget [-q] URL [-O file]
@@ -177,6 +187,82 @@ def run_shell(entry, python, git=False):
     return strip_trailing(out), "", None
 
 
+def _normalise(out, home, tmp, wf_python):
+    for real in (os.path.realpath(str(home)), str(home), os.path.realpath(tmp), tmp):
+        out = out.replace(real, "/Users/student")
+    envdir = str(pathlib.Path(wf_python).resolve().parent.parent)
+    out = out.replace(envdir, envdir.rsplit("/", 1)[0] + "/minigpt")
+    user = getpass.getuser()
+    if user:
+        out = out.replace(user, "student")
+    return out
+
+
+def run_workflow(entries, wf_python):
+    """Run every workflow step in order in one sandbox; return {id: (output, stderr, image)}."""
+    results = {}
+    with tempfile.TemporaryDirectory() as tmp:
+        home = pathlib.Path(tmp) / "home"
+        home.mkdir()
+        cache = pathlib.Path(tempfile.gettempdir()) / "pythontools-cache"
+        cache.mkdir(exist_ok=True)
+        env = {"PATH": path_with_shims(tmp, wf_python), "HOME": str(home), "LANG": "en_US.UTF-8", "LC_ALL": "en_US.UTF-8",
+               "TZ": "America/New_York", "TERM": "dumb", "PAGER": "cat", "GIT_PAGER": "cat", "COLUMNS": "80",
+               "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_PARAMETERS": "'init.defaultBranch=main' 'advice.detachedHead=false'",
+               "GIT_AUTHOR_NAME": "Student Example", "GIT_AUTHOR_EMAIL": "student@example.com",
+               "GIT_COMMITTER_NAME": "Student Example", "GIT_COMMITTER_EMAIL": "student@example.com",
+               "GIT_AUTHOR_DATE": "2026-09-08T11:00:00-04:00", "GIT_COMMITTER_DATE": "2026-09-08T11:00:00-04:00",
+               "PIP_DISABLE_PIP_VERSION_CHECK": "1", "PIP_CACHE_DIR": str(cache / "pip"), "PIP_NO_INPUT": "1",
+               "PYTORCH_ENABLE_MPS_FALLBACK": "1", "PYTHONHASHSEED": "0", "PYTHONIOENCODING": "utf-8",
+               "MPLBACKEND": "Agg", "MPLCONFIGDIR": str(cache / "mplconfig"), "PYTHONUNBUFFERED": "1"}
+        lines = ["set +e", "cd \"$HOME\"", "mkdir -p \"$HOME/github\"",
+                 "git config --global url.\"$HOME/github/\".insteadOf \"%s\"" % GITHUB_PLACEHOLDER]
+        n = 0
+        for e in entries:
+            if e.get("harness"):
+                lines.append(e["harness"])
+            for f in e.get("files", []):
+                n += 1
+                d = os.path.dirname(f["path"])
+                if d:
+                    lines.append("mkdir -p '%s'" % d)
+                lines.append("cat > '%s' <<'PT_FILE_%d'\n%s\nPT_FILE_%d" % (f["path"], n, f["content"].rstrip("\n"), n))
+            if e.get("no_run") or e.get("manual_run") or not e.get("example"):
+                continue
+            lines.append("echo '@@PT-STEP %s'" % e["id"])
+            lines.append(e["example"])
+            lines.append("echo '@@PT-END'")
+        script = "\n".join(lines) + "\n"
+        (pathlib.Path(tmp) / "chain.sh").write_text(script, encoding="utf-8")
+        p = subprocess.run(["bash", str(pathlib.Path(tmp) / "chain.sh")], cwd=home, env=env,
+                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=1800)
+        out = p.stdout
+        cur, buf = None, []
+        for line in out.splitlines():
+            if line.startswith("@@PT-STEP "):
+                cur, buf = line[len("@@PT-STEP "):].strip(), []
+            elif line.strip() == "@@PT-END" and cur:
+                results[cur] = (strip_trailing(_normalise("\n".join(buf), home, tmp, wf_python)), "", None)
+                cur = None
+            elif cur is not None:
+                buf.append(line)
+        if cur is not None:
+            results[cur] = (strip_trailing(_normalise("\n".join(buf), home, tmp, wf_python)), "step did not finish", None)
+        for e in entries:
+            if e.get("figure_file") and e["id"] in results:
+                src = home / "minigpt" / e["figure_file"]
+                IMG.mkdir(exist_ok=True)
+                png = IMG / (e["id"].replace("/", "-") + ".png")
+                if src.exists():
+                    shutil.copy(src, png)
+                    o, err, _ = results[e["id"]]
+                    results[e["id"]] = (o, err, "img/" + png.name)
+                else:
+                    o, err, _ = results[e["id"]]
+                    results[e["id"]] = (o, (err + "\nfigure_file not produced: " + e["figure_file"]).strip(), None)
+    return results
+
+
 def versions(python):
     v = {"date": datetime.date.today().isoformat()}
     try:
@@ -197,6 +283,13 @@ def versions(python):
     except Exception:
         pass
     v["platform"] = platform.platform()
+    try:
+        code = "import sys, torch; print(sys.version.split()[0], torch.__version__)"
+        wf = subprocess.run([WORKFLOW_PYTHON, "-c", code], capture_output=True, text=True, timeout=120).stdout.split()
+        if len(wf) == 2:
+            v["wf_python"], v["torch"] = wf
+    except Exception:
+        pass
     return v
 
 
@@ -213,6 +306,8 @@ def stamp(v, lang):
         return v["date"] + " · git " + v.get("git", "?")
     if lang == "shell":
         return v["date"] + " · bash on " + ("macOS" if sys.platform == "darwin" else sys.platform)
+    if lang == "workflow":
+        return v["date"] + " · python " + v.get("wf_python", "?") + " · torch " + v.get("torch", "?") + " · git " + v.get("git", "?") + " · macOS"
     return v["date"]
 
 
@@ -234,15 +329,20 @@ def main():
             continue
         data = load(fname)
         changed = False
+        chain = None
         for e in data["entries"]:
             if args.id and e["id"] != args.id:
                 continue
-            if e.get("no_run") or not e.get("example"):
+            if e.get("no_run") or e.get("manual_run") or not e.get("example"):
                 totals["SKIP"] += 1
                 continue
             runner = e.get("runner", lang)
             slug = e["id"].replace("/", "-")
-            if runner == "python":
+            if lang == "workflow":
+                if chain is None:
+                    chain = run_workflow(data["entries"], WORKFLOW_PYTHON)
+                out, err, image = chain.get(e["id"], ("", "no output captured for this step", None))
+            elif runner == "python":
                 out, err, image = run_python(e, args.python, slug)
             elif runner == "markdown":
                 out, err, image = run_markdown(e)

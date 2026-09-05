@@ -46,9 +46,10 @@ Week tags follow the Fall 2026 schedule in `HUDM_5001_2026FALL/README.md`. Setup
 | Python | 16 | 208 | 9 |
 | SQL | 5 | 24 | 3 |
 | Shell | 5 | 34 | 0 |
-| Git | 3 | 16 | 1 |
+| Git | 4 | 23 | 1 |
 | Markdown | 1 | 13 | 0 |
-| **Total** | **30** | **295** | **13** |
+| Workflow tab | 5 | 23 | 0 |
+| **Total** | **36** | **325** | **13** |
 
 Entry granularity: one entry = one syntax pattern a student would look up. Closely related methods share an entry (for example, the five string methods taught in mini 01 are one entry). 295 is on the dense side. The easiest cuts are the rows marked `optional`, and the three small groups that are menu paths rather than syntax (§3.1 Colab, §3.16, §5.5 setup). Merging those would bring the total to roughly 250 without losing any syntax.
 
@@ -463,7 +464,7 @@ Source: `hudm5001/class_notes/01_shell_and_command_line.ipynb`; youmilab `warm_u
 | shell/conda-create | `conda create -n hudm5001 python=3.12` | 1 | setup §4.1 | |
 | shell/conda-activate | `conda activate` / `conda deactivate` | 1 | setup §4.1 | |
 | shell/conda-install | `conda install -c conda-forge ...` | 1 | setup §4.2 | |
-| shell/pip-install | `pip install dash` (inside the env) | 1 | setup §4.2 | |
+| shell/pip-install | `python -m pip install dash` (inside the env; `python -m` so pip matches the interpreter) | 1 | setup §4.2 | |
 | shell/conda-env-commands | `conda env list`, `conda list`, `conda env export`, `conda remove` | 1 | setup §4.4 | |
 | shell/environment-yml | `conda env create -f environment.yml` | 1 | setup §4.3 | optional |
 | shell/launch-tools | `jupyter lab`, `spyder`, `code .` | 1 | setup §5–6, quick ref | |
@@ -589,13 +590,14 @@ All entries are built and every output on the page was produced by running the e
 | Python | 16 | 208 | 9 |
 | SQL | 5 | 24 | 3 |
 | Shell | 5 | 34 | 0 |
-| Git | 3 | 16 | 1 |
+| Git | 4 | 23 | 1 |
 | Markdown | 1 | 13 | 0 |
-| **Total** | **30** | **295** | **13** |
+| Workflow tab | 5 | 23 | 0 |
+| **Total** | **36** | **325** | **13** |
 
-Entries per week: wk 1: 42, wk 2: 30, wk 3: 21, wk 4: 17, wk 5: 54, wk 6: 25, wk 7: 16, wk 9: 40, wk 10: 8, wk 11: 16, wk 12: 4, wk 13: 22.
+Entries per week: wk 1: 45, wk 2: 30, wk 3: 23, wk 4: 17, wk 5: 54, wk 6: 26, wk 7: 17, wk 9: 55, wk 10: 11, wk 11: 17, wk 12: 4, wk 13: 25.
 
-Flags: `no_run` 25, `volatile` 14, `expect_error` 10, `figure` 19.
+Flags: `no_run` 32, `volatile` 22, `expect_error` 10, `figure` 19, `manual_run` 1.
 
 Verification environment: conda env `hudm5001-verify` (Python 3.13.15, pandas 2.2.3, numpy 2.5.2, matplotlib 3.11.1, plotnine 0.15.8, plotly 6.9.0), sqlite3 3.53.2, git 2.55.0, bash on macOS. Python examples run as Colab-style cells; shell and git examples run in a fresh `~/hudm5001` folder shown as `/Users/student`.
 
@@ -622,3 +624,10 @@ Ids built but not listed above (1): `shell/diff`, the replacement for `shell/les
 | `sql/distinct` | 5 | SELECT DISTINCT — unique values | Class_asset/why_sql_not_excel.html |
 | `sql/having` | 5 | HAVING — filter the groups | Class_asset/why_sql_not_excel.html |
 | `sql/is-null` | 5 | IS NULL / IS NOT NULL — find missing values | Class_asset/why_sql_not_excel.html |
+
+### 12.3 Additions on 2026-09-04 (evening)
+
+- Git gained a topic **Start your own project** (`git-start`): `git/init`, `git/gitignore`, `git/github-new-repo`, `git/gh-repo-create` (the GitHub CLI route), `git/remote-add-origin`, `git/branch`, `git/pull-request`. The push/clone examples talk to a local bare repository that stands in for GitHub (git's `url.<base>.insteadOf` rewrite), so the commands shown are exactly the ones a student types.
+- All terminal install commands use `python -m pip …` instead of a bare `pip …` (decision 2026-09-04: pip on the PATH may belong to another Python); Colab cells keep `!pip`.
+- A sixth tab, **A standard workflow** (`workflow.json`, 23 steps in five parts), walks the miniGPT build guide from an empty folder with conda (not venv) and unittest (not pytest): every step shows the files it writes, the commands, a line-by-line explanation, and the real output of running the steps in order inside one sandbox. The 5,000-iteration training run is recorded once (`manual_run`) rather than repeated. Sources: `_dev/workflow/` (builder, project files, recorded run); environment `minigpt-verify` (Python 3.12, torch).
+

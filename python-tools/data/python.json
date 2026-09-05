@@ -570,7 +570,7 @@
       "example": "import sys, numpy, pandas, matplotlib, plotly\nprint(\"Python\", sys.version.split()[0])\nprint(\"numpy\", numpy.__version__, \"| pandas\", pandas.__version__)",
       "output": "Python 3.13.15\nnumpy 2.5.2 | pandas 2.2.3",
       "output_note": "The numbers you see depend on when you installed. Colab today reports Python 3.13 and pandas 2.2.",
-      "gotcha": "`ModuleNotFoundError: No module named 'plotly'` means the package is missing from the active environment: `conda install -c conda-forge plotly` (or `pip install plotly`) and try again.",
+      "gotcha": "`ModuleNotFoundError: No module named 'plotly'` means the package is missing from the active environment: `conda install -c conda-forge plotly` (or `python -m pip install plotly`) and try again. If it is installed but still missing, `python -m pip --version` shows which Python your pip serves; it must be the same environment.",
       "related": [
         "shell/python-dash-c",
         "shell/conda-install",
@@ -4754,7 +4754,7 @@
       "example": "!pip install -q plotnine\nimport plotnine\nprint(\"plotnine\", plotnine.__version__)",
       "output": "plotnine 0.15.8",
       "volatile": true,
-      "gotcha": "Installs are forgotten when the runtime ends; keep the line in the Setup cell so it runs every time.",
+      "gotcha": "Installs are forgotten when the runtime ends; keep the line in the Setup cell so it runs every time. `!pip` is fine in Colab because it has only one Python; in a terminal on your own computer write `python -m pip install …` so that pip belongs to the Python you are running (see `shell/pip-install`), and in a local notebook `%pip install …` is the equivalent safeguard.",
       "related": [
         "shell/pip-install",
         "python/ggplot-basics",

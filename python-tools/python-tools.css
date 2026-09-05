@@ -267,6 +267,22 @@ html.pt-no-profile .page { float: none; width: 100%; margin-right: 0; padding-le
 .tk-n { color: var(--pt-ink); }
 .tk-d { color: var(--pt-accent); }
 
+/* workflow extras: file blocks and line-by-line explanations */
+.pt-file { margin: 0; }
+.pt-file__path { font-family: var(--pt-mono); font-size: 11px; letter-spacing: .04em; color: var(--pt-muted); margin: 2px 0 4px; cursor: pointer; list-style: none; }
+.pt-file__path::-webkit-details-marker { display: none; }
+.pt-file__path::before { content: "+ "; }
+.pt-file[open] .pt-file__path::before { content: "\2212 "; }
+.pt-file__n { margin-left: 8px; color: var(--pt-muted); opacity: .8; }
+.pt-file[open] .pt-file__n::after { content: ""; }
+.pt-file:not([open]) .pt-file__n::after { content: "show"; text-decoration: underline; text-underline-offset: 2px; }
+.pt-lines { margin: 0; }
+.pt-line { display: grid; grid-template-columns: minmax(150px, 34%) minmax(0, 1fr); gap: 0 14px; padding: 6px 0; border-top: 1px solid var(--pt-rule); }
+.pt-line:first-child { border-top: 0; padding-top: 0; }
+.pt-line dt { margin: 0; min-width: 0; }
+.pt-line dt code { display: block; white-space: pre-wrap; word-break: break-word; background: var(--pt-code-bg); border: 1px solid var(--pt-rule); padding: 3px 6px; font-size: 12px; line-height: 1.4; }
+.pt-line dd { margin: 0; font-size: 13.5px; line-height: 1.5; }
+.pt-row--lines .pt-cell { padding-top: 2px; }
 .pt-related { display: flex; flex-wrap: wrap; gap: 4px 6px; }
 .pt-related a { font-family: var(--pt-mono); font-size: 11.5px; padding: 1px 6px; border: 1px solid var(--pt-rule); color: var(--pt-ink); }
 .pt-related a:hover { border-color: var(--pt-ink); text-decoration: none; }
@@ -323,6 +339,7 @@ html.pt-no-profile .page { float: none; width: 100%; margin-right: 0; padding-le
   .pt-view__btn { flex: 1 1 50%; padding: 8px 12px; text-align: center; }
   .pt-profile-btn { padding: 8px 12px; text-align: center; }
   .pt-row { grid-template-columns: 1fr; gap: 3px 0; }
+  .pt-line { grid-template-columns: 1fr; gap: 3px 0; }
   .pt-label { padding-top: 0; }
   .pt-code pre { padding-right: 11px; }
   .pt-copy { top: -1px; right: -1px; border-top: 0; border-right: 0; }
