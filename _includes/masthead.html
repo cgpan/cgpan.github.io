@@ -5,7 +5,7 @@
         <button><div class="navicon"></div></button>
         <ul class="visible-links">
           {% for link in site.data.navigation.main %}
-            <li class="masthead__menu-item"><a href="{{ link.url | relative_url }}">{{ link.title }}</a></li>
+            {% assign is_current = false %}{% if link.url == "/" and page.url == "/" %}{% assign is_current = true %}{% elsif link.url != "/" and page.url contains link.url %}{% assign is_current = true %}{% endif %}<li class="masthead__menu-item"><a href="{{ link.url | relative_url }}"{% unless link.url contains "http" %} target="_self"{% endunless %}{% if is_current %} class="is-current" aria-current="page"{% endif %}>{{ link.title }}</a></li>
           {% endfor %}
           <li class="masthead__menu-item">
             <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Toggle dark mode">

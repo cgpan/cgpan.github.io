@@ -1,0 +1,43 @@
+<svg class="rfig" viewBox="0 0 480 300" role="img" aria-label="A decision tree that routes a student to one of three course sequences, with the recommended path highlighted" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity="0.55">
+    <path d="M240 58 L140 116 M240 58 L340 116"/>
+    <path d="M140 140 L88 198 M140 140 L192 198"/>
+    <path d="M340 140 L288 198 M340 140 L392 198"/>
+  </g>
+  <g class="rfig-accent" fill="none" stroke-width="2.6" stroke-linecap="round">
+    <path d="M240 58 L340 116"/>
+    <path d="M340 140 L392 198"/>
+  </g>
+  <g fill="none" stroke="currentColor" stroke-width="1.8">
+    <rect x="196" y="28" width="88" height="30" rx="4"/>
+    <rect x="100" y="110" width="80" height="30" rx="4"/>
+    <rect x="300" y="110" width="80" height="30" rx="4"/>
+  </g>
+  <rect class="rfig-accent-fill" x="300" y="110" width="80" height="30" rx="4" opacity="0.14"/>
+  <g fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.75">
+    <rect x="56" y="198" width="64" height="26" rx="3"/>
+    <rect x="160" y="198" width="64" height="26" rx="3"/>
+    <rect x="256" y="198" width="64" height="26" rx="3"/>
+  </g>
+  <g class="rfig-accent" fill="none" stroke-width="2.2">
+    <rect x="360" y="198" width="64" height="26" rx="3"/>
+  </g>
+  <rect class="rfig-accent-fill" x="360" y="198" width="64" height="26" rx="3" opacity="0.18"/>
+  <g font-family="inherit" font-size="12" fill="currentColor">
+    <text x="240" y="48" text-anchor="middle">grade 9</text>
+    <text x="140" y="130" text-anchor="middle">grade 10</text>
+    <text x="340" y="130" text-anchor="middle">grade 10</text>
+  </g>
+  <g font-family="inherit" font-size="10.5" fill="currentColor" opacity="0.8">
+    <text x="88" y="215" text-anchor="middle">algebra II</text>
+    <text x="192" y="215" text-anchor="middle">geometry</text>
+    <text x="288" y="215" text-anchor="middle">pre-calc</text>
+  </g>
+  <g font-family="inherit" font-size="10.5" class="rfig-accent-text">
+    <text x="392" y="215" text-anchor="middle">calculus</text>
+  </g>
+  <g font-family="inherit" font-size="11" fill="currentColor" opacity="0.6">
+    <text x="240" y="264" text-anchor="middle">estimated best sequence for this student</text>
+  </g>
+  <path class="rfig-accent" fill="none" stroke-width="1.6" stroke-dasharray="3 4" d="M392 232 L392 250"/>
+</svg>

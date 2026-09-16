@@ -1,51 +1,50 @@
 ---
 permalink: /
 title: ""
-excerpt: ""
+excerpt: "Chenguang Pan, PhD candidate in Measurement, Evaluation, and Statistics at Teachers College, Columbia University."
 author_profile: true
 redirect_from: 
   - /about/
   - /about.html
 ---
 
-{% if site.google_scholar_stats_use_cdn %}
-{% assign gsDataBaseUrl = "https://cdn.jsdelivr.net/gh/" | append: site.repository | append: "@" %}
-{% else %}
-{% assign gsDataBaseUrl = "https://raw.githubusercontent.com/" | append: site.repository | append: "/" %}
-{% endif %}
-{% assign url = gsDataBaseUrl | append: "google-scholar-stats/gs_data_shieldsio.json" %}
+# Chenguang Pan
 
-<span class='anchor' id='home'></span>
+I am a fifth-year PhD candidate in the Measurement, Evaluation, and Statistics program at Teachers College, Columbia University, where I am advised by Professor [Youmi Suk](https://youmilab.ai/). My dissertation, *Toward Trustworthy Personalized Decision-Making: Feasibility, Interpretability, and Realistic Evaluation*, is scheduled for defense in February 2027, and I expect to graduate in May 2027.
 
-I am a fifth-year PhD student in the Measurement, Evaluation, and Statistics program at Teachers College, Columbia University, where I am advised by Professor [Youmi Suk](https://youmilab.ai/). Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Technology Group in Beijing, where I held roles including business manager, instructor, and researcher for the graduate examination department.
+I work on causal machine learning for education: how to learn a decision rule from observational data, how to tell whether that rule is fair and implementable, and how to evaluate the methods themselves on data that behaves like the real thing. I also lead [EDM-ARS](https://edmars.ai/), an open-source multi-agent system that carries a quantitative study from a research question through to a written manuscript. A tour of the four threads is on the [Research](/research/){:target="_self"} page.
 
-<span class='anchor' id='research'></span>
-# Research
-My research interests lie at the intersection of **causal machine learning**, **educational data science**, and **generative AI for synthetic data**.
+Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Technology Group in Beijing, where I was Deputy Manager of the American Graduate Test Department, as well as an instructor and researcher.
 
+<div class="news-box" markdown="1">
 
-# News  
-- *2026.07* Chenguang will be an instructor this fall for a graduate-level course, HUDM5001 Programming for Data Science, at Teacher College, Columbia University.
-- *2026.06* Chenguang will give two oral presentations at SREE 2026 in Baltimore.
-- *2026.03*: &nbsp;🎉🎉 Excited to share [EDM-ARS (Educational Data Mining Automated Research System)](https://edmars.ai/) — a domain-specific, multi-agent LLM pipeline that turns a dataset + research prompt into a research paper.
-- *2025.12*: &nbsp;🎉🎉 Chenguang was awarded the Morton T. Embree Outstanding Contribution to Student Learning Award in recognition of his service as a TA.  
-- *2025.11*: &nbsp;🎉🎉 Chenguang will give oral presentations at both AERA 2026 and NCME 2026.
-- *2025.06*: &nbsp;🎉🎉 Three works that Chenguang was involved in were accepted by SREE 2025, and Chenguang will give an oral and a poster presentation.
-- *2025.06*: &nbsp;🎉🎉 Chenguang was invited to be a reviewer for the 2026 AERA Annual Meeting.  
+## News
+
+- *2026.09* Chenguang's paper *Estimating Optimal Dynamic Treatment Regimes for Personalized Education: A Tutorial and Applications with Machine Learning* (with Yuxuan Li and Youmi Suk) was accepted by *Zeitschrift für Psychologie*.
+- *2026.09* The syntax reference Chenguang built for HUDM 5001 Programming for Data Science is now open to everyone at [PythonTools](/python-tools/){:target="_self"}.
+- *2026.07* Chenguang will be an instructor this fall for a graduate-level course, HUDM 5001 Programming for Data Science, at Teachers College, Columbia University.
 
 <div id="hidden-news" style="display: none;" markdown="1">
 
-- *2025.05*: &nbsp;🎉🎉 Chenguang gave an oral and a poster presentation about his in-progress work *Designing Realistic and Interpretable Optimal Treatment Regimes for Personalized Education* in ACIC 2025, and [Foundations of Data Science Workshop organized by Columbia Data Science Institute](https://datascience.columbia.edu/event/foundations-of-data-science-workshop-spring-2025/)  
+- *2026.06* Chenguang will give two oral presentations at SREE 2026 in Baltimore.
+- *2026.03*: &nbsp;🎉🎉 Excited to share [EDM-ARS (Educational Data Mining Automated Research System)](https://edmars.ai/) — a domain-specific, multi-agent LLM pipeline that turns a dataset + research prompt into a research paper.
+- *2025.12*: &nbsp;🎉🎉 Chenguang was awarded the Morton T. Embree Outstanding Contribution to Student Learning Award in recognition of his service as a TA.
+- *2025.11*: &nbsp;🎉🎉 Chenguang will give oral presentations at both AERA 2026 and NCME 2026.
+- *2025.06*: &nbsp;🎉🎉 Three works that Chenguang was involved in were accepted by SREE 2025, and Chenguang will give an oral and a poster presentation.
+- *2025.06*: &nbsp;🎉🎉 Chenguang was invited to be a reviewer for the 2026 AERA Annual Meeting.
+- *2025.05*: &nbsp;🎉🎉 Chenguang gave an oral and a poster presentation about his in-progress work *Designing Realistic and Interpretable Optimal Treatment Regimes for Personalized Education* in ACIC 2025, and [Foundations of Data Science Workshop organized by Columbia Data Science Institute](https://datascience.columbia.edu/event/foundations-of-data-science-workshop-spring-2025/)
 - *2025.05*: &nbsp;🎉🎉 Chenguang served as a poster reviewer for the American Causal Inference Conference (ACIC) in Detroit.
 - *2025.01*: &nbsp;🎉🎉 Chenguang received a sponsored registration for the 2025 AERA Annual Meeting, AERA 2025.
 - *2024.12*: &nbsp;🎉🎉 Chenguang was awarded the Provost's Grant for Conference presentation, Columbia University, NY, U.S.
 - *2024.11*: &nbsp;🎉🎉 Chenguang's paper *Designing Optimal Dynamic Treatment Regimes Using TMLE for Personalized Math Course-taking Plans* (joint work with Youmi Suk) was accepted by the American Educational Research Association (AERA) conference 2025, Denver, CO, U.S.
 - *2024.09*: &nbsp;🎉🎉 Chenguang's work (as second author) *Designing Personalized Math Course-taking Plans in High School Using Optimal Treatment Regimes* was accepted by and presented at the Society for Research on Educational Effectiveness (SREE) conference. Baltimore, MD, U.S.
-- *2024.07*: &nbsp;🎉🎉 Chenguang's independent research paper *Examining the Algorithmic Fairness in Predicting High School Dropouts* was accepted by and presented at the 17th International Conference on Educational Data Mining (EDM) 2024. Additionally, he was awarded the IEDMS Scholarship by EDM. Atlanta, GA, U.S.
+- *2024.07*: &nbsp;🎉🎉 Chenguang's independent research paper *Examining Algorithmic Fairness in Predicting High School Dropouts* was accepted by and presented at the 17th International Conference on Educational Data Mining (EDM) 2024. Additionally, he was awarded the IEDMS Scholarship by EDM. Atlanta, GA, U.S.
 
 </div>
 
 <button id="toggle-news-btn" class="news-toggle" onclick="toggleNews()">Read more</button>
+
+</div>
 
 <script>
 function toggleNews() {
@@ -61,130 +60,3 @@ function toggleNews() {
   }
 }
 </script>
-
-<span class='anchor' id='publications'></span>
-# Publications   
-## Journal-track Papers
-- [Distilling Black-Box Machine Learning into a Small, Self-Explaining Language Model for Learning Analytics](https://arxiv.org/pdf/2608.21165), **Chenguang Pan**, Airui Meng, and Youmi Suk.  
-- [Estimating Optimal Dynamic Treatment Regimes for Personalized Education:A Tutorial and Applications with Machine Learning](), **Chenguang Pan**, Yuxuan Li, and Youmi Suk, **Under Revision**  
-- [Generative AI-Based Monte Carlo Simulation for Method Evaluation Using Synthetic Multilevel Data](https://arxiv.org/abs/2605.05752), Youmi Suk, **Chenguang Pan**, and Weixuan Xiao, **Under Review**  
-- [Learning Feasible Optimal Treatment Regimes for Personalized Decision-Making](https://osf.io/preprints/psyarxiv/arp48_v1), **Chenguang Pan**, Yuxuan Li, and Youmi Suk, **Under Review**
-- [Fair and Robust Estimation of Heterogeneous Treatment Effects for Optimal Policies in Multilevel Studies](https://doi.org/10.1080/00273171.2026.2669081), Youmi Suk, Chan Park, **Chenguang Pan**, and Kwangho Kim, Published by *Multivariate Behavioral Research* (MBR)  
-- [Using Generative AI for Sequential Data Generation in Monte Carlo Simulation Studies](https://doi.org/10.3102/10769986251397559), Youmi Suk, **Chenguang Pan**, and Ke Yang. Publised by *Journal of Educational and Behavioral Statistics* (JEBS)
-
-## Proceedings
-<div class="paper-box">
-  <div class="paper-box-image">
-    <div>
-      <div class="badge">SREE 2025</div>
-      <img src="images/SREE_2025.png" alt="SREE 2025 logo" width="100%">
-    </div>
-  </div>
-  <div class="paper-box-text" markdown="1">
-**[Investigating Interpretable Optimal Treatment Regimes Using Kolmogorov-Arnold Networks](https://builder.guidebook.com/g/#/guides/sree2025/schedule/730413/sessions/31565870)**  
-**Chenguang Pan**, Yuxuan Li, and Youmi Suk  
-*SREE 2025*
-  </div>
-</div>
-
-<div class="paper-box">
-  <div class="paper-box-image">
-    <div>
-      <div class="badge">AERA 2025</div>
-      <img src="images/AERA_2025.png" alt="AERA 2025 logo" width="100%">
-    </div>
-  </div>
-  <div class="paper-box-text" markdown="1">
-**[Designing Optimal Dynamic Treatment Regimes Using TMLE for Personalized Math Course-Taking Plans](https://doi.org/10.3102/2190733)**  
-**Chenguang Pan** and Youmi Suk  
-*AERA 2025*
-  </div>
-</div>  
-
-<div class="paper-box">
-  <div class="paper-box-image">
-    <div>
-      <div class="badge">SREE 2025</div>
-      <img src="images/SREE_2025.png" alt="SREE 2025 logo" width="100%">
-    </div>
-  </div>
-  <div class="paper-box-text" markdown="1">
-**[Improving the Feasibility of Optimal Treatment Regimes for Personalized Education](https://builder.guidebook.com/g/#/guides/sree2025/schedule/730413/sessions/31565650?scheduleDayPosition=2025-10-09&scheduleIndexInDayPosition=11)**  
-Yuxuan Li, **Chenguang Pan**,and Youmi Suk  
-*SREE 2025*
-  </div>
-</div>
-
-<div class="paper-box">
-  <div class="paper-box-image">
-    <div>
-      <div class="badge">EDM 2024</div>
-      <img src="images/EDM_2024.png" alt="EDM 2024 logo" width="100%">
-    </div>
-  </div>
-  <div class="paper-box-text" markdown="1">
-**[Examining the Algorithmic Fairness in Predicting High School Dropouts](https://zenodo.org/records/12729810)**  
-**Chenguang Pan** and Zhou Zhang  
-[**Code**](https://github.com/cgpan/HSLSdropout)  
-*EDM 2024*
-  </div>
-</div>
-
-<div class="paper-box">
-  <div class="paper-box-image">
-    <div>
-      <div class="badge">SREE 2024</div>
-      <img src="images/SREE_2024.png" alt="SREE 2024 logo" width="100%">
-    </div>
-  </div>
-  <div class="paper-box-text" markdown="1">
-**[Designing Personalized Math Course-Taking Plans in High School Using Optimal Treatment Regimes](https://sree.confex.com/sree/2024/meetingapp.cgi/Paper/5320)**  
-Youmi Suk and **Chenguang Pan**  
-*SREE 2024*
-  </div>
-</div>
-
-
-
-## Books  
-- [GRE Text-Completion Essentials: Full Explanations of High-Frequency Questions](https://isbnsearch.org/isbn/9787553666433), Bing Han, **Chenguang Pan**, and Daiyuan Cheng, published in Chinese.
-- [An Authentic Word List of High-Frequency GRE Vocabulary](https://isbnsearch.org/isbn/9787553662688), Bing Han and **Chenguang Pan**, published in Chinese.
-
-
-# 🎖 Honors and Awards
-- *2025* Morton T. Embree Outstanding Contribution to Student Learning Award, Teachers College, Columbia University
-- *2025* Provost's Grant for Conference presentation, Teachers College, Columbia University.
-- *2024* Provost's Grant for Conference presentation, Teachers College, Columbia University.
-- *2024* IEDMS Scholarship, EDM Conference 2024, Atlanta, GA, U.S.
-- *2023* Doctoral Research Fellowship Award, Teachers College, Columbia University.
-- *2017* Outstanding Teacher Award (award rate: 1/400), New Oriental Education & Technology Group, Beijing, China.
-
-
-# 🧐 Academic Service
-- Reviewer, Research Method, Society for Research on Educational Effectiveness (SREE) 2026  
-- Reviewer, American Causal Inference Conference (ACIC) 2026  
-- [Reviewer, 2026 American Institute of Research Forum](https://www.airweb.org/forum/2026/information/2026-proposal-reviewers)
-- Discussant, 3rd Annual Conference of Advanced Quantitative Methods and Analytics for Public Policy Support
-- Reviewer, AERA 2026 Annual Meeting
-- Reviewer, American Causal Inference Conference (ACIC) 2025
-
-# 📖 Educations
-- *2022.09 - now*: Ph.D. in Measurement, Evaluation, and Statistics, Teachers College, Columbia University, NY, U.S.
-- *2020.09 - 2021.09*: Master of Education in Quantitative Analytics, University of Virginia, VA, U.S.
-- *2010.09 - 2014.06*: Bachelor of Science in Physics, Harbin Normal University, Harbin, China.
-
-<span class='anchor' id='teaching'></span>
-# Teaching
-- *2026.01 - 2026.05*, Teaching Assistant for HUDM 5122 Applied Regression Analysis, Sessions 001 and 003, Columbia University, NY, U.S.
-- *2025.09 - 2025.12*, Teaching Assistant for HUDM 5122 Applied Regression Analysis, Columbia University, NY, U.S.
-- *2022.09 - 2022.12*, Teaching Assistant for QMSS GR5010 Quantitative Theory in Social Science, Columbia University, NY, U.S.
-- *2021.01 - 2021.07*, Instructor of Python Programming and Machine Learning, New Oriental Education & Technology Group, Beijing, China.
-- *2013.01 - 2022.07*, Instructor of GRE preparation in verbal and quantitative reasoning (teaching over 7,000 hours for over 10,000 students), New Oriental Education & Technology Group, Beijing, China.
-
-# Industry Experiences
-- *2018.05 - 2022.08*, Deputy Manager of American Graduate Tests Division, Full-time, New Oriental Education & Technology Group, Beijing, China.
-- *2014.05 - 2018.05*, Senior Researcher of GRE Instruction and Curriculum Department, Full-time, New Oriental Education & Technology Group, Beijing, China.  
-
-<span class='anchor' id='cv'></span>
-# CV
-Please contact me for the most recent CV PDF.

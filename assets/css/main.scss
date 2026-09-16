@@ -120,3 +120,305 @@ h1:before, .anchor:before {
     font-family: inherit;
     font-size: inherit;
 }
+
+
+/* ==========================================================================
+   Section pages: Research cards, Publications, Teaching, CV
+   Added for the multi-page layout. All colours come from the dark-mode
+   variables in _sass/_base.scss, so these blocks follow the theme toggle.
+   ========================================================================== */
+
+.pg-lede {
+  font-size: 1.08em;
+  line-height: 1.6;
+  color: var(--color-muted);
+  margin: 0 0 1.6em;
+}
+
+/* .page__content a sets an underline at higher specificity than a bare class,
+   so these links opt out explicitly. */
+.page__content {
+  a.rcard,
+  a.rcard:hover,
+  a.pg-back,
+  .pub__links a,
+  .rcard__more,
+  a.stats-card__link { text-decoration: none; }
+
+  a.stats-card__link:hover { text-decoration: underline; }
+
+  a.pg-back:hover { text-decoration: underline; }
+}
+
+.pg-back {
+  display: inline-block;
+  margin: 0 0 0.9em;
+  font-size: 0.86em;
+  letter-spacing: 0.02em;
+  color: var(--color-muted);
+
+  &:before { content: "\2190\00a0"; }
+  &:hover { color: var(--color-link); }
+}
+
+/* ---------- research illustrations ---------- */
+
+.rfig {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--color-text);
+  font-family: inherit;
+}
+
+.rfig-accent { stroke: var(--color-link); }
+.rfig-accent-fill { fill: var(--color-link); stroke: none; }
+.rfig-accent-text { fill: var(--color-link); }
+.rfig-accent-dot circle { fill: var(--color-link); }
+
+.rfig-frame {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1.1em 1.2em;
+  margin: 0 0 1.6em;
+  max-width: 560px;
+}
+
+/* ---------- research card grid ---------- */
+
+.rgrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5em;
+  margin: 0 0 2em;
+}
+
+@media (max-width: 700px) {
+  .rgrid { grid-template-columns: 1fr; }
+}
+
+.rcard {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1.1em 1.1em 1.2em;
+  text-decoration: none;
+  color: var(--color-text);
+  background: transparent;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: none;
+    border-color: var(--color-link);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(31, 36, 41, 0.10);
+  }
+
+  .rfig { margin-bottom: 0.9em; }
+}
+
+html[data-theme="dark"] .rcard:hover,
+html[data-theme="dark"] .rcard:focus-visible {
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+}
+
+.rcard__title {
+  font-family: $sans-serif;
+  font-size: 1.02em;
+  font-weight: 700;
+  line-height: 1.32;
+  margin: 0 0 0.35em;
+  color: var(--color-text);
+}
+
+.rcard__tags {
+  font-size: 0.8em;
+  font-style: italic;
+  color: var(--color-muted);
+  margin: 0 0 0.55em;
+}
+
+.rcard__blurb {
+  font-size: 0.9em;
+  line-height: 1.5;
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.rcard__more {
+  margin-top: auto;
+  padding-top: 0.8em;
+  font-size: 0.82em;
+  letter-spacing: 0.03em;
+  color: var(--color-link);
+
+  &:after { content: "\00a0\2192"; }
+}
+
+/* ---------- publications ---------- */
+
+.publist {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2em;
+}
+
+.pub {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.2em 1.2em;
+  padding: 0.95em 0;
+  border-bottom: 1px solid var(--color-border);
+
+  &:last-child { border-bottom: 0; }
+}
+
+.pub__body { min-width: 0; }
+
+.pub__title {
+  font-size: 1em;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0 0 0.2em;
+}
+
+.pub__authors {
+  font-size: 0.92em;
+  color: var(--color-muted);
+  margin: 0 0 0.2em;
+
+  strong { color: var(--color-text); }
+}
+
+.pub__venue {
+  font-size: 0.92em;
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.pub__side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35em;
+  white-space: nowrap;
+}
+
+.pub__year {
+  font-family: $monospace;
+  font-size: 0.82em;
+  color: var(--color-muted);
+}
+
+.pub-status {
+  display: inline-block;
+  font-family: $sans-serif;
+  font-size: 0.68em;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.15em 0.5em;
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  color: var(--color-muted);
+}
+
+.pub-status--out {
+  border-color: var(--color-link);
+  color: var(--color-link);
+}
+
+.pub__links {
+  margin: 0.4em 0 0;
+  font-size: 0.82em;
+
+  a {
+    display: inline-block;
+    margin-right: 0.5em;
+    padding: 0.1em 0.45em;
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+
+    &:hover { border-color: var(--color-link); text-decoration: none; }
+  }
+}
+
+/* ---------- teaching and CV rows ---------- */
+
+.rowlist {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.8em;
+}
+
+.row2 {
+  display: grid;
+  grid-template-columns: 8.5em 1fr;
+  gap: 0.3em 1.4em;
+  padding: 0.8em 0;
+  border-bottom: 1px solid var(--color-border);
+
+  &:last-child { border-bottom: 0; }
+}
+
+.row2__when {
+  font-family: $monospace;
+  font-size: 0.8em;
+  letter-spacing: 0.01em;
+  color: var(--color-muted);
+  padding-top: 0.2em;
+}
+
+.row2__what {
+  min-width: 0;
+
+  strong { font-weight: 600; }
+
+  p {
+    margin: 0.25em 0 0;
+    font-size: 0.93em;
+    color: var(--color-muted);
+    line-height: 1.5;
+  }
+}
+
+.pg-note {
+  font-size: 0.92em;
+  color: var(--color-muted);
+  border-left: 2px solid var(--color-border);
+  padding-left: 0.9em;
+  margin: 1.4em 0 0;
+}
+
+@media (max-width: 600px) {
+  .row2 { grid-template-columns: 1fr; gap: 0.15em 0; }
+  .row2__when { padding-top: 0; }
+  .pub { grid-template-columns: 1fr; }
+  .pub__side { flex-direction: row; align-items: center; gap: 0.6em; margin-top: 0.35em; }
+}
+
+/* current page in the seven-item nav: inset underline avoids any layout shift */
+.masthead__menu-item a.is-current {
+  color: var(--color-text);
+  font-weight: 700;
+  box-shadow: inset 0 -2px 0 var(--color-link);
+}
+
+/* News on the home page: a translucent panel so it reads apart from the summary.
+   The grey is deliberately theme-neutral, so one value works in light and dark. */
+.news-box {
+  background: rgba(127, 127, 127, 0.06);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.6em 1.4em 1.1em;
+  margin: 2em 0 0;
+
+  h2 {
+    margin-top: 0.6em;
+    padding-bottom: 0.35em;
+  }
+
+  ul { margin-bottom: 0.7em; }
+  > :last-child { margin-bottom: 0; }
+}

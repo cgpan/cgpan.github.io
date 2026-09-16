@@ -1,3 +1,12 @@
 _site/
 push.sh
 .DS_Store
+
+# The generated CV PDF stays local until it is deliberately published: this repo is
+# public, so committing it would make it downloadable from GitHub even though the
+# site no longer links it. To publish: copy it into files/ and link from _pages/cv.md.
+_cv/*.pdf
+
+# Machine-specific: symlink that points system Ruby's platform directory at the
+# vendored extensions after a macOS major upgrade. Not portable, do not commit.
+vendor/bundle/ruby/*/extensions/universal-darwin-26

@@ -1,0 +1,37 @@
+<svg class="rfig" viewBox="0 0 480 300" role="img" aria-label="A small real dataset feeding a generative model that produces many synthetic replicates used to evaluate an estimator" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="currentColor" stroke-width="1.8">
+    <rect x="40" y="104" width="86" height="72" rx="4"/>
+    <path d="M40 126 H126 M40 148 H126 M69 104 V176 M98 104 V176"/>
+  </g>
+  <g fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.5">
+    <path d="M132 140 H176"/>
+  </g>
+  <path fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.5" d="M170 134 l8 6 l-8 6"/>
+  <g class="rfig-accent" fill="none" stroke-width="2.2">
+    <rect x="182" y="110" width="94" height="60" rx="6"/>
+  </g>
+  <rect class="rfig-accent-fill" x="182" y="110" width="94" height="60" rx="6" opacity="0.12"/>
+  <g font-family="inherit" font-size="11.5" class="rfig-accent-text">
+    <text x="229" y="136" text-anchor="middle">generative</text>
+    <text x="229" y="152" text-anchor="middle">model</text>
+  </g>
+  <g fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.45">
+    <path d="M282 140 H318 M318 140 V88 M318 140 V192 M318 88 H336 M318 140 H336 M318 192 H336"/>
+  </g>
+  <g fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.8">
+    <rect x="342" y="72" width="62" height="32" rx="3"/>
+    <rect x="342" y="124" width="62" height="32" rx="3"/>
+    <rect x="342" y="176" width="62" height="32" rx="3"/>
+    <path d="M342 84 H404 M342 136 H404 M342 188 H404"/>
+  </g>
+  <g fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.35">
+    <path d="M410 88 h14 M410 140 h14 M410 192 h14"/>
+  </g>
+  <g font-family="inherit" font-size="11" fill="currentColor" opacity="0.8">
+    <text x="83" y="196" text-anchor="middle">one real sample</text>
+    <text x="373" y="230" text-anchor="middle">many synthetic replicates</text>
+  </g>
+  <g font-family="inherit" font-size="11" fill="currentColor" opacity="0.62">
+    <text x="240" y="268" text-anchor="middle">bias, variance, fairness and policy utility, measured</text>
+  </g>
+</svg>
