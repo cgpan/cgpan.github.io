@@ -10,9 +10,10 @@ redirect_from:
 
 # Chenguang Pan
 
-I am a fifth-year PhD candidate in the Measurement, Evaluation, and Statistics program at Teachers College, Columbia University, where I am advised by Professor [Youmi Suk](https://youmilab.ai/). My dissertation, *Toward Trustworthy Personalized Decision-Making: Feasibility, Interpretability, and Realistic Evaluation*, is scheduled for defense in February 2027, and I expect to graduate in May 2027.
+I am a fifth-year PhD candidate in the Measurement, Evaluation, and Statistics program at Teachers College, Columbia University, where I am advised by Professor [Youmi Suk](https://youmilab.ai/). I expect to graduate in May 2027.
 
-I work on causal machine learning for education: how to learn a decision rule from observational data, how to tell whether that rule is fair and implementable, and how to evaluate the methods themselves on data that behaves like the real thing. I also lead [EDM-ARS](https://edmars.ai/), an open-source multi-agent system that carries a quantitative study from a research question through to a written manuscript. A tour of the four threads is on the [Research](/research/){:target="_self"} page.
+I develop and extend quantitative methods at the intersection of causal inference, machine learning, and generative AI, and I apply them to
+help schools make better decisions for individual students using the data they already collect. A tour of my research is on the [Research](/research/){:target="_self"} page.
 
 Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Technology Group in Beijing, where I was Deputy Manager of the American Graduate Test Department, as well as an instructor and researcher.
 
