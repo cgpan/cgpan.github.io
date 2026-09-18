@@ -21,7 +21,7 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 
 ## News
 
-- *2026.09* Chenguang's paper *Estimating Optimal Dynamic Treatment Regimes for Personalized Education: A Tutorial and Applications with Machine Learning* (with Yuxuan Li and Youmi Suk) was accepted by *Zeitschrift für Psychologie*.
+- *2026.09* Chenguang's paper *Estimating Optimal Dynamic Treatment Regimes for Personalized Education: A Tutorial and Applications with Machine Learning* (with Yuxuan Li, Thomas Harris, and Youmi Suk) was accepted by *Zeitschrift für Psychologie*.
 - *2026.09* The syntax reference Chenguang built for HUDM 5001 Programming for Data Science is now open to everyone at [PythonTools](/python-tools/){:target="_self"}.
 - *2026.07* Chenguang will be an instructor this fall for a graduate-level course, HUDM 5001 Programming for Data Science, at Teachers College, Columbia University.
 
