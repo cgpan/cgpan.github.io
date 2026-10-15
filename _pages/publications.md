@@ -23,7 +23,7 @@ author_profile: true
   <li class="pub">
     <div class="pub__body">
       <p class="pub__title">Estimating Optimal Dynamic Treatment Regimes for Personalized Education: A Tutorial and Applications with Machine Learning</p>
-      <p class="pub__authors"><strong>Chenguang Pan</strong>, Yuxuan Li, and Youmi Suk</p>
+      <p class="pub__authors"><strong>Chenguang Pan</strong>, Yuxuan Li, Thomas Harris, and Youmi Suk</p>
       <p class="pub__venue"><em>Zeitschrift für Psychologie</em></p>
       <p class="pub__links"><a href="https://arxiv.org/abs/2610.10843">Preprint</a></p>
     </div>
