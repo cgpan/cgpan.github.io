@@ -54,7 +54,7 @@ author_profile: true
   <li class="row2"><div class="row2__when">2026</div><div class="row2__what">Reviewer, SIG Data-Driven Decision Making in Education, AERA Annual Meeting.</div></li>
   <li class="row2"><div class="row2__when">2026</div><div class="row2__what"><a href="https://www.airweb.org/forum/2026/information/2026-proposal-reviewers">Reviewer, AIR Forum</a>.</div></li>
   <li class="row2"><div class="row2__when">2025, 2026</div><div class="row2__what">Reviewer, American Causal Inference Conference (ACIC).</div></li>
-  <li class="row2"><div class="row2__when">&nbsp;</div><div class="row2__what">Discussant, 3rd Annual Conference on Advanced Quantitative Methods and Analytics for Public Policy Support.</div></li>
+  <li class="row2"><div class="row2__when">2025</div><div class="row2__what">Discussant, 3rd Annual Conference on Advanced Quantitative Methods and Analytics for Public Policy Support.</div></li>
 </ul>
 
 ## Industry experience

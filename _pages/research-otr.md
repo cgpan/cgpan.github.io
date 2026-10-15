@@ -31,8 +31,9 @@ A regime that no one can read will not be adopted. I have been using Kolmogorov-
       <p class="pub__title">Estimating Optimal Dynamic Treatment Regimes for Personalized Education: A Tutorial and Applications with Machine Learning</p>
       <p class="pub__authors"><strong>Chenguang Pan</strong>, Yuxuan Li, and Youmi Suk</p>
       <p class="pub__venue"><em>Zeitschrift für Psychologie</em></p>
+      <p class="pub__links"><a href="https://arxiv.org/abs/2610.10843">Preprint</a></p>
     </div>
-    <div class="pub__side"><span class="pub__year">2026</span><span class="pub-status pub-status--out">Accepted</span></div>
+    <div class="pub__side"><span class="pub__year">2026</span><span class="pub-status pub-status--out">In press</span></div>
   </li>
   <li class="pub">
     <div class="pub__body">
