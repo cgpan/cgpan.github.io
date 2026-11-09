@@ -16,7 +16,7 @@ author_profile: true
     <div class="row2__what">
       <strong>Ph.D., Measurement, Evaluation, and Statistics</strong>
       <p>Teachers College, Columbia University, NY, U.S.</p>
-      <p>Dissertation: <em>Toward Trustworthy Personalized Decision-Making: Feasibility, Interpretability, and Realistic Evaluation</em>. Committee: Youmi Suk (chair), Bryan Keller, and Lawrence DeCarlo. Defense scheduled for February 2027.</p>
+      <p>Dissertation: <em>Toward Trustworthy Personalized Decision-Making: Feasibility, Interpretability, and Realistic Evaluation</em>.</p>
     </div>
   </li>
   <li class="row2">
