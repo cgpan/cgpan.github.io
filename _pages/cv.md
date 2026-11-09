@@ -39,7 +39,7 @@ author_profile: true
 
 <ul class="rowlist">
   <li class="row2"><div class="row2__when">2026</div><div class="row2__what">SREE Conference Attendance Grant, Society for Research on Educational Effectiveness.</div></li>
-  <li class="row2"><div class="row2__when">2025</div><div class="row2__what">Morton T. Embree Outstanding Contribution to Student Learning Award, Teachers College, Columbia University.</div></li>
+  <li class="row2"><div class="row2__when">2025</div><div class="row2__what">Morton T. Embree Award for Outstanding Contribution to Student Learning, Teachers College, Columbia University.</div></li>
   <li class="row2"><div class="row2__when">2025</div><div class="row2__what">Provost's Grant for Conference Presentation, Teachers College, Columbia University.</div></li>
   <li class="row2"><div class="row2__when">2024</div><div class="row2__what">Provost's Grant for Conference Presentation, Teachers College, Columbia University.</div></li>
   <li class="row2"><div class="row2__when">2024</div><div class="row2__what">IEDMS Scholarship, International Educational Data Mining Society, EDM 2024, Atlanta, GA, U.S.</div></li>
@@ -52,7 +52,7 @@ author_profile: true
 <ul class="rowlist">
   <li class="row2"><div class="row2__when">2026</div><div class="row2__what">Reviewer, research methods, Society for Research on Educational Effectiveness (SREE).</div></li>
   <li class="row2"><div class="row2__when">2026</div><div class="row2__what">Reviewer, SIG Data-Driven Decision Making in Education, AERA Annual Meeting.</div></li>
-  <li class="row2"><div class="row2__when">2026</div><div class="row2__what"><a href="https://www.airweb.org/forum/2026/information/2026-proposal-reviewers">Reviewer, AIR Forum</a>.</div></li>
+  <li class="row2"><div class="row2__when">2026</div><div class="row2__what"><a href="https://www.airweb.org/forum/2026/information/2026-proposal-reviewers">Reviewer, Association for Institutional Research (AIR) Forum</a>.</div></li>
   <li class="row2"><div class="row2__when">2025, 2026</div><div class="row2__what">Reviewer, American Causal Inference Conference (ACIC).</div></li>
   <li class="row2"><div class="row2__when">2025</div><div class="row2__what">Discussant, 3rd Annual Conference on Advanced Quantitative Methods and Analytics for Public Policy Support.</div></li>
 </ul>
@@ -65,13 +65,15 @@ author_profile: true
     <div class="row2__what">
       <strong>Deputy Manager, American Graduate Test Department</strong>
       <p>New Oriental Education &amp; Technology Group, Beijing, China. Strategic and operational leadership for a 65-person team of instructors and staff.</p>
+      <p>Designed the instructor evaluation system and ran instructor training. Launched learning products for 10- to 20-day programs serving 800 to 1,000 students a year, including parallel pre- and post-course tests and a WeChat mini-app that personalizes daily vocabulary plans using the forgetting curve.</p>
     </div>
   </li>
   <li class="row2">
     <div class="row2__when">2014.05&ndash;2018.05</div>
     <div class="row2__what">
       <strong>Senior Researcher, GRE Instruction and Curriculum Design</strong>
-      <p>New Oriental Education &amp; Technology Group, Beijing, China. Evaluated teaching and learning performance using quantitative methods and natural language processing.</p>
+      <p>New Oriental Education &amp; Technology Group, Beijing, China. Evaluated teaching and learning performance using quantitative methods.</p>
+      <p>Built Python NLP tools for word-frequency and item analysis to support curriculum development and two published GRE preparation books.</p>
     </div>
   </li>
 </ul>
@@ -81,15 +83,19 @@ author_profile: true
 <ul class="rowlist">
   <li class="row2">
     <div class="row2__when">LLM &amp; AI</div>
-    <div class="row2__what">Multi-agent system design, LLM fine-tuning (LoRA), model distillation, and LLM evaluation.</div>
+    <div class="row2__what">LLM fine-tuning (LoRA), model distillation, multi-agent system design and evaluation, and generative models for synthetic data (CTGAN, diffusion models).</div>
   </li>
   <li class="row2">
     <div class="row2__when">statistics</div>
     <div class="row2__what">Statistical computing and machine learning in <strong>R</strong> (tidyverse, grf, tmle, SuperLearner) and <strong>Python</strong> (PyTorch, scikit-learn, pandas, NumPy).</div>
   </li>
   <li class="row2">
+    <div class="row2__when">web</div>
+    <div class="row2__what">Interactive web-based teaching tools and data visualization in HTML and JavaScript, such as <a href="/stats-tools/" target="_self">StatsTools</a>.</div>
+  </li>
+  <li class="row2">
     <div class="row2__when">computing</div>
-    <div class="row2__what">High-throughput and parallel computing for large simulation studies (OSG Open Science Pool).</div>
+    <div class="row2__what">High-throughput and parallel computing for large Monte Carlo simulation studies (OSG Open Science Pool).</div>
   </li>
   <li class="row2">
     <div class="row2__when">tools</div>
@@ -99,4 +105,4 @@ author_profile: true
 
 ## Professional memberships
 
-<p>American Educational Research Association (AERA); Society for Research on Educational Effectiveness (SREE); Society for Causal Inference (SCI); International Educational Data Mining Society (IEDMS); Psi Chi, the International Honor Society in Psychology.</p>
+<p>American Educational Research Association (AERA); Society for Research on Educational Effectiveness (SREE); Society for Causal Inference (SCI); International Educational Data Mining Society (IEDMS); Association for Institutional Research (AIR); Psi Chi, the International Honor Society in Psychology.</p>

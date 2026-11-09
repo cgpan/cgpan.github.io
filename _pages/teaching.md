@@ -46,7 +46,7 @@ author_profile: true
   </li>
 </ul>
 
-<p class="pg-note">Awarded the Morton T. Embree Outstanding Contribution to Student Learning Award in 2025, in recognition of service as a teaching assistant.</p>
+<p class="pg-note">Awarded the Morton T. Embree Award for Outstanding Contribution to Student Learning in 2025, in recognition of service as a teaching assistant.</p>
 
 ## Doctoral mentoring
 
@@ -55,7 +55,7 @@ author_profile: true
     <div class="row2__when">2026.04&ndash;now</div>
     <div class="row2__what">
       <strong>Research mentor, Ed.D. students, Pepperdine University</strong>
-      <p>Mentoring two doctoral students in quantitative research design using SPSS and Python, from descriptive statistics through regression. We co-authored a study of unequal access and heterogeneous returns to advanced high school mathematics, submitted to AERA 2027.</p>
+      <p>Mentoring two doctoral students in quantitative research design using SPSS and Python, from descriptive statistics through regression. We co-authored a study of unequal access and heterogeneous returns to advanced high school mathematics, accepted at AERA 2027.</p>
     </div>
   </li>
 </ul>

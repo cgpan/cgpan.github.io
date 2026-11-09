@@ -59,4 +59,12 @@ The interesting problem is not the fine-tuning but the guarantee. An explanation
     </div>
     <div class="pub__side"><span class="pub-status">Under review</span></div>
   </li>
+  <li class="pub">
+    <div class="pub__body">
+      <p class="pub__title">Distilling Black-Box Machine Learning into a Small, Self-Explaining Large Language Model for Learning Analytics</p>
+      <p class="pub__authors"><strong>Chenguang Pan</strong>, Airui Meng, and Youmi Suk</p>
+      <p class="pub__venue"><em>AERA 2027</em>, SIG Advanced Technologies for Learning, oral presentation</p>
+    </div>
+    <div class="pub__side"><span class="pub__year">2027</span></div>
+  </li>
 </ul>

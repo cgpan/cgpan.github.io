@@ -96,6 +96,30 @@ author_profile: true
 <ul class="publist">
   <li class="pub">
     <div class="pub__body">
+      <p class="pub__title">Realistic Monte Carlo Simulation with Generative AI for Causal Method Evaluation in Multilevel Settings</p>
+      <p class="pub__authors"><strong>Chenguang Pan</strong> and Youmi Suk</p>
+      <p class="pub__venue"><em>AERA 2027</em>, Division D, roundtable presentation</p>
+    </div>
+    <div class="pub__side"><span class="pub__year">2027</span></div>
+  </li>
+  <li class="pub">
+    <div class="pub__body">
+      <p class="pub__title">Distilling Black-Box Machine Learning into a Small, Self-Explaining Large Language Model for Learning Analytics</p>
+      <p class="pub__authors"><strong>Chenguang Pan</strong>, Airui Meng, and Youmi Suk</p>
+      <p class="pub__venue"><em>AERA 2027</em>, SIG Advanced Technologies for Learning, oral presentation</p>
+    </div>
+    <div class="pub__side"><span class="pub__year">2027</span></div>
+  </li>
+  <li class="pub">
+    <div class="pub__body">
+      <p class="pub__title">Examining Unequal Access and Heterogeneous Returns to Advanced High School Mathematics</p>
+      <p class="pub__authors">J. Lee, <strong>Chenguang Pan</strong>, and W. Li</p>
+      <p class="pub__venue"><em>AERA 2027</em>, Division L, oral presentation</p>
+    </div>
+    <div class="pub__side"><span class="pub__year">2027</span></div>
+  </li>
+  <li class="pub">
+    <div class="pub__body">
       <p class="pub__title">Domain-Specific Multi-Agent Systems for Automated Educational Data Mining Research and Review</p>
       <p class="pub__authors"><strong>Chenguang Pan</strong>, Zhou Zhang, Weixuan Xiao, Chengyuan Yao, and Youmi Suk</p>
       <p class="pub__venue"><em>SREE 2026</em>, oral presentation</p>

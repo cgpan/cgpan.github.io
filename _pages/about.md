@@ -21,16 +21,20 @@ Before pursuing my PhD, I spent nearly a decade at New Oriental Education & Tech
 
 ## News
 
+- *2026.11* Three papers Chenguang co-authored were accepted at AERA 2027 in Toronto:
+  - *Realistic Monte Carlo Simulation with Generative AI for Causal Method Evaluation in Multilevel Settings* (with Youmi Suk), a roundtable presentation in Division D
+  - [*Distilling Black-Box Machine Learning into a Small, Self-Explaining Large Language Model for Learning Analytics*](https://arxiv.org/abs/2608.21165) (with Airui Meng and Youmi Suk), an oral presentation in SIG Advanced Technologies for Learning
+  - *Examining Unequal Access and Heterogeneous Returns to Advanced High School Mathematics* (with J. Lee and W. Li), an oral presentation in Division L
 - *2026.10* Chenguang released [`pytlverse`](https://github.com/cgpan/pytlverse), a Python port of the R [tlverse](https://tlverse.org) packages for TMLE and optimal treatment regimes, in both single-stage and longitudinal settings. In benchmarks against the R tlverse, it ran about 10 times faster while using about one-sixth of the memory, which makes large-scale simulation studies practical.
 - *2026.10* Chenguang's paper [*Estimating Optimal Dynamic Treatment Regimes for Personalized Education: A Tutorial and Applications with Machine Learning*](https://arxiv.org/abs/2610.10843) (with Yuxuan Li, Thomas Harris, and Youmi Suk), accepted by *Zeitschrift für Psychologie*, is now in press. The preprint is available on arXiv.
-- *2026.09* The syntax reference Chenguang built for HUDM 5001 Programming for Data Science is now open to everyone at [PythonTools](/python-tools/){:target="_self"}.
 
 <div id="hidden-news" style="display: none;" markdown="1">
 
+- *2026.09* The syntax reference Chenguang built for HUDM 5001 Programming for Data Science is now open to everyone at [PythonTools](/python-tools/){:target="_self"}.
 - *2026.07* Chenguang will be an instructor this fall for a graduate-level course, HUDM 5001 Programming for Data Science, at Teachers College, Columbia University.
 - *2026.06* Chenguang will give two oral presentations at SREE 2026 in Baltimore.
 - *2026.03*: &nbsp;🎉🎉 Excited to share [EDM-ARS (Educational Data Mining Automated Research System)](https://edmars.ai/) — a domain-specific, multi-agent LLM pipeline that turns a dataset + research prompt into a research paper.
-- *2025.12*: &nbsp;🎉🎉 Chenguang was awarded the Morton T. Embree Outstanding Contribution to Student Learning Award in recognition of his service as a TA.
+- *2025.12*: &nbsp;🎉🎉 Chenguang was awarded the Morton T. Embree Award for Outstanding Contribution to Student Learning in recognition of his service as a TA.
 - *2025.11*: &nbsp;🎉🎉 Chenguang will give oral presentations at both AERA 2026 and NCME 2026.
 - *2025.06*: &nbsp;🎉🎉 Three works that Chenguang was involved in were accepted by SREE 2025, and Chenguang will give an oral and a poster presentation.
 - *2025.06*: &nbsp;🎉🎉 Chenguang was invited to be a reviewer for the 2026 AERA Annual Meeting.
