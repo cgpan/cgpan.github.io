@@ -38,6 +38,13 @@ author_profile: true
 ## Honors and awards
 
 <ul class="rowlist">
+  <li class="row2">
+    <div class="row2__when">2026.11&ndash;2027.05</div>
+    <div class="row2__what">
+      Google Antigravity for Science Research Access Award, Google.
+      <p>In-kind research support (~$1,200). Awarded competitive 6-month highest-tier access to frontier AI models (Gemini 4 Argon &amp; Carbon) for non-commercial scientific research.</p>
+    </div>
+  </li>
   <li class="row2"><div class="row2__when">2026</div><div class="row2__what">SREE Conference Attendance Grant, Society for Research on Educational Effectiveness.</div></li>
   <li class="row2"><div class="row2__when">2025</div><div class="row2__what">Morton T. Embree Award for Outstanding Contribution to Student Learning, Teachers College, Columbia University.</div></li>
   <li class="row2"><div class="row2__when">2025</div><div class="row2__what">Provost's Grant for Conference Presentation, Teachers College, Columbia University.</div></li>
